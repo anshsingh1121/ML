@@ -1,0 +1,96 @@
+# =============================================================================
+# Incident Intelligence Platform — Logging Configuration
+# =============================================================================
+# Uses Python's logging.config.dictConfig format
+# Supports structured JSON logging for enterprise audit trails
+# =============================================================================
+
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  standard:
+    format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+  detailed:
+    format: "%(asctime)s | %(levelname)-8s | %(name)s | %(module)s:%(funcName)s:%(lineno)d | %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+  json:
+    class: "src.utils.logger.JsonFormatter"
+    format: "%(asctime)s %(levelname)s %(name)s %(message)s"
+
+handlers:
+  console:
+    class: "logging.StreamHandler"
+    level: "INFO"
+    formatter: "standard"
+    stream: "ext://sys.stdout"
+
+  app_file:
+    class: "logging.handlers.RotatingFileHandler"
+    level: "DEBUG"
+    formatter: "detailed"
+    filename: "logs/app.log"
+    maxBytes: 10485760    # 10 MB
+    backupCount: 5
+    encoding: "utf-8"
+
+  ml_file:
+    class: "logging.handlers.RotatingFileHandler"
+    level: "INFO"
+    formatter: "detailed"
+    filename: "logs/ml_training.log"
+    maxBytes: 10485760
+    backupCount: 5
+    encoding: "utf-8"
+
+  api_file:
+    class: "logging.handlers.RotatingFileHandler"
+    level: "INFO"
+    formatter: "detailed"
+    filename: "logs/api_access.log"
+    maxBytes: 10485760
+    backupCount: 3
+    encoding: "utf-8"
+
+  error_file:
+    class: "logging.handlers.RotatingFileHandler"
+    level: "ERROR"
+    formatter: "detailed"
+    filename: "logs/error.log"
+    maxBytes: 10485760
+    backupCount: 10
+    encoding: "utf-8"
+
+loggers:
+  src:
+    level: "DEBUG"
+    handlers:
+      - console
+      - app_file
+      - error_file
+    propagate: false
+
+  src.ml:
+    level: "INFO"
+    handlers:
+      - console
+      - ml_file
+      - error_file
+    propagate: false
+
+  src.data:
+    level: "INFO"
+    handlers:
+      - console
+      - app_file
+    propagate: false
+
+root:
+  level: "INFO"
+  handlers:
+    - console
+    - app_file
+    - error_file

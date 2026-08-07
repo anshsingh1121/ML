@@ -1,0 +1,162 @@
+# =============================================================================
+# Incident Intelligence Platform — Main Application Configuration
+# =============================================================================
+# Organization: First Citizens Bank
+# Classification: INTERNAL — CONFIDENTIAL
+# Version: 1.0.0
+#
+# IMPORTANT: Do NOT commit secrets to this file.
+#            Use .env file or environment variables for credentials.
+# =============================================================================
+
+app:
+  name: "Incident Intelligence Platform"
+  version: "1.0.0"
+  environment: "${APP_ENV:development}"   # development | staging | production
+  debug: true
+  seed: 42                                # Global random seed for reproducibility
+
+# ---------------------------------------------------------------------------
+# Data Directories
+# ---------------------------------------------------------------------------
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  interim_dir: "data/interim"
+  external_dir: "data/external"
+  default_format: "csv"                   # csv | parquet
+  encoding: "utf-8"
+  input_csv_path: "${DATA_INPUT_PATH:data/raw/incidents.csv}"
+  use_synthetic_data: false               # Set to true only if you want to auto-generate synthetic data
+  allow_custom_categories: true           # Preserve company custom categories & assignment groups during cleaning/validation
+
+
+# ---------------------------------------------------------------------------
+# Dataset Generator Configuration
+# ---------------------------------------------------------------------------
+dataset_generator:
+  default_num_records: 10000
+  output_filename: "servicenow_incidents"
+  seed: 42
+  # Realistic banking incident distribution
+  category_distribution:
+    Network: 0.18
+    Software: 0.22
+    Hardware: 0.12
+    Database: 0.08
+    Security: 0.10
+    Application: 0.15
+    Infrastructure: 0.08
+    End User Services: 0.07
+  # Priority distribution (P1 rare, P3/P4 common)
+  priority_distribution:
+    1: 0.05       # Critical
+    2: 0.15       # High
+    3: 0.45       # Moderate
+    4: 0.35       # Low
+  # SLA compliance rate
+  sla_met_rate: 0.82
+  # Duplicate incident rate
+  duplicate_rate: 0.05
+  # Recurring incident rate
+  recurring_rate: 0.08
+  # Parent-child incident rate
+  parent_child_rate: 0.03
+  # Incidents with knowledge article linked
+  knowledge_linked_rate: 0.25
+  # Incidents linked to problem records
+  problem_linked_rate: 0.10
+  # Incidents linked to change requests
+  change_linked_rate: 0.07
+  # Date range for incident generation
+  date_range:
+    start: "2024-01-01"
+    end: "2025-12-31"
+  # Resolution time ranges per priority (hours)
+  resolution_time_ranges:
+    1:
+      min: 0.5
+      max: 8.0
+      mean: 3.0
+      std: 1.5
+    2:
+      min: 1.0
+      max: 24.0
+      mean: 8.0
+      std: 4.0
+    3:
+      min: 2.0
+      max: 72.0
+      mean: 24.0
+      std: 12.0
+    4:
+      min: 4.0
+      max: 168.0
+      mean: 48.0
+      std: 24.0
+
+# ---------------------------------------------------------------------------
+# Model Directories
+# ---------------------------------------------------------------------------
+models:
+  base_dir: "models"
+  random_forest_dir: "models/random_forest"
+  embeddings_dir: "models/embeddings"
+  registry_file: "models/model_registry.json"
+
+# ---------------------------------------------------------------------------
+# FAISS Index Configuration
+# ---------------------------------------------------------------------------
+indexes:
+  base_dir: "indexes"
+  index_file: "indexes/incident_index.faiss"
+  metadata_file: "indexes/incident_index.meta"
+  backup_dir: "indexes/backups"
+
+# ---------------------------------------------------------------------------
+# Report Configuration
+# ---------------------------------------------------------------------------
+reporting:
+  output_dir: "reports"
+  daily_dir: "reports/daily"
+  weekly_dir: "reports/weekly"
+  monthly_dir: "reports/monthly"
+  company_name: "First Citizens Bank"
+  report_title: "Incident Intelligence Report"
+
+# ---------------------------------------------------------------------------
+# Dashboard Configuration
+# ---------------------------------------------------------------------------
+dashboard:
+  host: "0.0.0.0"
+  port: 8501
+  theme: "dark"
+  title: "Incident Intelligence Platform"
+  page_icon: "🏦"
+  layout: "wide"
+
+# ---------------------------------------------------------------------------
+# API Configuration
+# ---------------------------------------------------------------------------
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 2
+  reload: true                            # Auto-reload in development
+  cors_origins:
+    - "http://localhost:8501"
+    - "http://127.0.0.1:8501"
+
+# ---------------------------------------------------------------------------
+# Logging Configuration
+# ---------------------------------------------------------------------------
+logging:
+  level: "${LOG_LEVEL:INFO}"
+  format: "json"                          # json | text
+  log_dir: "logs"
+  app_log: "logs/app.log"
+  ml_log: "logs/ml_training.log"
+  api_log: "logs/api_access.log"
+  max_bytes: 10485760                     # 10 MB
+  backup_count: 5
+  console_enabled: true

@@ -1,0 +1,125 @@
+# Model Configuration for Incident Intelligence Platform
+# First Citizens Bank - Phase 1
+
+models:
+  assignment_group:
+    algorithm: random_forest
+    params:
+      n_estimators: 200
+      max_depth: 20
+      min_samples_split: 5
+      min_samples_leaf: 2
+      max_features: sqrt
+      class_weight: balanced
+      random_state: 42
+      n_jobs: -1
+
+  resolution_time:
+    algorithm: random_forest
+    params:
+      n_estimators: 150
+      max_depth: 15
+      min_samples_split: 10
+      min_samples_leaf: 4
+      max_features: sqrt
+      class_weight: null
+      random_state: 42
+      n_jobs: -1
+
+  category:
+    algorithm: random_forest
+    params:
+      n_estimators: 200
+      max_depth: 25
+      min_samples_split: 5
+      min_samples_leaf: 2
+      max_features: sqrt
+      class_weight: balanced
+      random_state: 42
+      n_jobs: -1
+
+  priority:
+    algorithm: random_forest
+    params:
+      n_estimators: 100
+      max_depth: 10
+      min_samples_split: 10
+      min_samples_leaf: 5
+      max_features: sqrt
+      class_weight: balanced_subsample
+      random_state: 42
+      n_jobs: -1
+
+hyperparameter_optimization:
+  method: randomized_search
+  cv_folds: 5
+  n_iter: 50
+  scoring: f1_weighted
+  param_distributions:
+    n_estimators: [100, 150, 200, 300, 500]
+    max_depth: [10, 15, 20, 25, 30, null]
+    min_samples_split: [2, 5, 10, 15]
+    min_samples_leaf: [1, 2, 4, 8]
+    max_features: [sqrt, log2, null]
+
+embeddings:
+  model_name: all-MiniLM-L6-v2
+  batch_size: 64
+  max_seq_length: 256
+  normalize: true
+  cache_dir: models/embeddings
+
+faiss:
+  index_type: IVFFlat
+  nlist: 100
+  nprobe: 10
+  auto_switch_threshold: 50000
+  index_dir: indexes
+
+similarity:
+  semantic_weight: 0.7
+  structural_weight: 0.3
+  top_k: 10
+  min_similarity_score: 0.5
+
+training:
+  test_size: 0.2
+  validation_size: 0.1
+  stratify: true
+  random_state: 42
+
+feature_engineering:
+  text_features:
+    - short_description
+    - description
+  categorical_features:
+    - category
+    - subcategory
+    - impact
+    - urgency
+    - contact_type
+  numerical_features:
+    - reassignment_count
+    - reopen_count
+  target_columns:
+    - assignment_group
+    - resolution_time_bucket
+    - category
+    - priority
+
+hybrid:
+  rf_weight: 0.60
+  semantic_weight: 0.40
+  agreement_bonus: 0.10
+  disagreement_penalty: 0.05
+  insufficient_matches_penalty: 0.10
+  partial_reassign_credit: 0.50
+  very_high_threshold: 0.88
+  high_threshold: 0.75
+  moderate_threshold: 0.60
+  low_threshold: 0.45
+  rf_dominant_threshold: 0.70
+  mttr_rf_weight: 0.50
+  mttr_semantic_weight: 0.50
+  default_top_k: 5
+

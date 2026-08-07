@@ -1,0 +1,51 @@
+# ServiceNow Configuration
+# First Citizens Bank - Incident Intelligence Platform
+
+connection:
+  base_url: ${SERVICENOW_URL}
+  auth_method: basic
+  username: ${SERVICENOW_USER}
+  password: ${SERVICENOW_PASS}
+  timeout: 30
+  max_retries: 3
+  retry_backoff: 2
+  verify_ssl: true
+
+api:
+  table: incident
+  batch_size: 500
+  max_records: 100000
+  api_version: now
+
+query:
+  filter: "active=true^ORactive=false^sys_created_on>=javascript:gs.beginningOfLast12Months()"
+  order_by: sys_created_on
+  order_direction: desc
+
+field_mapping:
+  number: incident_number
+  short_description: short_description
+  description: description
+  category: category
+  subcategory: subcategory
+  priority: priority
+  impact: impact
+  urgency: urgency
+  assignment_group: assignment_group
+  assigned_to: assigned_to
+  state: state
+  contact_type: contact_type
+  sys_created_on: created_date
+  sys_updated_on: updated_date
+  resolved_at: resolved_date
+  closed_at: closed_date
+  close_notes: resolution_notes
+  reassignment_count: reassignment_count
+  reopen_count: reopen_count
+  caller_id: caller
+  cmdb_ci: configuration_item
+
+export:
+  format: csv
+  output_dir: data/raw
+  filename_pattern: "incidents_{date}.csv"

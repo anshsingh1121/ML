@@ -1,0 +1,253 @@
+# =============================================================================
+# AI-Powered Incident Intelligence Platform
+# Modern Python Packaging & Tooling Configuration
+# First Citizens Bank - Enterprise Deployment
+# =============================================================================
+
+# ── Build System ─────────────────────────────────────────────────────────────
+[build-system]
+requires = ["setuptools>=75.0", "wheel>=0.44"]
+build-backend = "setuptools.build_meta"
+
+# ── Project Metadata ─────────────────────────────────────────────────────────
+[project]
+name = "incident-intelligence"
+version = "2.0.0"
+description = "AI-Powered Incident Intelligence Platform for automated incident triage, assignment prediction, resolution recommendation, and time estimation."
+readme = "README.md"
+license = {text = "Proprietary - First Citizens Bank"}
+requires-python = ">=3.11"
+authors = [
+    {name = "First Citizens Bank - AI Engineering", email = "ai-engineering@firstcitizens.com"},
+]
+keywords = [
+    "incident-management",
+    "machine-learning",
+    "nlp",
+    "servicenow",
+    "faiss",
+    "semantic-search",
+    "enterprise-ai",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pandas>=2.2,<3",
+    "numpy>=1.26,<2",
+    "scipy>=1.13,<2",
+    "scikit-learn>=1.5,<2",
+    "sentence-transformers>=3.4,<4",
+    "faiss-cpu>=1.8,<2",
+    "shap>=0.46,<1",
+    "joblib>=1.4,<2",
+    "matplotlib>=3.9,<4",
+    "seaborn>=0.13,<1",
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.32,<1",
+    "httpx>=0.28,<1",
+    "streamlit>=1.41,<2",
+    "openpyxl>=3.1,<4",
+    "xlsxwriter>=3.2,<4",
+    "pyyaml>=6.0,<7",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "python-dotenv>=1.1,<2",
+    "structlog>=24.4,<25",
+    "tqdm>=4.67,<5",
+    "rich>=13.9,<14",
+    "click>=8.1,<9",
+]
+
+[project.urls]
+Homepage = "https://github.com/firstcitizens/incident-intelligence"
+Documentation = "https://github.com/firstcitizens/incident-intelligence/wiki"
+Repository = "https://github.com/firstcitizens/incident-intelligence"
+"Issue Tracker" = "https://github.com/firstcitizens/incident-intelligence/issues"
+
+[project.scripts]
+incident-intelligence = "src.cli:main"
+
+# ── Optional Dependency Groups ───────────────────────────────────────────────
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8,<1",
+    "mypy>=1.13,<2",
+    "pre-commit>=4.0,<5",
+    "ipython>=8.29,<9",
+    "ipdb>=0.13,<1",
+]
+test = [
+    "pytest>=8.3,<9",
+    "pytest-cov>=6.1,<7",
+    "pytest-mock>=3.14,<4",
+    "pytest-asyncio>=0.24,<1",
+    "pytest-xdist>=3.5,<4",
+    "hypothesis>=6.115,<7",
+    "faker>=33.0,<34",
+]
+docs = [
+    "mkdocs>=1.6,<2",
+    "mkdocs-material>=9.5,<10",
+    "mkdocstrings[python]>=0.27,<1",
+]
+
+# ── Setuptools Package Discovery ─────────────────────────────────────────────
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+exclude = ["tests*", "docs*", "scripts*"]
+
+# ── Pytest Configuration ─────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html:reports/coverage",
+    "--cov-fail-under=10",
+]
+markers = [
+    "unit: Unit tests (fast, no external dependencies)",
+    "integration: Integration tests (may require external services)",
+    "slow: Slow-running tests (model training, large data processing)",
+    "api: API endpoint tests",
+    "dashboard: Dashboard/UI tests",
+    "model: ML model training and evaluation tests",
+    "smoke: Smoke tests for quick validation",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# ── Ruff Linter Configuration ────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "SIM",    # flake8-simplify
+    "S",      # flake8-bandit (security)
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "RET",    # flake8-return
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate (commented-out code)
+    "PL",     # pylint
+    "RUF",    # ruff-specific rules
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PIE",    # flake8-pie
+    "LOG",    # flake8-logging
+    "T20",    # flake8-print
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "S101",   # assert usage (allowed in tests)
+    "S105",   # hardcoded password (false positives in config templates)
+    "B008",   # function call in default argument (FastAPI Depends pattern)
+    "PLR0913", # too many arguments (ML functions often need many params)
+    "PLR2004", # magic value comparison (acceptable in tests/thresholds)
+    "RUF012", # mutable class variable (pydantic models)
+    "UP007",  # use X | Y for union types (keep Optional for readability)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ARG001", "ARG002", "PLR2004", "T20"]
+"scripts/**/*.py" = ["T20"]
+"src/cli.py" = ["T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+# ── MyPy Type Checking Configuration ─────────────────────────────────────────
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_any_generics = true
+no_implicit_optional = true
+no_implicit_reexport = true
+show_error_codes = true
+show_error_context = true
+pretty = true
+namespace_packages = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "faiss.*",
+    "sentence_transformers.*",
+    "shap.*",
+    "sklearn.*",
+    "streamlit.*",
+    "structlog.*",
+]
+ignore_missing_imports = true
+
+# ── Coverage Configuration ───────────────────────────────────────────────────
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/__main__.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+precision = 2
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.",
+    "raise NotImplementedError",
+    "pass",
+    "\\.\\.\\.",
+]
