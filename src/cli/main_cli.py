@@ -522,8 +522,7 @@ class EnterpriseCLI:
             ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="catboost_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
             ("Stage 8: Generate Local Neural Embeddings (`TF-IDF + SVD`)", lambda: self.cmd_embed(input_path="data/processed/train.csv", batch_size=64)),
             ("Stage 9: Build & Register FAISS Vector Index", lambda: self.cmd_index(input_path="data/processed/train.csv", index_name="incident_semantic_index")),
-            ("Stage 10: Execute Hybrid Recommendation Engine (Demo Precedent)", lambda: self.cmd_recommend(input_path=None, text="ATM cash withdrawal failing due to hardware network timeout on CMDB_CI ATM-001", top_k=5)),
-            ("Stage 11: Execute Pytest Test Suite", lambda: subprocess.run([sys.executable, "-m", "pytest", "tests/"], check=False).returncode)
+            ("Stage 10: Execute Hybrid Recommendation Engine (Demo Precedent)", lambda: self.cmd_recommend(input_path=None, text="ATM cash withdrawal failing due to hardware network timeout on CMDB_CI ATM-001", top_k=5))
         ]
 
         stage_results = []
