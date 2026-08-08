@@ -139,6 +139,18 @@ class DatasetValidator:
 
     def _check_missing_values(self, df: pd.DataFrame) -> CheckResult:
         """Rule 1: Check for missing or null values across critical required fields."""
+        missing_cols = [col for col in self.REQUIRED_FIELDS if col not in df.columns]
+        if missing_cols:
+            return CheckResult(
+                rule_id="CHK-01",
+                rule_name="Required Fields Missing",
+                passed=False,
+                error_count=len(df),
+                error_pct=100.0,
+                details_msg=f"Dataset schema is missing required columns entirely: {missing_cols}",
+                sample=[]
+            )
+
         missing_counts = df[self.REQUIRED_FIELDS].isnull().sum()
         total_missing = int(missing_counts.sum())
         passed = total_missing == 0
