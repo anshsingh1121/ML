@@ -66,6 +66,11 @@ class HyperparameterOptimizer:
 
         predictors = self.feat_reg.get_random_forest_predictors()
         prep_pipeline = self.trainer.build_preprocessing_pipeline(X_train, predictors)
+        
+        # Determine text feature index after preprocessing
+        X_trans = prep_pipeline.fit_transform(X_train, y_train)
+        text_idx = X_trans.shape[1] - 1
+
         estimator = CatBoostClassifier(random_seed=42, verbose=0)
         full_pipe = Pipeline([
             ("preprocessing", prep_pipeline),
@@ -94,7 +99,7 @@ class HyperparameterOptimizer:
             search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=skf, scoring=scoring, random_state=42, n_jobs=-1, verbose=1)
 
         X_train_clean = self.trainer._get_safe_predictor_matrix(X_train, predictors)
-        search.fit(X_train_clean, y_train.astype(str))
+        search.fit(X_train_clean, y_train.astype(str), estimator__text_features=[text_idx])
         dur = time.time() - start_t
 
         best_params_clean = {k.replace("estimator__", ""): v for k, v in search.best_params_.items()}
@@ -118,6 +123,11 @@ class HyperparameterOptimizer:
 
         predictors = self.feat_reg.get_random_forest_predictors()
         prep_pipeline = self.trainer.build_preprocessing_pipeline(X_train, predictors)
+
+        # Determine text feature index after preprocessing
+        X_trans = prep_pipeline.fit_transform(X_train, y_train)
+        text_idx = X_trans.shape[1] - 1
+
         estimator = CatBoostRegressor(random_seed=42, verbose=0, loss_function="MAE")
         full_pipe = Pipeline([
             ("preprocessing", prep_pipeline),
@@ -144,7 +154,7 @@ class HyperparameterOptimizer:
             search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=kf, scoring=scoring, random_state=42, n_jobs=-1, verbose=1)
 
         X_train_clean = self.trainer._get_safe_predictor_matrix(X_train, predictors)
-        search.fit(X_train_clean, y_train)
+        search.fit(X_train_clean, y_train, estimator__text_features=[text_idx])
         dur = time.time() - start_t
 
         best_params_clean = {k.replace("estimator__", ""): v for k, v in search.best_params_.items()}

@@ -18,7 +18,7 @@ def test_feature_registry_singleton_and_defaults() -> None:
     reg1 = FeatureRegistry.get_instance()
     reg2 = FeatureRegistry.get_instance()
     assert reg1 is reg2
-    assert len(reg1.list_all_features()) == 51
+    assert len(reg1.list_all_features()) == 52
 
     feat = reg1.get_feature("assignment_group")
     assert feat is not None
@@ -66,5 +66,5 @@ def test_feature_registry_export_json_and_md(tmp_path: Path) -> None:
 
     with open(out_j, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data["total_features"] == 51
+    assert data["total_features"] == 52
     assert "assignment_group" in data["features"]

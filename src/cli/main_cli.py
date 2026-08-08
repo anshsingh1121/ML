@@ -22,6 +22,7 @@ from src.data.validation import DatasetValidator
 from src.data.readiness import MLReadinessEvaluator as MLReadinessChecker
 from src.preprocessing.eda import EnterpriseEDAEngine
 from src.preprocessing.cleaner import EnterpriseDataCleaner
+from src.preprocessing.enricher import EnterpriseDataEnricher
 from src.preprocessing.engineer import FeatureEngineeringEngine
 from src.preprocessing.text_preprocessor import TextPreprocessor
 from src.preprocessing.splitter import DatasetSplitter
@@ -242,10 +243,16 @@ class EnterpriseCLI:
         clean_df, clean_audit = cleaner.clean_dataset(df, output_dir="reports")
         print(f"  -> Cleaned: {len(clean_df):,} surviving records.")
 
+        # Step 1.5: Enrich
+        print("\n[Step 1.5/5] Checking for External Data Enrichment (CMDB/Shift)...")
+        enricher = EnterpriseDataEnricher(raw_data_dir="data/raw")
+        enriched_df, _ = enricher.enrich_dataset(clean_df, {"transformations": []})
+        print(f"  -> Enrichment complete. Columns: {len(enriched_df.columns)}")
+
         # Step 2: Engineer
         print("\n[Step 2/5] Executing Feature Engineering Engine...")
         engine = FeatureEngineeringEngine()
-        eng_df, eng_report = engine.engineer_features(clean_df, output_dir="reports")
+        eng_df, eng_report = engine.engineer_features(enriched_df, output_dir="reports")
         print(f"  -> Engineered: {eng_report['total_new_features']} new features created & synchronized.")
 
         # Step 3: Text Preprocessing
@@ -294,16 +301,16 @@ class EnterpriseCLI:
                 return 1
             df_t = robust_read_csv(train_file)
             predictors = self.registry.get_random_forest_predictors()
-            X_t = df_t[predictors]
+            X_t = trainer._get_safe_predictor_matrix(df_t, predictors)
 
-            if target in ["assignment_group", "category", "priority"]:
+            if target in ["assignment_group", "category", "priority", "resolution_time_bucket"]:
                 best_p = optimizer.optimize_classifier(X_t, df_t[target], target_col=target)
             else:
                 best_p = optimizer.optimize_regressor(X_t, df_t[target], target_col=target)
             print(f"[SUCCESS] HPO Best Parameters Identified: {best_p}")
 
         print("\n---> [Stage 2/2] Training & Persisting Complete Zero-Leakage Pipeline...")
-        if target in ["assignment_group", "category", "priority"]:
+        if target in ["assignment_group", "category", "priority", "resolution_time_bucket"]:
             out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
         else:
             out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
@@ -517,7 +524,7 @@ class EnterpriseCLI:
             ("Stage 2: Enterprise Dataset Validation", lambda: self.cmd_validate(input_path=input_path)),
             ("Stage 3: Zero-Leakage Data Intelligence Pipeline", lambda: self.cmd_pipeline(input_path=input_path, output_dir="data/processed")),
             ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", hpo=True, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
-            ("Stage 5: Train Regression Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", hpo=True, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+            ("Stage 5: Train Classification Model (`resolution_time_bucket`)", lambda: self.cmd_train(target="resolution_time_bucket", hpo=True, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
             ("Stage 6: Evaluate Classification Model", lambda: self.cmd_evaluate(model_key="catboost_assignment_group:latest", test_data="data/processed/test.csv", target="assignment_group")),
             ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="catboost_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
             ("Stage 8: Generate Local Neural Embeddings (`TF-IDF + SVD`)", lambda: self.cmd_embed(input_path="data/processed/train.csv", batch_size=64)),

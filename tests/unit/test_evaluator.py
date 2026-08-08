@@ -44,11 +44,15 @@ def dummy_pipeline_and_test_data(tmp_path: Path) -> Tuple[Path, Path, Path]:
     X = df_test[predictors]
     y_clf = df_test["assignment_group"]
     prep = trainer.build_preprocessing_pipeline(X, predictors)
+    from catboost import CatBoostClassifier, CatBoostRegressor
+    X_trans = prep.fit_transform(X, y_clf)
+    text_idx = X_trans.shape[1] - 1
+    
     clf_pipe = Pipeline([
         ("preprocessing", prep),
-        ("estimator", RandomForestClassifier(n_estimators=10, random_state=42))
+        ("estimator", CatBoostClassifier(iterations=10, random_seed=42, verbose=0))
     ])
-    clf_pipe.fit(X, y_clf)
+    clf_pipe.fit(X, y_clf, estimator__text_features=[text_idx])
     clf_model_p = tmp_path / "dummy_clf.pkl"
     joblib.dump(clf_pipe, clf_model_p)
 
@@ -57,9 +61,9 @@ def dummy_pipeline_and_test_data(tmp_path: Path) -> Tuple[Path, Path, Path]:
     prep_reg = trainer.build_preprocessing_pipeline(X, predictors)
     reg_pipe = Pipeline([
         ("preprocessing", prep_reg),
-        ("estimator", RandomForestRegressor(n_estimators=10, random_state=42))
+        ("estimator", CatBoostRegressor(iterations=10, random_seed=42, verbose=0, loss_function="MAE"))
     ])
-    reg_pipe.fit(X, np.log1p(y_reg))
+    reg_pipe.fit(X, np.log1p(y_reg), estimator__text_features=[text_idx])
     reg_model_p = tmp_path / "dummy_reg.pkl"
     joblib.dump(reg_pipe, reg_model_p)
 

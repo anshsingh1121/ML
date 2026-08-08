@@ -499,7 +499,19 @@ class FeatureRegistry:
             business_meaning="Continuous elapsed clock time from opened_at to resolved_at.",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="median", scaling_strategy="log1p", feature_engineering_rules="Primary regression target (`y_resolution_time`). Apply log1p transform (`np.log1p(y)`) to normalize right-skewed log-normal distribution.",
-            random_forest_usage="target_resolution_time", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            random_forest_usage="target", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+        
+        # 23. resolution_time_bucket
+        self.register_feature(FeatureDefinition(
+            business_name="Resolution Time SLA Bucket", technical_name="resolution_time_bucket", data_type="string",
+            nullable=True, cardinality="4", missing_percentage=2.0,
+            business_meaning="Discretized classification target for resolution time.",
+            ml_importance="high", target_leakage_classification="blocked", encoding_strategy="categorical",
+            imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Primary classification target.",
+            random_forest_usage="target", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="optional"
         ))

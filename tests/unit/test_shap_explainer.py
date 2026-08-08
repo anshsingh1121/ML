@@ -40,12 +40,17 @@ def dummy_model_and_data(tmp_path: Path) -> Tuple[Path, Path, pd.DataFrame]:
 
     X = df[predictors]
     y = df["assignment_group"]
+    from catboost import CatBoostClassifier
+    
     prep = trainer.build_preprocessing_pipeline(X, predictors)
+    X_trans = prep.fit_transform(X, y)
+    text_idx = X_trans.shape[1] - 1
+    
     pipe = Pipeline([
         ("preprocessing", prep),
-        ("estimator", RandomForestClassifier(n_estimators=5, random_state=42))
+        ("estimator", CatBoostClassifier(iterations=5, random_seed=42, verbose=0))
     ])
-    pipe.fit(X, y)
+    pipe.fit(X, y, estimator__text_features=[text_idx])
     model_p = tmp_path / "dummy_shap.pkl"
     joblib.dump(pipe, model_p)
 

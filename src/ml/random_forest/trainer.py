@@ -167,7 +167,7 @@ class EnterpriseRandomForestTrainer:
 
         text_idx = X_train_trans.shape[1] - 1
 
-        is_classification = (target_type in ["assignment_group", "category", "priority"])
+        is_classification = (target_type in ["assignment_group", "category", "priority", "resolution_time_bucket"])
         models_dict: Dict[str, Any] = {}
 
         if is_classification:
@@ -177,8 +177,7 @@ class EnterpriseRandomForestTrainer:
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 verbose=0,
-                random_seed=42,
-                text_features=[text_idx]
+                random_seed=42
             )
         else:
             # Regression for resolution_time_hours
@@ -189,8 +188,7 @@ class EnterpriseRandomForestTrainer:
                 learning_rate=0.1,
                 loss_function="MAE",
                 verbose=0,
-                random_seed=42,
-                text_features=[text_idx]
+                random_seed=42
             )
 
         comparison_results = []
@@ -202,7 +200,10 @@ class EnterpriseRandomForestTrainer:
             start_t = time.time()
             try:
                 # Fit estimator on transformed features
-                estimator.fit(X_train_trans, y_train)
+                if name == "CatBoost":
+                    estimator.fit(X_train_trans, y_train, text_features=[text_idx])
+                else:
+                    estimator.fit(X_train_trans, y_train)
                 train_dur = time.time() - start_t
 
                 # Evaluate on validation set
@@ -334,15 +335,14 @@ class EnterpriseRandomForestTrainer:
             
             rf_cfg = self.cfg.get(f"models.{target_col}.params", {})
             estimator = CatBoostClassifier(
-                iterations=rf_cfg.get("n_estimators", 300),
-                depth=rf_cfg.get("max_depth", 6),
-                learning_rate=0.1,
-                verbose=0,
+                iterations=rf_cfg.get("iterations", 300),
+                depth=rf_cfg.get("depth", 6),
+                learning_rate=rf_cfg.get("learning_rate", 0.1),
                 random_seed=42,
-                text_features=[text_idx]
+                verbose=0
             )
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
-            primary_pipeline.fit(X_train, y_train)
+            primary_pipeline.fit(X_train, y_train, estimator__text_features=[text_idx])
 
         # Evaluate final pipeline on validation fold
         val_preds = primary_pipeline.predict(X_val)
@@ -425,16 +425,15 @@ class EnterpriseRandomForestTrainer:
             
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
             estimator = CatBoostRegressor(
-                iterations=rf_cfg.get("n_estimators", 150),
-                depth=rf_cfg.get("max_depth", 6),
-                learning_rate=0.1,
+                iterations=rf_cfg.get("iterations", 150),
+                depth=rf_cfg.get("depth", 6),
+                learning_rate=rf_cfg.get("learning_rate", 0.1),
                 loss_function="MAE",
-                verbose=0,
                 random_seed=42,
-                text_features=[text_idx]
+                verbose=0
             )
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
-            primary_pipeline.fit(X_train, y_train_log)
+            primary_pipeline.fit(X_train, y_train_log, estimator__text_features=[text_idx])
 
         # Evaluate on validation fold (inverse transform log1p via expm1)
         val_preds_log = primary_pipeline.predict(X_val)
