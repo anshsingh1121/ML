@@ -252,8 +252,13 @@ class EnterpriseDataCleaner:
         return df
 
     def _validate_business_rules(self, df: pd.DataFrame, audit_log: Dict[str, Any]) -> pd.DataFrame:
-        """Enforce numeric priority ranges (1 to 5)."""
-        if "priority" in df.columns and pd.api.types.is_numeric_dtype(df["priority"]):
+        """Enforce numeric priority ranges (1 to 5). Extract digits if strings like '4 - Low' are passed."""
+        if "priority" in df.columns:
+            # Auto-extract and cast if priority is provided as a string like '4 - Low'
+            if not pd.api.types.is_numeric_dtype(df["priority"]):
+                df["priority"] = df["priority"].astype(str).str.extract(r'(\d+)')[0]
+                df["priority"] = pd.to_numeric(df["priority"], errors='coerce').fillna(3)
+                
             invalid_mask = (df["priority"] < 1) | (df["priority"] > 5)
             invalid_count = int(invalid_mask.sum())
             if invalid_count > 0:

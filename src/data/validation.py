@@ -262,7 +262,7 @@ class DatasetValidator:
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
         details_msg = "All ticket priorities conform to standard 1-5 integer scale." if passed else f"Found {error_count} tickets with out-of-bounds priorities."
-        sample = [{"invalid_priority": int(p)} for p in df[invalid_mask]["priority"].head(3).tolist()] if not passed else []
+        sample = [{"invalid_priority": str(p)} for p in df[invalid_mask]["priority"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-06", "Invalid Priorities", passed, error_count, error_pct, details_msg, sample)
 
