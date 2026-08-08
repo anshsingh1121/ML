@@ -90,6 +90,7 @@ class EnterpriseFeatureExtractor(BaseEstimator, TransformerMixin):
         
         # Prevent TfidfVectorizer 'empty vocabulary' ValueError on dummy/empty datasets
         df.loc[df["combined_text"] == "", "combined_text"] = "missingtext"
+        df["combined_text"] = df["combined_text"] + " safetoken"
 
         # Extract interaction terms if raw numeric columns present
         if "priority" in df.columns and "impact" in df.columns and "priority_x_impact" not in df.columns:

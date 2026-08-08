@@ -451,7 +451,7 @@ class FeatureRegistry:
             business_meaning="Primary summary headline describing the incident or monitoring alert.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Normalize whitespace, strip HTML; primary text input for SentenceTransformer 384-D vector generation.",
-            random_forest_usage="excluded", embedding_usage="primary_semantic_input", faiss_metadata_usage="excluded",
+            random_forest_usage="predictor", embedding_usage="primary_semantic_input", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="knowledge_chunk_payload",
             explainability_usage="natural_language_context", required_or_optional="required"
         ))
@@ -463,7 +463,7 @@ class FeatureRegistry:
             business_meaning="Comprehensive diagnostic text, stack traces, and error logs reported.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Truncate to 256 tokens; concatenate with short_description for secondary semantic embedding.",
-            random_forest_usage="excluded", embedding_usage="secondary_summary", faiss_metadata_usage="excluded",
+            random_forest_usage="predictor", embedding_usage="secondary_summary", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="knowledge_chunk_payload",
             explainability_usage="natural_language_context", required_or_optional="required"
         ))
