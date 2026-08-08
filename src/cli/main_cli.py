@@ -555,10 +555,22 @@ class EnterpriseCLI:
         print("=" * 70)
         print(f"Total Elapsed Time: {total_elapsed:.2f} seconds")
         print(f"Overall Status    : {'CERTIFIED SUCCESSFUL' if overall_status == 0 else 'EXCLUSION FAILED'}\n")
+        
+        # Fetch and print Model Performance
+        model_reg = ModelRegistry.get_instance()
+        clf_meta = model_reg.get_model_metadata("catboost_assignment_group", "latest")
+        reg_meta = model_reg.get_model_metadata("catboost_resolution_time_hours", "latest")
+        
         print(f"  {'Step':<5} | {'Stage Description':<55} | {'Status'}")
         print(f"  {'-'*5} | {'-'*55} | {'-'*12}")
         for idx, s_name, s_stat in stage_results:
             print(f"  #{idx:<4} | {s_name:<55} | {s_stat}")
+
+        print("\nModel Performance Metrics:")
+        if clf_meta:
+            print(f"  ? Classification (Accuracy): {clf_meta.metrics.get('accuracy', 'N/A')} | F1 Score: {clf_meta.metrics.get('f1_weighted', 'N/A')}")
+        if reg_meta:
+            print(f"  ? Regression (RMSE)      : {reg_meta.metrics.get('rmse', 'N/A')} hours | MAE: {reg_meta.metrics.get('mae', 'N/A')} hours")
 
         print("\nGenerated Artifacts & Output Locations:")
         print("  • Processed Data : data/processed/ (train.csv, val.csv, test.csv, master_engineered_incidents.csv)")
