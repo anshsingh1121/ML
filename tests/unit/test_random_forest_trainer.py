@@ -127,7 +127,7 @@ def test_train_baselines_and_compare(synthetic_incidents_csv: Tuple[Path, Path, 
     )
 
     assert "DecisionTree" in pipelines_dict
-    assert "RandomForest" in pipelines_dict
+    assert "CatBoost" in pipelines_dict
     assert "ExtraTrees" in pipelines_dict
     assert best_name in pipelines_dict
 
@@ -147,7 +147,7 @@ def test_train_classifier_and_regressor(synthetic_incidents_csv: Tuple[Path, Pat
     pipe_clf = joblib.load(clf_path)
     assert hasattr(pipe_clf, "predict")
 
-    meta_clf = ModelRegistry.get_instance().get_model_metadata("random_forest_assignment_group")
+    meta_clf = ModelRegistry.get_instance().get_model_metadata("catboost_assignment_group")
     assert meta_clf is not None
     assert meta_clf.target_variable == "assignment_group"
 
@@ -157,6 +157,6 @@ def test_train_classifier_and_regressor(synthetic_incidents_csv: Tuple[Path, Pat
     pipe_reg = joblib.load(reg_path)
     assert hasattr(pipe_reg, "predict")
 
-    meta_reg = ModelRegistry.get_instance().get_model_metadata("random_forest_resolution_time_hours")
+    meta_reg = ModelRegistry.get_instance().get_model_metadata("catboost_resolution_time_hours")
     assert meta_reg is not None
     assert meta_reg.target_variable == "resolution_time_hours"

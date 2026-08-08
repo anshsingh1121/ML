@@ -62,7 +62,7 @@ class EnterpriseCLI:
     def _check_and_self_heal(self) -> None:
         """Check if core runtime artifacts are missing and trigger automatic self-healing if required."""
         raw_path = Path("data/raw/incidents.csv")
-        clf_path = Path("models/random_forest_assignment_group.pkl")
+        clf_path = Path("models/catboost_assignment_group.pkl")
         idx_path = Path("indexes/incident_semantic_index_latest.index")
         proc_path = Path("data/processed/master_engineered_incidents.csv")
 
@@ -312,7 +312,7 @@ class EnterpriseCLI:
         print("Model metadata, features, and SHA256 checksum registered in models/model_registry.json.")
         return 0
 
-    def cmd_evaluate(self, model_key: str = "random_forest_assignment_group:latest", test_data: Optional[str] = None, target: str = "assignment_group") -> int:
+    def cmd_evaluate(self, model_key: str = "catboost_assignment_group:latest", test_data: Optional[str] = None, target: str = "assignment_group") -> int:
         """Evaluate trained model pipeline across test partition (`test.csv`)."""
         print(f"\n====================================================================")
         print(f"Evaluating Model (`key={model_key}`, target={target})")
@@ -334,7 +334,7 @@ class EnterpriseCLI:
         print("Visual diagnostic plots generated: reports/confusion_matrix.png, reports/roc_curve.png, reports/feature_importance.png")
         return 0
 
-    def cmd_explain(self, model_key: str = "random_forest_assignment_group:latest", input_path: Optional[str] = None, target: str = "assignment_group") -> int:
+    def cmd_explain(self, model_key: str = "catboost_assignment_group:latest", input_path: Optional[str] = None, target: str = "assignment_group") -> int:
         """Run SHAP Explainable AI diagnostics on trained model pipeline."""
         print(f"\n====================================================================")
         print(f"Executing Explainable AI (`SHAP`) Engine (`model={model_key}`)")
@@ -372,7 +372,7 @@ class EnterpriseCLI:
         print("\nFull Markdown Catalog exported to: models/model_registry.md")
         return 0
 
-    def cmd_predict(self, input_path: str, model_key: str = "random_forest_assignment_group:latest", target: str = "assignment_group") -> int:
+    def cmd_predict(self, input_path: str, model_key: str = "catboost_assignment_group:latest", target: str = "assignment_group") -> int:
         """Execute zero-manual-preprocessing inference and export structured prediction metadata."""
         print(f"\n---> [1/1] Executing zero-leakage prediction across: {input_path} (`model={model_key}`)...")
         in_file = Path(input_path)
@@ -518,8 +518,8 @@ class EnterpriseCLI:
             ("Stage 3: Zero-Leakage Data Intelligence Pipeline", lambda: self.cmd_pipeline(input_path=input_path, output_dir="data/processed")),
             ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", hpo=False, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
             ("Stage 5: Train Regression Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", hpo=False, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
-            ("Stage 6: Evaluate Classification Model", lambda: self.cmd_evaluate(model_key="random_forest_assignment_group:latest", test_data="data/processed/test.csv", target="assignment_group")),
-            ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="random_forest_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
+            ("Stage 6: Evaluate Classification Model", lambda: self.cmd_evaluate(model_key="catboost_assignment_group:latest", test_data="data/processed/test.csv", target="assignment_group")),
+            ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="catboost_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
             ("Stage 8: Generate Local Neural Embeddings (`TF-IDF + SVD`)", lambda: self.cmd_embed(input_path="data/processed/train.csv", batch_size=64)),
             ("Stage 9: Build & Register FAISS Vector Index", lambda: self.cmd_index(input_path="data/processed/train.csv", index_name="incident_semantic_index")),
             ("Stage 10: Execute Hybrid Recommendation Engine (Demo Precedent)", lambda: self.cmd_recommend(input_path=None, text="ATM cash withdrawal failing due to hardware network timeout on CMDB_CI ATM-001", top_k=5)),
@@ -563,7 +563,7 @@ class EnterpriseCLI:
 
         print("\nGenerated Artifacts & Output Locations:")
         print("  • Processed Data : data/processed/ (train.csv, val.csv, test.csv, master_engineered_incidents.csv)")
-        print("  • Trained Models : models/ (random_forest_assignment_group.pkl, random_forest_resolution_time_hours.pkl)")
+        print("  • Trained Models : models/ (catboost_assignment_group.pkl, catboost_resolution_time_hours.pkl)")
         print("  • Vector Index   : indexes/ (incident_semantic_index_latest.index)")
         print("  • Audit Reports  : reports/ (validation_report.md, eda_report.md, hybrid_prediction.json/md/csv)")
         print("=" * 70 + "\n")
@@ -813,9 +813,9 @@ class EnterpriseCLI:
         elif choice == "11":
             return self.cmd_train(target="assignment_group", hpo=True, compare_baselines=True)
         elif choice == "12":
-            return self.cmd_evaluate(model_key="random_forest_assignment_group:latest", target="assignment_group")
+            return self.cmd_evaluate(model_key="catboost_assignment_group:latest", target="assignment_group")
         elif choice == "13":
-            return self.cmd_explain(model_key="random_forest_assignment_group:latest", target="assignment_group")
+            return self.cmd_explain(model_key="catboost_assignment_group:latest", target="assignment_group")
         elif choice == "14":
             return self.cmd_models()
         elif choice == "15":

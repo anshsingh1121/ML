@@ -23,6 +23,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score
@@ -165,15 +166,12 @@ class EnterpriseRandomForestTrainer:
         if is_classification:
             rf_cfg = self.cfg.get(f"models.{target_type}.params", {})
             models_dict["DecisionTree"] = DecisionTreeClassifier(max_depth=15, class_weight="balanced", random_state=42)
-            models_dict["RandomForest"] = RandomForestClassifier(
-                n_estimators=rf_cfg.get("n_estimators", 200),
-                max_depth=rf_cfg.get("max_depth", 20),
-                min_samples_split=rf_cfg.get("min_samples_split", 5),
-                min_samples_leaf=rf_cfg.get("min_samples_leaf", 2),
-                max_features=rf_cfg.get("max_features", "sqrt"),
-                class_weight=rf_cfg.get("class_weight", "balanced"),
-                random_state=rf_cfg.get("random_state", 42),
-                n_jobs=-1
+            models_dict["CatBoost"] = CatBoostClassifier(
+                iterations=rf_cfg.get("n_estimators", 300),
+                depth=rf_cfg.get("max_depth", 6),
+                learning_rate=0.1,
+                verbose=0,
+                random_seed=42
             )
             models_dict["ExtraTrees"] = ExtraTreesClassifier(n_estimators=150, max_depth=20, class_weight="balanced", random_state=42, n_jobs=-1)
 
@@ -195,14 +193,12 @@ class EnterpriseRandomForestTrainer:
             # Regression for resolution_time_hours
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
             models_dict["DecisionTree"] = DecisionTreeRegressor(max_depth=10, random_state=42)
-            models_dict["RandomForest"] = RandomForestRegressor(
-                n_estimators=rf_cfg.get("n_estimators", 150),
-                max_depth=rf_cfg.get("max_depth", 15),
-                min_samples_split=rf_cfg.get("min_samples_split", 10),
-                min_samples_leaf=rf_cfg.get("min_samples_leaf", 4),
-                max_features=rf_cfg.get("max_features", "sqrt"),
-                random_state=rf_cfg.get("random_state", 42),
-                n_jobs=-1
+            models_dict["CatBoost"] = CatBoostRegressor(
+                iterations=rf_cfg.get("n_estimators", 150),
+                depth=rf_cfg.get("max_depth", 6),
+                learning_rate=0.1,
+                verbose=0,
+                random_seed=42
             )
             models_dict["ExtraTrees"] = ExtraTreesRegressor(n_estimators=150, max_depth=15, random_state=42, n_jobs=-1)
 
@@ -221,7 +217,7 @@ class EnterpriseRandomForestTrainer:
         comparison_results = []
         fitted_pipelines: Dict[str, Pipeline] = {}
         best_score = -float("inf") if is_classification else float("inf")
-        best_model_name = "RandomForest"
+        best_model_name = "CatBoost"
 
         for name, estimator in models_dict.items():
             start_t = time.time()
@@ -325,8 +321,8 @@ class EnterpriseRandomForestTrainer:
         compare_baselines: bool = True
     ) -> Path:
         """
-        Train primary Random Forest (and multi-baseline) classification pipeline on triage predictors.
-        Persist complete sklearn Pipeline to disk (`models/random_forest_assignment_group.pkl`), and register inside ModelRegistry.
+        Train primary CatBoost (and multi-baseline) classification pipeline on triage predictors.
+        Persist complete sklearn Pipeline to disk (`models/catboost_assignment_group.pkl`), and register inside ModelRegistry.
         """
         start_t = time.time()
         train_file = Path(train_path or "data/processed/train.csv")
@@ -350,19 +346,16 @@ class EnterpriseRandomForestTrainer:
 
         if compare_baselines:
             pipelines_dict, best_name = self.train_baselines_and_compare(X_train, y_train, X_val, y_val, predictors, target_type=target_col)
-            # Primary model is Random Forest or Best Baseline as requested
-            primary_pipeline = pipelines_dict.get("RandomForest", pipelines_dict[best_name])
+            # Primary model is CatBoost or Best Baseline as requested
+            primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
         else:
             rf_cfg = self.cfg.get(f"models.{target_col}.params", {})
-            estimator = RandomForestClassifier(
-                n_estimators=rf_cfg.get("n_estimators", 200),
-                max_depth=rf_cfg.get("max_depth", 20),
-                min_samples_split=rf_cfg.get("min_samples_split", 5),
-                min_samples_leaf=rf_cfg.get("min_samples_leaf", 2),
-                max_features=rf_cfg.get("max_features", "sqrt"),
-                class_weight=rf_cfg.get("class_weight", "balanced"),
-                random_state=rf_cfg.get("random_state", 42),
-                n_jobs=-1
+            estimator = CatBoostClassifier(
+                iterations=rf_cfg.get("n_estimators", 300),
+                depth=rf_cfg.get("max_depth", 6),
+                learning_rate=0.1,
+                verbose=0,
+                random_seed=42
             )
             prep = self.build_preprocessing_pipeline(X_train, predictors)
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
@@ -375,7 +368,7 @@ class EnterpriseRandomForestTrainer:
         train_dur = time.time() - start_t
 
         # Persist complete pipeline
-        out_path = self.models_dir / f"random_forest_{target_col}.pkl"
+        out_path = self.models_dir / f"catboost_{target_col}.pkl"
         joblib.dump(primary_pipeline, out_path)
         logger.info(f"Successfully persisted complete classification pipeline to: {out_path}")
 
@@ -385,7 +378,7 @@ class EnterpriseRandomForestTrainer:
         hyperparams_clean = {k: str(v) if not isinstance(v, (int, float, str, bool, type(None))) else v for k, v in hyperparams.items()}
 
         self.model_reg.register_model(
-            model_name=f"random_forest_{target_col}",
+            model_name=f"catboost_{target_col}",
             version="v1.0.0",
             training_dataset_uri=str(train_file),
             dataset_version="v2.0.0-alpha",
@@ -397,7 +390,7 @@ class EnterpriseRandomForestTrainer:
             status="Active"
         )
 
-        logger.info(f"Registered model random_forest_{target_col}:v1.0.0 (Acc: {acc:.4f}, F1: {f1:.4f})")
+        logger.info(f"Registered model catboost_{target_col}:v1.0.0 (Acc: {acc:.4f}, F1: {f1:.4f})")
         return out_path
 
     def train_regressor(
@@ -408,9 +401,9 @@ class EnterpriseRandomForestTrainer:
         compare_baselines: bool = True
     ) -> Path:
         """
-        Train primary Random Forest (and multi-baseline) regression pipeline on triage predictors.
+        Train primary CatBoost (and multi-baseline) regression pipeline on triage predictors.
         Applies log1p target transformation (`np.log1p`) to normalize right-skewed resolution windows.
-        Persist complete sklearn Pipeline to disk (`models/random_forest_resolution_time_hours.pkl`), and register inside ModelRegistry.
+        Persist complete sklearn Pipeline to disk (`models/catboost_resolution_time_hours.pkl`), and register inside ModelRegistry.
         """
         start_t = time.time()
         train_file = Path(train_path or "data/processed/train.csv")
@@ -436,17 +429,15 @@ class EnterpriseRandomForestTrainer:
 
         if compare_baselines:
             pipelines_dict, best_name = self.train_baselines_and_compare(X_train, y_train_log, X_val, y_val_log, predictors, target_type=target_col)
-            primary_pipeline = pipelines_dict.get("RandomForest", pipelines_dict[best_name])
+            primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
         else:
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
-            estimator = RandomForestRegressor(
-                n_estimators=rf_cfg.get("n_estimators", 150),
-                max_depth=rf_cfg.get("max_depth", 15),
-                min_samples_split=rf_cfg.get("min_samples_split", 10),
-                min_samples_leaf=rf_cfg.get("min_samples_leaf", 4),
-                max_features=rf_cfg.get("max_features", "sqrt"),
-                random_state=rf_cfg.get("random_state", 42),
-                n_jobs=-1
+            estimator = CatBoostRegressor(
+                iterations=rf_cfg.get("n_estimators", 150),
+                depth=rf_cfg.get("max_depth", 6),
+                learning_rate=0.1,
+                verbose=0,
+                random_seed=42
             )
             prep = self.build_preprocessing_pipeline(X_train, predictors)
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
@@ -462,7 +453,7 @@ class EnterpriseRandomForestTrainer:
         r2 = float(r2_score(y_val_inv, val_preds_inv))
         train_dur = time.time() - start_t
 
-        out_path = self.models_dir / f"random_forest_{target_col}.pkl"
+        out_path = self.models_dir / f"catboost_{target_col}.pkl"
         joblib.dump(primary_pipeline, out_path)
         logger.info(f"Successfully persisted complete regression pipeline to: {out_path}")
 
@@ -470,7 +461,7 @@ class EnterpriseRandomForestTrainer:
         hyperparams_clean = {k: str(v) if not isinstance(v, (int, float, str, bool, type(None))) else v for k, v in hyperparams.items()}
 
         self.model_reg.register_model(
-            model_name=f"random_forest_{target_col}",
+            model_name=f"catboost_{target_col}",
             version="v1.0.0",
             training_dataset_uri=str(train_file),
             dataset_version="v2.0.0-alpha",

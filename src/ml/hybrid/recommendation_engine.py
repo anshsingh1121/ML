@@ -66,9 +66,9 @@ class HybridRecommendationEngine:
         # Load Random Forest pipelines from canonical Model Registry source or exact fallback path
         self.rf_classifier = rf_classifier_pipeline
         if self.rf_classifier is None:
-            clf_path = self.model_reg.get_model_path("random_forest_assignment_group")
+            clf_path = self.model_reg.get_model_path("catboost_assignment_group")
             if not clf_path:
-                clf_path = self.models_dir / "random_forest_assignment_group.pkl"
+                clf_path = self.models_dir / "catboost_assignment_group.pkl"
             if clf_path.exists():
                 try:
                     self.rf_classifier = joblib.load(clf_path)

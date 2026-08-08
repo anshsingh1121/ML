@@ -36,7 +36,7 @@ def test_hpo_classifier(sample_data: Tuple[pd.DataFrame, pd.Series, pd.Series]) 
     
     best_params = hpo.optimize_classifier(X, y_clf, target_col="assignment_group", n_iter=1, cv_folds=2)
     assert isinstance(best_params, dict)
-    assert "n_estimators" in best_params
+    assert "iterations" in best_params
     assert Path("reports/hpo_comparison_assignment_group.json").exists()
     assert Path("reports/hpo_comparison_assignment_group.md").exists()
 
@@ -48,6 +48,6 @@ def test_hpo_regressor(sample_data: Tuple[pd.DataFrame, pd.Series, pd.Series]) -
     
     best_params = hpo.optimize_regressor(X, y_reg, target_col="resolution_time_hours", n_iter=1, cv_folds=2)
     assert isinstance(best_params, dict)
-    assert "n_estimators" in best_params
+    assert "iterations" in best_params
     assert Path("reports/hpo_comparison_resolution_time_hours.json").exists()
     assert Path("reports/hpo_comparison_resolution_time_hours.md").exists()

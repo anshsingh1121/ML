@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.model_selection import GridSearchCV, KFold, RandomizedSearchCV, StratifiedKFold
 from sklearn.pipeline import Pipeline
 
@@ -60,31 +60,28 @@ class HyperparameterOptimizer:
         n_iter: Optional[int] = None,
         cv_folds: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Run StratifiedKFold hyperparameter search across RandomForestClassifier pipeline."""
+        """Run StratifiedKFold hyperparameter search across CatBoostClassifier pipeline."""
         start_t = time.time()
         logger.info(f"Initiating Hyperparameter Optimization for classifier target: '{target_col}'...")
 
         predictors = self.feat_reg.get_random_forest_predictors()
         prep_pipeline = self.trainer.build_preprocessing_pipeline(X_train, predictors)
-
-        estimator = RandomForestClassifier(class_weight="balanced", random_state=42, n_jobs=-1)
+        estimator = CatBoostClassifier(random_seed=42, verbose=0)
         full_pipe = Pipeline([
             ("preprocessing", prep_pipeline),
             ("estimator", estimator)
         ])
 
-        raw_grid = self.hpo_cfg.get("param_distributions", {
-            "n_estimators": [100, 150, 200, 300],
-            "max_depth": [10, 15, 20, 25, None],
-            "min_samples_split": [2, 5, 10],
-            "min_samples_leaf": [1, 2, 4],
-            "max_features": ["sqrt", "log2", None]
-        })
+        raw_grid = {
+            "iterations": [100, 200, 300],
+            "depth": [4, 6, 8],
+            "learning_rate": [0.05, 0.1]
+        }
         param_grid = self._prepare_pipeline_param_grid(raw_grid)
 
         method = self.hpo_cfg.get("method", "randomized_search").lower()
-        cv = cv_folds or int(self.hpo_cfg.get("cv_folds", 5))
-        iters = n_iter or int(self.hpo_cfg.get("n_iter", 20))
+        cv = int(self.hpo_cfg.get("cv_folds", 5))
+        iters = int(self.hpo_cfg.get("n_iter", 20))
         scoring = self.hpo_cfg.get("scoring", "f1_weighted")
 
         skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
@@ -115,31 +112,28 @@ class HyperparameterOptimizer:
         n_iter: Optional[int] = None,
         cv_folds: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Run KFold hyperparameter search across RandomForestRegressor pipeline."""
+        """Run KFold hyperparameter search across CatBoostRegressor pipeline."""
         start_t = time.time()
         logger.info(f"Initiating Hyperparameter Optimization for regressor target: '{target_col}'...")
 
         predictors = self.feat_reg.get_random_forest_predictors()
         prep_pipeline = self.trainer.build_preprocessing_pipeline(X_train, predictors)
-
-        estimator = RandomForestRegressor(random_state=42, n_jobs=-1)
+        estimator = CatBoostRegressor(random_seed=42, verbose=0)
         full_pipe = Pipeline([
             ("preprocessing", prep_pipeline),
             ("estimator", estimator)
         ])
 
-        raw_grid = self.hpo_cfg.get("param_distributions", {
-            "n_estimators": [100, 150, 200],
-            "max_depth": [10, 15, 20, None],
-            "min_samples_split": [2, 5, 10],
-            "min_samples_leaf": [1, 2, 4],
-            "max_features": ["sqrt", "log2"]
-        })
+        raw_grid = {
+            "iterations": [100, 200, 300],
+            "depth": [4, 6, 8],
+            "learning_rate": [0.05, 0.1]
+        }
         param_grid = self._prepare_pipeline_param_grid(raw_grid)
 
         method = self.hpo_cfg.get("method", "randomized_search").lower()
-        cv = cv_folds or int(self.hpo_cfg.get("cv_folds", 5))
-        iters = n_iter or int(self.hpo_cfg.get("n_iter", 20))
+        cv = int(self.hpo_cfg.get("cv_folds", 5))
+        iters = int(self.hpo_cfg.get("n_iter", 20))
         scoring = "neg_root_mean_squared_error"
 
         kf = KFold(n_splits=cv, shuffle=True, random_state=42)
