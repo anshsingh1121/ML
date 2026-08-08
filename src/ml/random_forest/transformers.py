@@ -77,6 +77,20 @@ class EnterpriseFeatureExtractor(BaseEstimator, TransformerMixin):
                 X = pd.DataFrame(X)
         df = X.copy()
 
+        # Consolidate textual context into a single dense representation
+        if "short_description" not in df.columns:
+            df["short_description"] = ""
+        if "description" not in df.columns:
+            df["description"] = ""
+            
+        sd = df["short_description"].astype(str).fillna("")
+        d = df["description"].astype(str).fillna("")
+        df["combined_text"] = sd + " " + d
+        df["combined_text"] = df["combined_text"].str.lower().str.strip()
+        
+        # Prevent TfidfVectorizer 'empty vocabulary' ValueError on dummy/empty datasets
+        df.loc[df["combined_text"] == "", "combined_text"] = "missingtext"
+
         # Extract interaction terms if raw numeric columns present
         if "priority" in df.columns and "impact" in df.columns and "priority_x_impact" not in df.columns:
             df["priority_x_impact"] = pd.to_numeric(df["priority"], errors="coerce").fillna(3) * pd.to_numeric(df["impact"], errors="coerce").fillna(2)

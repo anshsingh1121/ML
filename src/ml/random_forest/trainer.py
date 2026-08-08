@@ -23,6 +23,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     RandomForestRegressor,
 )
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
@@ -122,6 +123,9 @@ class EnterpriseRandomForestTrainer:
             transformers.append(("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False), onehot_cols))
         if num_cols:
             transformers.append(("num", SimpleImputer(strategy="median"), num_cols))
+            
+        # Add TF-IDF for unstructured textual embeddings directly into the RF pipeline
+        transformers.append(("text_tfidf", TfidfVectorizer(max_features=500, stop_words="english"), "combined_text"))
 
         col_trans = ColumnTransformer(transformers=transformers, remainder="drop", verbose_feature_names_out=False)
 

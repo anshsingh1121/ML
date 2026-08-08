@@ -30,7 +30,10 @@ def test_enterprise_feature_extractor_edge_cases() -> None:
     """Test EnterpriseFeatureExtractor numpy fallback and get_feature_names_out."""
     extractor = EnterpriseFeatureExtractor()
     arr = np.array([[1, 2], [3, 4]])
-    assert np.array_equal(extractor.fit_transform(arr), arr)
+    out_df = extractor.fit_transform(arr)
+    # Ensure original data is perfectly preserved in the output
+    assert np.array_equal(out_df[["x_0", "x_1"]].values, arr)
+    assert "combined_text" in out_df.columns
 
     df = pd.DataFrame({
         "priority": [1, 2],
