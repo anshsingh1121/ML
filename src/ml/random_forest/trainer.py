@@ -187,6 +187,7 @@ class EnterpriseRandomForestTrainer:
                 iterations=rf_cfg.get("n_estimators", 150),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
+                loss_function="MAE",
                 verbose=0,
                 random_seed=42,
                 text_features=[text_idx]
@@ -427,6 +428,7 @@ class EnterpriseRandomForestTrainer:
                 iterations=rf_cfg.get("n_estimators", 150),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
+                loss_function="MAE",
                 verbose=0,
                 random_seed=42,
                 text_features=[text_idx]

@@ -118,7 +118,7 @@ class HyperparameterOptimizer:
 
         predictors = self.feat_reg.get_random_forest_predictors()
         prep_pipeline = self.trainer.build_preprocessing_pipeline(X_train, predictors)
-        estimator = CatBoostRegressor(random_seed=42, verbose=0)
+        estimator = CatBoostRegressor(random_seed=42, verbose=0, loss_function="MAE")
         full_pipe = Pipeline([
             ("preprocessing", prep_pipeline),
             ("estimator", estimator)
@@ -134,7 +134,7 @@ class HyperparameterOptimizer:
         method = self.hpo_cfg.get("method", "randomized_search").lower()
         cv = int(self.hpo_cfg.get("cv_folds", 5))
         iters = int(self.hpo_cfg.get("n_iter", 20))
-        scoring = "neg_root_mean_squared_error"
+        scoring = "neg_mean_absolute_error"
 
         kf = KFold(n_splits=cv, shuffle=True, random_state=42)
 
