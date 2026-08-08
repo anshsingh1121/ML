@@ -103,10 +103,10 @@ class HyperparameterOptimizer:
 
         if method == "grid_search":
             logger.info(f"Running GridSearchCV across {cv} folds (scoring={scoring})...")
-            search = GridSearchCV(full_pipe, param_grid=param_grid, cv=skf, scoring=scoring, n_jobs=4, verbose=1)
+            search = GridSearchCV(full_pipe, param_grid=param_grid, cv=skf, scoring=scoring, n_jobs=6, verbose=1)
         else:
             logger.info(f"Running RandomizedSearchCV across {cv} folds ({iters} iterations, scoring={scoring})...")
-            search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=skf, scoring=scoring, random_state=42, n_jobs=4, verbose=1)
+            search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=skf, scoring=scoring, random_state=42, n_jobs=6, verbose=1)
 
         X_train_clean = self.trainer._get_safe_predictor_matrix(X_train, predictors)
         search.fit(X_train_clean, y_train.astype(str))
@@ -156,9 +156,9 @@ class HyperparameterOptimizer:
         kf = KFold(n_splits=cv, shuffle=True, random_state=42)
 
         if method == "grid_search":
-            search = GridSearchCV(full_pipe, param_grid=param_grid, cv=kf, scoring=scoring, n_jobs=4, verbose=1)
+            search = GridSearchCV(full_pipe, param_grid=param_grid, cv=kf, scoring=scoring, n_jobs=6, verbose=1)
         else:
-            search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=kf, scoring=scoring, random_state=42, n_jobs=4, verbose=1)
+            search = RandomizedSearchCV(full_pipe, param_distributions=param_grid, n_iter=iters, cv=kf, scoring=scoring, random_state=42, n_jobs=6, verbose=1)
 
         X_train_clean = self.trainer._get_safe_predictor_matrix(X_train, predictors)
         search.fit(X_train_clean, y_train)
