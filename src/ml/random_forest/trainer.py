@@ -399,6 +399,11 @@ class EnterpriseRandomForestTrainer:
         df_val = robust_read_csv(val_file)
 
         predictors = self.feat_reg.get_random_forest_predictors()
+        
+        # Inject Assignment Group for SLA context during resolution time regression
+        if "assignment_group" not in predictors:
+            predictors.append("assignment_group")
+            
         self._verify_no_target_leakage(predictors)
 
         X_train = self._get_safe_predictor_matrix(df_train, predictors)

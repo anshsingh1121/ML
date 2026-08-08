@@ -254,6 +254,13 @@ class FeatureEngineeringEngine:
             "safe", "ordinal", "predictor", "1 if weekday < 5 and 8 <= hour <= 18 else 0", ["opened_at_dayofweek", "opened_at_hour"], report
         )
 
+        # Weekend flag
+        df["is_weekend"] = (df["opened_at_dayofweek"] >= 5).astype(int)
+        self._register_new_feature(
+            "is_weekend", "Weekend Indicator", "integer", "1 if Saturday or Sunday else 0",
+            "safe", "ordinal", "predictor", "1 if weekday >= 5 else 0", ["opened_at_dayofweek"], report
+        )
+
         # Holiday indicator
         month_day_series = list(zip(dt.dt.month.fillna(0).astype(int), dt.dt.day.fillna(0).astype(int)))
         df["is_holiday"] = [1 if md in self.holidays else 0 for md in month_day_series]

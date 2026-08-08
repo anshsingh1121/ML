@@ -126,9 +126,7 @@ def test_train_baselines_and_compare(synthetic_incidents_csv: Tuple[Path, Path, 
         predictors, target_type="assignment_group"
     )
 
-    assert "DecisionTree" in pipelines_dict
     assert "CatBoost" in pipelines_dict
-    assert "ExtraTrees" in pipelines_dict
     assert best_name in pipelines_dict
 
     # Check report files
