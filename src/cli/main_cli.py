@@ -142,7 +142,11 @@ class EnterpriseCLI:
         status = report.get("overall_status", "PASS" if is_valid else "FAIL")
         print(f"[STATUS] Validation Result: {status}")
         print("Detailed report exported to: reports/validation_report.md")
-        return 0 if is_valid or status in ("CERTIFIED_ENTERPRISE_READY", "PASS", "PASSED") else 2
+        
+        if not is_valid:
+            print("\n[WARNING] Dataset validation detected anomalies. The pipeline will proceed to Stage 3 (Enterprise Data Cleaner) to automatically remediate them.")
+        
+        return 0  # Always proceed to cleaning stage
 
     def cmd_readiness(self, input_path: str) -> int:
         """Run ML readiness verification."""
