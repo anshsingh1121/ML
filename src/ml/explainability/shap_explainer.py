@@ -98,6 +98,29 @@ class SHAPIntelligenceExplainer:
         else:
             return pd.DataFrame(X_trans, columns=resolved_names[:n_cols])
 
+    def _compute_shap_values(self, estimator: Any, X_trans_df: pd.DataFrame) -> Tuple[Any, Any]:
+        """Intercept CatBoost to use native NLP SHAP, or fallback to standard TreeExplainer."""
+        import shap
+        estimator_name = type(estimator).__name__
+        if estimator_name in ["CatBoostClassifier", "CatBoostRegressor"]:
+            from catboost import Pool
+            text_features = estimator.get_param("text_features")
+            pool = Pool(X_trans_df, text_features=text_features)
+            # Returns (n_samples, n_classes, n_features+1) for multiclass, or (n_samples, n_features+1) for binary/reg
+            raw_shap = estimator.get_feature_importance(pool, type="ShapValues")
+            if len(raw_shap.shape) == 3:
+                shap_vals = raw_shap[:, :, :-1]
+                expected_vals = raw_shap[0, :, -1]
+                # Convert to SHAP list format for multiclass compatibility
+                n_classes = shap_vals.shape[1]
+                shap_list = [shap_vals[:, c, :] for c in range(n_classes)]
+                return shap_list, expected_vals
+            else:
+                return raw_shap[:, :-1], raw_shap[0, -1]
+        else:
+            explainer = shap.TreeExplainer(estimator)
+            return explainer.shap_values(X_trans_df), explainer.expected_value
+
     def explain_global(
         self,
         model_key_or_path: Union[str, Path],
@@ -123,9 +146,8 @@ class SHAPIntelligenceExplainer:
         X_trans = prep.transform(X_sample) if prep else X_sample
         X_trans_df = self._get_transformed_dataframe_with_business_names(prep, X_trans, predictors)
 
-        logger.info(f"Computing SHAP TreeExplainer values across {len(X_trans_df)} records...")
-        explainer = shap.TreeExplainer(estimator)
-        shap_values = explainer.shap_values(X_trans_df)
+        logger.info(f"Computing SHAP values across {len(X_trans_df)} records...")
+        shap_values, _ = self._compute_shap_values(estimator, X_trans_df)
 
         # Handle multi-class vs regression shap array structures
         if isinstance(shap_values, list):
@@ -205,8 +227,7 @@ class SHAPIntelligenceExplainer:
         probs = pipeline.predict_proba(X_in) if hasattr(pipeline, "predict_proba") else None
 
         # Compute SHAP local values
-        explainer = shap.TreeExplainer(estimator)
-        shap_values = explainer.shap_values(X_trans_df)
+        shap_values, _ = self._compute_shap_values(estimator, X_trans_df)
 
         results = []
         now_iso = datetime.now().isoformat()
