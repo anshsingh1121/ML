@@ -95,6 +95,11 @@ class EnterpriseRandomForestTrainer:
         for col in predictors:
             if col not in X.columns:
                 continue
+            
+            # Text columns are handled separately by TfidfVectorizer via combined_text
+            if col in ["short_description", "description"]:
+                continue
+                
             feat_def = self.feat_reg.get_feature(col)
             strategy = feat_def.encoding_strategy if feat_def else "none"
 
