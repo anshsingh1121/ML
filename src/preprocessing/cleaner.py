@@ -62,17 +62,17 @@ class EnterpriseDataCleaner:
         # 1. Duplicate Removal
         clean_df = self._remove_duplicates(clean_df, audit_log)
 
-        # 2. Schema & Data Type Enforcement
+        # 2. Business Rule Validation (Priority, State ranges) - Must run BEFORE type enforcement to parse text like '4 - Low'
+        clean_df = self._validate_business_rules(clean_df, audit_log)
+
+        # 3. Schema & Data Type Enforcement
         clean_df = self._enforce_data_types(clean_df, audit_log)
 
-        # 3. Missing Value Handling via Feature Registry
+        # 4. Missing Value Handling via Feature Registry
         clean_df = self._handle_missing_values(clean_df, audit_log)
 
-        # 4. Invalid Category & Domain Validation
+        # 5. Invalid Category & Domain Validation
         clean_df = self._validate_and_clean_categories(clean_df, audit_log)
-
-        # 5. Business Rule Validation (Priority, State ranges)
-        clean_df = self._validate_business_rules(clean_df, audit_log)
 
         # 6. Timestamp Progression Validation (opened_at <= resolved_at <= closed_at)
         clean_df = self._validate_timestamps(clean_df, audit_log, strict_mode)
