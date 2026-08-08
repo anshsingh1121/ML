@@ -102,9 +102,10 @@ class SHAPIntelligenceExplainer:
         """Intercept CatBoost to use native NLP SHAP, or fallback to standard TreeExplainer."""
         import shap
         estimator_name = type(estimator).__name__
-        if estimator_name in ["CatBoostClassifier", "CatBoostRegressor"]:
+        if estimator_name in ["CatBoostClassifier", "CatBoostRegressor", "CatBoostClassifierWrapper", "CatBoostRegressorWrapper"]:
             from catboost import Pool
-            text_features = estimator.get_param("text_features")
+            # Identify text features dynamically from the dataframe dtypes
+            text_features = [i for i, dtype in enumerate(X_trans_df.dtypes) if dtype == "object" or dtype == "string"]
             pool = Pool(X_trans_df, text_features=text_features)
             # Returns (n_samples, n_classes, n_features+1) for multiclass, or (n_samples, n_features+1) for binary/reg
             raw_shap = estimator.get_feature_importance(pool, type="ShapValues")
