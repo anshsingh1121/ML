@@ -130,8 +130,8 @@ class EnterpriseRandomForestTrainer:
         if num_cols:
             transformers.append(("num", SimpleImputer(strategy="median"), num_cols))
             
-        # Add TF-IDF for unstructured textual embeddings directly into the RF pipeline
-        transformers.append(("text_tfidf", TfidfVectorizer(max_features=500, stop_words="english"), "combined_text"))
+        # Pass raw unstructured text directly into the pipeline for CatBoost Native NLP Engine
+        transformers.append(("text_raw", "passthrough", ["combined_text"]))
 
         col_trans = ColumnTransformer(transformers=transformers, remainder="drop", verbose_feature_names_out=False)
 
@@ -165,59 +165,32 @@ class EnterpriseRandomForestTrainer:
         X_train_trans = prep_pipeline.transform(X_train)
         X_val_trans = prep_pipeline.transform(X_val)
 
+        text_idx = X_train_trans.shape[1] - 1
+
         is_classification = (target_type in ["assignment_group", "category", "priority"])
         models_dict: Dict[str, Any] = {}
 
         if is_classification:
             rf_cfg = self.cfg.get(f"models.{target_type}.params", {})
-            models_dict["DecisionTree"] = DecisionTreeClassifier(max_depth=15, class_weight="balanced", random_state=42)
             models_dict["CatBoost"] = CatBoostClassifier(
                 iterations=rf_cfg.get("n_estimators", 300),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 verbose=0,
-                random_seed=42
+                random_seed=42,
+                text_features=[text_idx]
             )
-            models_dict["ExtraTrees"] = ExtraTreesClassifier(n_estimators=150, max_depth=20, class_weight="balanced", random_state=42, n_jobs=-1)
-
-            # Optional XGBoost
-            try:
-                from xgboost import XGBClassifier
-                models_dict["XGBoost"] = XGBClassifier(n_estimators=150, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1)
-            except ImportError:
-                logger.info("Optional library `xgboost` not installed; skipping XGBoost baseline.")
-
-            # Optional LightGBM
-            try:
-                from lightgbm import LGBMClassifier
-                models_dict["LightGBM"] = LGBMClassifier(n_estimators=150, max_depth=10, learning_rate=0.1, random_state=42, n_jobs=-1, verbose=-1)
-            except ImportError:
-                logger.info("Optional library `lightgbm` not installed; skipping LightGBM baseline.")
-
         else:
             # Regression for resolution_time_hours
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
-            models_dict["DecisionTree"] = DecisionTreeRegressor(max_depth=10, random_state=42)
             models_dict["CatBoost"] = CatBoostRegressor(
                 iterations=rf_cfg.get("n_estimators", 150),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 verbose=0,
-                random_seed=42
+                random_seed=42,
+                text_features=[text_idx]
             )
-            models_dict["ExtraTrees"] = ExtraTreesRegressor(n_estimators=150, max_depth=15, random_state=42, n_jobs=-1)
-
-            try:
-                from xgboost import XGBRegressor
-                models_dict["XGBoost"] = XGBRegressor(n_estimators=150, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1)
-            except ImportError:
-                pass
-
-            try:
-                from lightgbm import LGBMRegressor
-                models_dict["LightGBM"] = LGBMRegressor(n_estimators=150, max_depth=10, learning_rate=0.1, random_state=42, n_jobs=-1, verbose=-1)
-            except ImportError:
-                pass
 
         comparison_results = []
         fitted_pipelines: Dict[str, Pipeline] = {}
@@ -354,15 +327,19 @@ class EnterpriseRandomForestTrainer:
             # Primary model is CatBoost or Best Baseline as requested
             primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
         else:
+            prep = self.build_preprocessing_pipeline(X_train, predictors)
+            X_train_trans = prep.fit_transform(X_train, y_train)
+            text_idx = X_train_trans.shape[1] - 1
+            
             rf_cfg = self.cfg.get(f"models.{target_col}.params", {})
             estimator = CatBoostClassifier(
                 iterations=rf_cfg.get("n_estimators", 300),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 verbose=0,
-                random_seed=42
+                random_seed=42,
+                text_features=[text_idx]
             )
-            prep = self.build_preprocessing_pipeline(X_train, predictors)
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
             primary_pipeline.fit(X_train, y_train)
 
@@ -436,15 +413,19 @@ class EnterpriseRandomForestTrainer:
             pipelines_dict, best_name = self.train_baselines_and_compare(X_train, y_train_log, X_val, y_val_log, predictors, target_type=target_col)
             primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
         else:
+            prep = self.build_preprocessing_pipeline(X_train, predictors)
+            X_train_trans = prep.fit_transform(X_train, y_train_log)
+            text_idx = X_train_trans.shape[1] - 1
+            
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
             estimator = CatBoostRegressor(
                 iterations=rf_cfg.get("n_estimators", 150),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 verbose=0,
-                random_seed=42
+                random_seed=42,
+                text_features=[text_idx]
             )
-            prep = self.build_preprocessing_pipeline(X_train, predictors)
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
             primary_pipeline.fit(X_train, y_train_log)
 

@@ -252,12 +252,29 @@ class EnterpriseDataCleaner:
         return df
 
     def _validate_business_rules(self, df: pd.DataFrame, audit_log: Dict[str, Any]) -> pd.DataFrame:
-        """Enforce numeric priority ranges (1 to 5). Extract digits if strings like '4 - Low' are passed."""
+        """Enforce numeric ranges. Extract digits or map raw strings for priority (1-5) and severity (1-3)."""
+        
+        def safe_map(series: pd.Series, keyword_map: Dict[str, int], default: int) -> pd.Series:
+            """Convert mixed text/numeric series into standardized integers."""
+            if pd.api.types.is_numeric_dtype(series):
+                return series.fillna(default)
+            
+            series = series.astype(str).str.lower().str.strip()
+            # If it starts with a digit, try extracting it
+            extracted = series.str.extract(r'^(\d+)')[0]
+            
+            # Map semantic keywords
+            mapped = pd.Series(index=series.index, data=np.nan)
+            for keyword, val in keyword_map.items():
+                mapped.loc[series.str.contains(keyword, na=False)] = val
+                
+            # Combine logic: if mapped is NaN, fallback to extracted, else default
+            final = mapped.fillna(pd.to_numeric(extracted, errors='coerce')).fillna(default)
+            return final
+
         if "priority" in df.columns:
-            # Auto-extract and cast if priority is provided as a string like '4 - Low'
-            if not pd.api.types.is_numeric_dtype(df["priority"]):
-                df["priority"] = df["priority"].astype(str).str.extract(r'(\d+)')[0]
-                df["priority"] = pd.to_numeric(df["priority"], errors='coerce').fillna(3)
+            priority_map = {"critical": 1, "high": 2, "moderate": 3, "medium": 3, "low": 4, "planning": 5}
+            df["priority"] = safe_map(df["priority"], priority_map, 3)
                 
             invalid_mask = (df["priority"] < 1) | (df["priority"] > 5)
             invalid_count = int(invalid_mask.sum())
@@ -270,6 +287,23 @@ class EnterpriseDataCleaner:
                     "records_modified": invalid_count,
                     "action": f"Clipped {invalid_count:,} out-of-bounds priority ratings into valid banking tier [1, 5]."
                 })
+                
+        if "severity" in df.columns:
+            severity_map = {"critical": 1, "high": 1, "sev 1": 1, "medium": 2, "sev 2": 2, "low": 3, "sev 3": 3}
+            df["severity"] = safe_map(df["severity"], severity_map, 2)
+            
+            invalid_mask = (df["severity"] < 1) | (df["severity"] > 3)
+            invalid_count = int(invalid_mask.sum())
+            if invalid_count > 0:
+                df.loc[df["severity"] < 1, "severity"] = 1
+                df.loc[df["severity"] > 3, "severity"] = 3
+                audit_log["transformations"].append({
+                    "step": "Business Rule Enforcement",
+                    "affected_column": "severity",
+                    "records_modified": invalid_count,
+                    "action": f"Clipped {invalid_count:,} out-of-bounds severity ratings into valid tier [1, 3]."
+                })
+
         return df
 
     def _validate_timestamps(self, df: pd.DataFrame, audit_log: Dict[str, Any], strict_mode: bool) -> pd.DataFrame:
