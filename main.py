@@ -47,10 +47,15 @@ Examples:
     subparsers.add_parser("menu", help="Launch interactive menu (1-16)")
     subparsers.add_parser("status", help="Check system readiness and registry status")
 
-    # 2. generate
+    # 2. generate / fetch
     gen_parser = subparsers.add_parser("generate", help="Generate synthetic ServiceNow incidents")
     gen_parser.add_argument("--records", type=int, default=10000, help="Number of incident records to generate")
     gen_parser.add_argument("--output", type=str, default="datasets/synthetic/v1/incidents.csv", help="Output CSV path")
+
+    fetch_parser = subparsers.add_parser("fetch", help="Fetch real-time incidents from ServiceNow API")
+    fetch_parser.add_argument("--output", type=str, default="data/raw/incidents.csv", help="Output CSV path")
+    fetch_parser.add_argument("--limit", type=int, default=100000, help="Maximum number of records to pull")
+    fetch_parser.add_argument("--batch-size", type=int, default=10000, help="Number of records to pull per request")
 
     # 3. validate / readiness
     val_parser = subparsers.add_parser("validate", help="Run dataset validation checks")

@@ -86,7 +86,9 @@ class EnterpriseCLI:
             self._check_and_self_heal()
 
         try:
-            if command == "validate":
+            if command == "fetch":
+                return self.cmd_fetch(getattr(args, "output", "data/raw/incidents.csv"), getattr(args, "limit", 100000), getattr(args, "batch_size", 10000))
+            elif command == "validate":
                 return self.cmd_validate(args.input)
             elif command == "readiness":
                 return self.cmd_readiness(args.input)
@@ -132,6 +134,19 @@ class EnterpriseCLI:
             print(f"\n[CRITICAL ERROR] Failed to execute '{command}': {e}")
             return 1
 
+
+    def cmd_fetch(self, output_path: str, limit: int, batch_size: int) -> int:
+        """Fetch huge real-time datasets from ServiceNow via REST API."""
+        print(f"\n---> [1/1] Initializing ServiceNow API Fetcher...")
+        from src.data.servicenow_api import ServiceNowFetcher
+        fetcher = ServiceNowFetcher()
+        success = fetcher.fetch_incidents(output_path=output_path, limit=limit, batch_size=batch_size)
+        if success:
+            print(f"[STATUS] Fetch Operation: PASS")
+            return 0
+        else:
+            print(f"[STATUS] Fetch Operation: FAIL")
+            return 1
 
     def cmd_validate(self, input_path: str) -> int:
         """Run enterprise dataset validation framework."""
