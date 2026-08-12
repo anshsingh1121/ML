@@ -40,7 +40,7 @@ graph TD
 
     %% Model Consumption
     Store --> RF["Random Forest Classifier / Regressor<br/>(Assignment Group & MTTR Prediction)"] ::: modelStyle
-    Store --> ST["SentenceTransformer<br/>(all-MiniLM-L6-v2 384-D Dense Vectors)"] ::: modelStyle
+    Store --> ST["SentenceTransformer<br/>(tfidf-svd-384 384-D Dense Vectors)"] ::: modelStyle
 
     %% Vector Store & Similarity
     ST --> FAISS["FAISS Vector Index<br/>(IVFFlat / IndexFlatIP Euclidean & Cosine)"] ::: modelStyle
@@ -69,7 +69,7 @@ graph TD
    - **Cyclic Sine/Cosine Encoding:** Applied to temporal timestamps (`opened_at_hour`, `opened_at_dayofweek`) to maintain daily continuous shift continuity.
 
 5. **Text Normalization & Tokenization (`EncText`):**
-   Prepares `short_description` and `description` for dense neural embeddings by truncating to 256 tokens (`all-MiniLM-L6-v2` sequence maximum) and removing HTML/escape artifacts.
+   Prepares `short_description` and `description` for dense neural embeddings by truncating to 256 tokens (`tfidf-svd-384` sequence maximum) and removing HTML/escape artifacts.
 
 6. **On-Premises Feature Store (`Store`):**
    Centralized, memory-mapped storage array holding preprocessed structural matrices and serialized text corpora ready for training and inference without re-running data prep.

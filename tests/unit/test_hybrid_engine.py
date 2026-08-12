@@ -286,8 +286,8 @@ def test_sync_features_and_edge_cases(clean_config, tmp_path, sample_semantic_ma
     from src.ml.model_registry import ModelRegistry
     ModelRegistry._instance = None
     (tmp_path / "models").mkdir(parents=True, exist_ok=True)
-    (tmp_path / "models" / "random_forest_assignment_group.pkl").touch()
-    (tmp_path / "models" / "random_forest_resolution_time_hours.pkl").touch()
+    (tmp_path / "models" / "catboost_assignment_group.pkl").touch()
+    (tmp_path / "models" / "catboost_resolution_time_hours.pkl").touch()
     rec_no_models = HybridRecommendationEngine(
         models_dir=tmp_path / "models",
         reports_dir=tmp_path / "reports",
@@ -300,6 +300,6 @@ def test_sync_features_and_edge_cases(clean_config, tmp_path, sample_semantic_ma
     assert "recommended_assignment_group" in res_fallback
 
     # Test get_model_path coverage directly on ModelRegistry
-    assert rec_no_models.model_reg.get_model_path("random_forest_assignment_group") is not None
+    assert rec_no_models.model_reg.get_model_path("catboost_assignment_group") is not None
     assert rec_no_models.model_reg.get_model_path("non_existent_model") is None
     ModelRegistry._instance = None

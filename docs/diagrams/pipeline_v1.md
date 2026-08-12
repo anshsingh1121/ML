@@ -47,8 +47,8 @@ graph TB
     end
 
     subgraph StructML["🔵 Random Forest Models"]
-        G1["Assignment Group<br/>Classifier<br/>(RandomForestClassifier)"]
-        G2["Resolution Time<br/>Regressor<br/>(RandomForestRegressor)"]
+        G1["Assignment Group<br/>Classifier<br/>(CatBoostClassifier)"]
+        G2["Resolution Time<br/>Regressor<br/>(CatBoostRegressor)"]
         G3["Category<br/>Classifier"]
         G4["Priority<br/>Classifier"]
         G5["Hyperparameter<br/>Optimization<br/>(RandomizedSearchCV)"]
@@ -56,7 +56,7 @@ graph TB
     end
 
     subgraph TextML["🟣 Text Intelligence"]
-        H1["Sentence Transformer<br/>all-MiniLM-L6-v2<br/>(384 dimensions)"]
+        H1["Sentence Transformer<br/>tfidf-svd-384<br/>(384 dimensions)"]
         H2["FAISS Vector Index<br/>FlatL2 / IVFFlat<br/>(Persistent Storage)"]
     end
 
@@ -86,7 +86,7 @@ graph TB
         L4["AI Resolution<br/>Summary"]
     end
 
-    subgraph Dashboard["🟣 Streamlit Dashboard"]
+    subgraph Dashboard["🟣 TF-IDF Dashboard"]
         M1["Incident Classifier"]
         M2["Similar Incidents<br/>Explorer"]
         M3["Model Performance<br/>& XAI"]

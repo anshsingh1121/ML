@@ -19,9 +19,7 @@ from src.utils import robust_read_csv
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import (
     ExtraTreesClassifier,
-    ExtraTreesRegressor,
-    RandomForestClassifier,
-    RandomForestRegressor,
+    ExtraTreesRegressor
 )
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -35,14 +33,14 @@ from src.data.feature_lineage import FeatureLineageTracker
 from src.data.feature_registry import FeatureRegistry
 from src.data.pipeline_contracts import PipelineContractValidator
 from src.ml.model_registry import ModelRegistry
-from src.ml.random_forest.transformers import EnterpriseFeatureExtractor, FrequencyEncoder
+from src.ml.catboost.transformers import EnterpriseFeatureExtractor, FrequencyEncoder
 from src.utils.config_manager import ConfigManager
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-class EnterpriseRandomForestTrainer:
+class EnterpriseCatBoostTrainer:
     """
     Enterprise-grade Random Forest and baseline ML trainer for First Citizens Bank Incident Intelligence Platform.
     Ensures zero target leakage, complete preprocessing + estimator pipeline persistence, and model registry compliance.
@@ -167,7 +165,7 @@ class EnterpriseRandomForestTrainer:
 
         text_idx = X_train_trans.shape[1] - 1
 
-        is_classification = (target_type in ["assignment_group", "category", "priority", "resolution_time_bucket"])
+        is_classification = (target_type in ["assignment_group", "category", "priority", "resolution_time_hours"])
         models_dict: Dict[str, Any] = {}
 
         if is_classification:
@@ -315,7 +313,7 @@ class EnterpriseRandomForestTrainer:
         df_train = robust_read_csv(train_file)
         df_val = robust_read_csv(val_file)
 
-        predictors = self.feat_reg.get_random_forest_predictors()
+        predictors = self.feat_reg.get_catboost_predictors()
         # Verify no target leakage
         self._verify_no_target_leakage(predictors)
 
@@ -399,11 +397,13 @@ class EnterpriseRandomForestTrainer:
         df_train = robust_read_csv(train_file)
         df_val = robust_read_csv(val_file)
 
-        predictors = self.feat_reg.get_random_forest_predictors()
+        predictors = self.feat_reg.get_catboost_predictors()
         
-        # Inject Assignment Group for SLA context during resolution time regression
-        if "assignment_group" not in predictors:
-            predictors.append("assignment_group")
+        # Resolution time is predicted BEFORE assignment.
+        # Therefore, we strictly do NOT include assignment_group as a predictor
+        # to ensure parallel independent execution in the workflow without forward-leakage.
+        if "assignment_group" in predictors:
+            predictors.remove("assignment_group")
             
         self._verify_no_target_leakage(predictors)
 
@@ -465,5 +465,5 @@ class EnterpriseRandomForestTrainer:
             status="Active"
         )
 
-        logger.info(f"Registered model random_forest_{target_col}:v1.0.0 (RMSE: {rmse:.4f}, MAE: {mae:.4f}, R2: {r2:.4f})")
+        logger.info(f"Registered model catboost_{target_col}:v1.0.0 (RMSE: {rmse:.4f}, MAE: {mae:.4f}, R2: {r2:.4f})")
         return out_path

@@ -313,7 +313,7 @@ class EnterpriseEDAEngine:
             "blocked_columns_present": blocked_present,
             "pure_leakage_predictors_present": pure_leakage,
             "warning_columns_present": warning_present,
-            "recommendation": "Drop pure_leakage_predictors before training initial triage models (`RandomForestClassifier`)."
+            "recommendation": "Drop pure_leakage_predictors before training initial triage models (`CatBoostClassifier`)."
         }
 
     def _generate_visual_charts(
@@ -344,7 +344,7 @@ class EnterpriseEDAEngine:
             figures.append({
                 "filename": "01_category_distribution.png",
                 "title": "Category Frequency Distribution",
-                "ml_explanation": "Identifies class imbalances across top incident categories. High cardinality or extreme skewness dictates whether `class_weight='balanced'` or stratified resampling is mandatory for `RandomForestClassifier`."
+                "ml_explanation": "Identifies class imbalances across top incident categories. High cardinality or extreme skewness dictates whether `class_weight='balanced'` or stratified resampling is mandatory for `CatBoostClassifier`."
             })
 
         # Chart 2: Priority vs SLA Compliance

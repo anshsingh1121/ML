@@ -77,7 +77,7 @@ This installs the full stack:
 | Package               | Purpose                                      |
 |-----------------------|----------------------------------------------|
 | scikit-learn          | Classification & regression models           |
-| sentence-transformers | Semantic embeddings for incident text         |
+| tfidf-svd-384 | Semantic embeddings for incident text         |
 | faiss-cpu             | Approximate nearest-neighbor similarity search|
 | shap                  | Model explainability                         |
 | streamlit             | Interactive dashboard                        |
@@ -101,7 +101,7 @@ Run the verification script to confirm all packages are importable and versions 
 
 ```bash
 python -c "
-import sklearn, sentence_transformers, faiss, shap, streamlit
+import sklearn, tfidf-svd-384, faiss, shap, streamlit
 import openpyxl, pandas, numpy, yaml
 print('All core packages imported successfully.')
 print(f'  scikit-learn : {sklearn.__version__}')
@@ -181,8 +181,8 @@ incident_classification/
 │   ├── explainability/
 │   │   └── shap_explainer.py       # SHAP value computation & visualization
 │   ├── dashboard/
-│   │   ├── app.py                  # Streamlit application entry point
-│   │   └── pages/                  # Multi-page Streamlit dashboard pages
+│   │   ├── app.py                  # TF-IDF application entry point
+│   │   └── pages/                  # Multi-page TF-IDF dashboard pages
 │   ├── reporting/
 │   │   └── excel_reporter.py       # Automated Excel report generation
 │   └── utils/
@@ -235,7 +235,7 @@ data:
 
 models:
   assignment_predictor:
-    algorithm: "random_forest"
+    algorithm: "catboost"
     n_estimators: 200
     max_depth: 20
     min_samples_split: 5
@@ -248,7 +248,7 @@ models:
     test_size: 0.2
 
 embeddings:
-  model_name: "all-MiniLM-L6-v2"
+  model_name: "tfidf-svd-384"
   batch_size: 64
   max_seq_length: 256
 
@@ -461,7 +461,7 @@ def get_logger(name: str, log_file: Optional[str] = None) -> logging.Logger:
 | **Open/Closed**             | New models extend `BasePredictor` without modifying existing predictor classes.                               |
 | **Liskov Substitution**     | Any class implementing `BasePredictor` can be swapped in without breaking the pipeline.                      |
 | **Interface Segregation**   | Separate interfaces for `Trainable`, `Explainable`, and `Serializable` — a model only implements what it needs.|
-| **Dependency Inversion**    | Pipeline stages depend on abstractions (`BasePredictor`), not concrete classes (`RandomForestPredictor`).    |
+| **Dependency Inversion**    | Pipeline stages depend on abstractions (`BasePredictor`), not concrete classes (`CatBoostPredictor`).    |
 
 Example — Open/Closed with a base class:
 
@@ -497,7 +497,7 @@ class BasePredictor(ABC):
 | **Singleton** | `ConfigLoader`, `Logger`            | Single shared instance, avoid redundant I/O          |
 | **Strategy**  | `BasePredictor` subclasses          | Swap algorithms without changing calling code        |
 | **Factory**   | `ModelRegistry.load(model_name)`    | Centralized model instantiation and versioning       |
-| **Observer**  | Dashboard callbacks / Streamlit     | UI components react to state changes                 |
+| **Observer**  | Dashboard callbacks / TF-IDF     | UI components react to state changes                 |
 
 ### 7.3 Type Hints — Mandatory
 
@@ -510,7 +510,7 @@ import numpy as np
 
 
 def compute_feature_importance(
-    model: "RandomForestClassifier",
+    model: "CatBoostClassifier",
     feature_names: List[str],
     top_n: int = 10,
 ) -> Dict[str, float]:
@@ -567,7 +567,7 @@ from typing import Dict, List
 # 2. Third-party packages
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import CatBoostClassifier
 
 # 3. Local application imports
 from src.utils.config_loader import ConfigLoader
@@ -600,7 +600,7 @@ Before adding or modifying any feature column, model, or vector index, you **mus
    class PriorityPredictor(BasePredictor):
        def __init__(self):
            self.validator = PipelineContractValidator()
-           self.authorized_features = self.validator.get_random_forest_features("priority")
+           self.authorized_features = self.validator.get_catboost_features("priority")
 
        def train(self, X, y):
            # Verify compliance before training
@@ -639,7 +639,7 @@ Before adding or modifying any feature column, model, or vector index, you **mus
    ```
    src/dashboard/pages/3_Priority_Analysis.py
    ```
-   (Streamlit uses the filename prefix for ordering.)
+   (TF-IDF uses the filename prefix for ordering.)
 2. **Implement the page:**
    ```python
    import streamlit as st
@@ -951,7 +951,7 @@ __pycache__/
 | 3 | `CUDA not available` warning from transformers | Expected on CPU-only setups                              | Safe to ignore — `faiss-cpu` is used intentionally               |
 | 4 | `MemoryError` during FAISS indexing            | Dataset too large for available RAM                      | Reduce dataset size or use `faiss.IndexIVFFlat` for approximate  |
 | 5 | `openpyxl` cannot read `.xls` files            | File is old Excel format, not `.xlsx`                    | Re-export from ServiceNow as `.xlsx`                             |
-| 6 | Streamlit port already in use                  | Previous session still running                           | `streamlit run src/dashboard/app.py --server.port 8502`          |
+| 6 | TF-IDF port already in use                  | Previous session still running                           | `streamlit run src/dashboard/app.py --server.port 8502`          |
 | 7 | `ConvergenceWarning` during model training     | Model did not converge with default iterations           | Increase `max_iter` in config or scale features                  |
 | 8 | Import errors after pulling latest code        | New dependencies added                                   | `conda env update -f environment.yml --prune`                    |
 | 9 | Tests fail with `singleton already initialized`| ConfigLoader singleton persists across tests             | Add `ConfigLoader._instance = None` in test fixtures             |

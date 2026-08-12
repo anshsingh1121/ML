@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.ml.random_forest.transformers import (
+from src.ml.catboost.transformers import (
     DataFrameSelector,
     EnterpriseFeatureExtractor,
     FrequencyEncoder,

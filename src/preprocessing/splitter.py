@@ -279,7 +279,7 @@ class DatasetSplitter:
             "---",
             "",
             "## 4. Phase 3 (Random Forest) Readiness Interlock",
-            f"The partitioned datasets in `data/processed/` (`train.csv`, `val.csv`, `test.csv`) are verified clean, feature-engineered, normalized, and stratified. They are ready for immediate ingestion by `RandomForestClassifier` upon user approval."
+            f"The partitioned datasets in `data/processed/` (`train.csv`, `val.csv`, `test.csv`) are verified clean, feature-engineered, normalized, and stratified. They are ready for immediate ingestion by `CatBoostClassifier` upon user approval."
         ])
 
         with open(md_file, "w", encoding="utf-8") as f:

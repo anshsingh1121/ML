@@ -93,7 +93,7 @@ class ModelEvaluator:
             raise FileNotFoundError(f"Test partition missing: {test_file}")
 
         df_test = robust_read_csv(test_file)
-        predictors = self.feat_reg.get_random_forest_predictors()
+        predictors = self.feat_reg.get_catboost_predictors()
         X_test = self._get_safe_predictor_matrix(df_test, predictors)
         y_test = df_test[target_col]
 

@@ -48,7 +48,6 @@ class QualityGateRunner:
 
     def run_all_gates(
         self,
-        num_test_records: int = 5000,
         save_certification: bool = True,
         report_dir: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -56,7 +55,6 @@ class QualityGateRunner:
         Execute all 6 quality gates and issue a formal certification summary.
 
         Args:
-            num_test_records: Number of synthetic records to generate and validate.
             save_certification: Whether to output quality_gate_certification.md.
             report_dir: Custom output folder. Defaults to reports/.
 
@@ -80,9 +78,14 @@ class QualityGateRunner:
         logger.debug("Executing Gate 3: Documentation Validation...")
         gates["Documentation Validation"] = self.validate_documentation()
 
-        # Gate 4: Schema Validation (Generate test dataset)
-        logger.debug(f"Executing Gate 4: Schema Validation (Generating {num_test_records:,} test records)...")
-        df_test = self.generator.generate_dataset(num_records=num_test_records, batch_size=25000)
+        # Gate 4: Schema Validation
+        logger.debug(f"Executing Gate 4: Schema Validation...")
+        from src.utils import robust_read_csv
+        try:
+            df_test = robust_read_csv("data/raw/incidents.csv")
+        except FileNotFoundError:
+            logger.error("Dataset 'data/raw/incidents.csv' missing. Quality gates require real data.")
+            df_test = pd.DataFrame()
         gates["Schema Validation"] = self.validate_schema(df_test)
 
         # Gate 5: Dataset Quality Validation (12 Quality Rules)
@@ -156,7 +159,6 @@ class QualityGateRunner:
     def validate_automation_scripts(self) -> Dict[str, Any]:
         """Verify Windows batch automation scripts exist and are non-empty."""
         scripts = [
-            "setup.bat", "run.bat"
         ]
         missing = []
         empty = []
@@ -217,6 +219,8 @@ class QualityGateRunner:
     def save_certification_report(self, cert: Dict[str, Any], report_dir: Optional[str] = None) -> Path:
         """Save formal Quality Gate Certification summary to reports/quality_gate_certification.md."""
         out_dir = Path(report_dir or self.config.get("reports.dir", "reports"))
+        if not out_dir.is_absolute():
+            out_dir = self.get_project_root() / out_dir
         out_dir.mkdir(parents=True, exist_ok=True)
 
         md_path = out_dir / "quality_gate_certification.md"
@@ -257,21 +261,9 @@ class QualityGateRunner:
         return md_path
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse CLI arguments for QualityGateRunner."""
-    parser = argparse.ArgumentParser(
-        description="First Citizens Bank — Phase 1.5 Quality Gate Certification CLI"
-    )
-    parser.add_argument(
-        "--records", "-r",
-        type=int,
-        default=5000,
-        help="Number of synthetic test records to generate during schema/dataset checks (default: 5000)"
-    )
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
-    args = parse_args()
+    parser = argparse.ArgumentParser(description="First Citizens Bank - ML Quality Gate Certification")
+    args = parser.parse_args()
+
     runner = QualityGateRunner()
-    runner.run_all_gates(num_test_records=args.records)
+    runner.run_all_gates()

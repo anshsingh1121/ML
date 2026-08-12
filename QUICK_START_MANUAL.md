@@ -6,20 +6,16 @@
 
 ---
 
-## 🛑 Step 1: First-Time Setup (`setup.bat`)
 
-**Before doing anything else, you must run `setup.bat` once.**  
 This script prepares your Windows computer to run the platform locally without sending any banking data to the cloud.
 
 ### Exactly How to Run It:
 1. Open Windows File Explorer and navigate to your `incident_classification` folder.
-2. Double-click **`setup.bat`**.
 3. A blue/black command window will open and walk you through 9 automatic steps.
 
-### What `setup.bat` Automatically Does For You:
 - **Python Check**: Checks if Python 3.11+ is installed on your PC. If not, it automatically downloads and configures a **25 MB self-contained portable copy of Python** directly into the project (`.python-embed\`). You do **not** need administrator rights to install it.
 - **Zscaler & Corporate Proxy Setup**: Automatically detects Windows network settings, corporate PAC files, and Zscaler (`Z-App`). It applies enterprise `--trusted-host` security flags so package downloads (`pip`) never crash due to SSL certificate verification checks (`CERTIFICATE_VERIFY_FAILED`).
-- **AI/ML Library Installation**: Installs required data science libraries (`pandas`, `scikit-learn`, `faiss-cpu`, `shap`, `sentence-transformers`). *Note: This step takes 5 to 10 minutes depending on internet speed.*
+- **AI/ML Library Installation**: Installs required data science libraries (`pandas`, `scikit-learn`, `faiss-cpu`, `shap`, `tfidf-svd-384`). *Note: This step takes 5 to 10 minutes depending on internet speed.*
 - **Workspace Creation**: Creates all necessary folders (`data\raw\`, `data\processed\`, `models\`, `indexes\`, `reports\`, `logs\`).
 - **Diagnostic Verification**: Runs a quick import check and displays the platform status (`python main.py status`).
 
@@ -28,21 +24,16 @@ When finished, you will see:
 ========================================================================
    SETUP COMPLETE!
 ========================================================================
-   To run the platform day-to-day, just double-click:  run.bat
 ========================================================================
 Press any key to close this window...
 ```
 
 ---
 
-## ▶️ Step 2: Daily Operation (`run.bat`)
 
-**After `setup.bat` has completed successfully once, you never need to run `setup.bat` again.**  
-For daily operations, data processing, and AI ticket classification, use **`run.bat`**.
 
 ### Exactly How to Run It:
 1. Open Windows File Explorer inside the project folder.
-2. Double-click **`run.bat`**.
 3. The platform checks if a dataset exists and presents the **Daily Operational Launcher**:
 
 ```text
@@ -81,14 +72,12 @@ The platform is designed to protect and process your real company data without r
 1. Take your real ServiceNow incident export (`.csv` file).
 2. Copy or move it directly into the **`data\raw\`** folder inside the project.
 3. Rename the file to **`incidents.csv`** (so the full path is `data\raw\incidents.csv`).
-4. Double-click **`run.bat`** and select **Option `[1]`**.
 
 > **Automatic Protection & Custom Categories:**
 > - **Zero Overwrites**: When the platform sees your file at `data\raw\incidents.csv`, it **automatically skips synthetic data generation** so your real data is never overwritten.
 > - **Preserves Company Support Groups**: Because `allow_custom_categories: true` is enabled by default, your real company assignment groups (e.g., `ATMOps`, `Network-Operations-L2`, `FirstCitizens-L2-Prod`) and custom incident categories are safely preserved and passed directly into machine learning training!
 
 ### What If You Don't Have Real Data Yet?
-If `data\raw\incidents.csv` is empty when you double-click `run.bat`, the system will ask you:
 ```text
 No dataset found at data\raw\incidents.csv.
 If you have your own real CSV dataset, you can drop it into data\raw\incidents.csv right now.
@@ -101,7 +90,6 @@ Type **`Y`** and press Enter. The platform will generate 500 realistic sample ba
 
 ## 🛠️ Step 4: The Advanced Interactive CLI Subshell (Menu Option 2)
 
-If you select **Option `[2]`** inside `run.bat`, you enter the full 21-command interactive engine:
 
 ```text
 --- PHASE 1 & 2: DATA FOUNDATION & INTELLIGENCE ---
@@ -147,22 +135,15 @@ If you select **Option `[2]`** inside `run.bat`, you enter the full 21-command i
 
 If your computer is protected by **Zscaler Client Connector (`Z-App`)**, corporate firewalls, or strict IT proxies:
 - **You do not need to disable Zscaler.**
-- All installation scripts (`setup.bat` and `run.bat`) automatically inject `--trusted-host pypi.org --trusted-host files.pythonhosted.org` and proxy arguments (`%PIP_PROXY_ARGS%`).
 - This allows Python and `pip` to establish secure connections through Zscaler's SSL interception transparently without triggering `SSL: CERTIFICATE_VERIFY_FAILED` errors.
-- If any network check fails, `setup.bat` saves a detailed diagnostic log to **`setup_log.txt`** in plain English that you can share with your IT support team.
 
 ---
 
 ## ❓ Frequently Asked Questions (FAQ)
 
-### Q: I double-clicked `setup.bat` and it says "Downloading portable copy of Python..." Is that normal?
-**A: Yes!** If you do not have Python installed (or if you don't have administrator rights to install Python globally), `setup.bat` downloads a official ~25 MB embeddable Python package directly inside the project folder (`.python-embed\`). Everything runs contained inside this folder.
 
-### Q: How do I know if `setup.bat` worked?
-**A:** At the very end of `setup.bat`, look for `[ACTIVE & READY]` across `data/raw/`, `data/processed/`, `reports/`, and `models/`. It will print **`SETUP COMPLETE!`** in green/bold text.
 
 ### Q: What if I want to re-run setup cleanly from scratch?
-**A:** Delete the `.venv` folder (or `.python-embed` folder if using portable Python) inside your project directory, and double-click `setup.bat` again.
 
 ### Q: Does this platform send ticket descriptions or banking data to OpenAI or any cloud LLM?
-**A: No.** All neural embeddings (`all-MiniLM-L6-v2`), vector searches (`FAISS`), and classification models (`Random Forest`) execute **100% locally on your computer's CPU**. Zero external network requests are made during data processing or ticket triage.
+**A: No.** All neural embeddings (`tfidf-svd-384`), vector searches (`FAISS`), and classification models (`Random Forest`) execute **100% locally on your computer's CPU**. Zero external network requests are made during data processing or ticket triage.

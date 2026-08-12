@@ -35,7 +35,7 @@ class FeatureDefinition:
     imputation_strategy: str
     scaling_strategy: str
     feature_engineering_rules: str
-    random_forest_usage: str
+    catboost_usage: str
     embedding_usage: str
     faiss_metadata_usage: str
     dashboard_usage: str
@@ -103,12 +103,12 @@ class FeatureRegistry:
         """Retrieve all features matching a leakage tier ('safe', 'warning', 'blocked')."""
         return self.get_features_by_usage("target_leakage_classification", classification.lower())
 
-    def get_random_forest_predictors(self, target_type: str = "assignment_group") -> List[str]:
+    def get_catboost_predictors(self, target_type: str = "assignment_group") -> List[str]:
         """Retrieve safe predictor column names authorized for Random Forest training."""
         safe_feats = self.get_features_by_leakage("safe")
         results = []
         for feat in safe_feats:
-            if feat.random_forest_usage == "predictor":
+            if feat.catboost_usage == "predictor":
                 results.append(feat.technical_name)
         return sorted(results)
 
@@ -212,7 +212,7 @@ class FeatureRegistry:
             lines.append(
                 f"| `{feat.technical_name}` | {feat.business_name} | `{feat.data_type}` | "
                 f"{'Yes' if feat.nullable else 'No'} | {feat.cardinality} | {badge} | "
-                f"`{feat.random_forest_usage}` | `{feat.embedding_usage}` | `{feat.faiss_metadata_usage}` | `{feat.future_rag_usage}` |"
+                f"`{feat.catboost_usage}` | `{feat.embedding_usage}` | `{feat.faiss_metadata_usage}` | `{feat.future_rag_usage}` |"
             )
 
         lines.extend([
@@ -228,7 +228,7 @@ class FeatureRegistry:
                 f"- **ML Importance:** `{feat.ml_importance}` | **Leakage Tier:** `{feat.target_leakage_classification}`",
                 f"- **Preprocessing Strategy:** Encoding=`{feat.encoding_strategy}`, Imputation=`{feat.imputation_strategy}`, Scaling=`{feat.scaling_strategy}`",
                 f"- **Feature Engineering Rules:** {feat.feature_engineering_rules}",
-                f"- **Downstream Usage Contracts:** RF=`{feat.random_forest_usage}`, Embedding=`{feat.embedding_usage}`, FAISS=`{feat.faiss_metadata_usage}`, Dashboard=`{feat.dashboard_usage}`, API=`{feat.api_exposure}`, RAG=`{feat.future_rag_usage}`, Explainability=`{feat.explainability_usage}`",
+                f"- **Downstream Usage Contracts:** RF=`{feat.catboost_usage}`, Embedding=`{feat.embedding_usage}`, FAISS=`{feat.faiss_metadata_usage}`, Dashboard=`{feat.dashboard_usage}`, API=`{feat.api_exposure}`, RAG=`{feat.future_rag_usage}`, Explainability=`{feat.explainability_usage}`",
                 f"- **Status:** `{'Required' if feat.required_or_optional=='required' else 'Optional'}` (`Deprecated: {feat.deprecated_status}`)\n"
             ])
 
@@ -247,7 +247,7 @@ class FeatureRegistry:
             business_meaning="Unique system identifier assigned to ticket upon creation in ServiceNow.",
             ml_importance="none", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Retain purely for audit ID and correlation; exclude from ML predictor arrays.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="citation_reference",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -259,7 +259,7 @@ class FeatureRegistry:
             business_meaning="UTC timestamp when the ticket was created and triage initiated.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Extract hour and day of week; apply continuous Sine/Cosine cyclic shift encoding.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -271,7 +271,7 @@ class FeatureRegistry:
             business_meaning="UTC timestamp when support engineering restored operational service.",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Strictly exclude at triage time to prevent future timestamp leakage. Used only for MTTR outcome calculation.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -283,7 +283,7 @@ class FeatureRegistry:
             business_meaning="UTC timestamp when ticket is administratively finalized after verification.",
             ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Strictly exclude from all predictive models due to administrative delay variance.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -295,7 +295,7 @@ class FeatureRegistry:
             business_meaning="Ordinal severity rating (1=Critical to 5=Planning) governing SLA windows.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="ordinal",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as raw integer 1-5; directly weights decision tree splits and SLA calculation.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -307,7 +307,7 @@ class FeatureRegistry:
             business_meaning="Scope of business disruption (1=High/Bank-wide to 3=Low/Single User).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="ordinal",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as ordinal 1-3 predictor.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -319,7 +319,7 @@ class FeatureRegistry:
             business_meaning="Time criticality of service restoration (1=High to 3=Low).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="ordinal",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as ordinal 1-3 predictor.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -331,7 +331,7 @@ class FeatureRegistry:
             business_meaning="Technical alarm intensity reported by monitoring tools.",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="ordinal",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as ordinal 1-3 predictor.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="required_payload", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -343,7 +343,7 @@ class FeatureRegistry:
             business_meaning="Current operational phase (1=New, 2=In Progress, 6=Resolved, 7=Closed, 8=Canceled).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="one_hot",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Use as status filter during training dataset preparation (exclude canceled/state=8).",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -355,7 +355,7 @@ class FeatureRegistry:
             business_meaning="Top-level functional taxonomy classification (e.g., Core Banking, Security).",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="one_hot",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="One-hot encode across 8 banking domains; primary driver for assignment routing.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -367,7 +367,7 @@ class FeatureRegistry:
             business_meaning="Granular software/hardware fault classification within Category.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="frequency",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Apply smooth out-of-fold target/frequency encoding to manage high cardinality (~40 categories).",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
             dashboard_usage="chart_axis", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -379,7 +379,7 @@ class FeatureRegistry:
             business_meaning="Designated L1/L2/L3 engineering support squad responsible for ticket resolution.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="label",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Primary multi-class classification target (`y_assignment_group`). Apply balanced class weights.",
-            random_forest_usage="target_assignment_group", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="target_assignment_group", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -391,7 +391,7 @@ class FeatureRegistry:
             business_meaning="Individual engineer assigned inside the support squad.",
             ml_importance="none", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="High cardinality person ID; exclude from all predictive modeling to prevent overfitting.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -403,7 +403,7 @@ class FeatureRegistry:
             business_meaning="Business-facing banking service offering (e.g., SWIFT Payments, ATM Network).",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="frequency",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Apply frequency encoding; strong exact-match structural boost in hybrid similarity.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
             dashboard_usage="chart_axis", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -415,7 +415,7 @@ class FeatureRegistry:
             business_meaning="Exact CMDB infrastructure asset ID (server, database node, gateway).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="frequency",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Frequency encode for tabular models; provide exact match (+0.15 boost) inside FAISS hybrid retrieval.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -427,7 +427,7 @@ class FeatureRegistry:
             business_meaning="Hardware/software vendor associated with the affected CI (e.g., IBM, Cisco).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Impute missing as 'Internal/UNKNOWN'; frequency encode.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="optional_payload", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="optional"
         ))
@@ -439,7 +439,7 @@ class FeatureRegistry:
             business_meaning="Employee or automated monitoring daemon that initiated the ticket.",
             ml_importance="none", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Exclude from ML modeling due to extreme cardinality and privacy governance.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -451,7 +451,7 @@ class FeatureRegistry:
             business_meaning="Primary summary headline describing the incident or monitoring alert.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Normalize whitespace, strip HTML; primary text input for SentenceTransformer 384-D vector generation.",
-            random_forest_usage="predictor", embedding_usage="primary_semantic_input", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="primary_semantic_input", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="knowledge_chunk_payload",
             explainability_usage="natural_language_context", required_or_optional="required"
         ))
@@ -463,7 +463,7 @@ class FeatureRegistry:
             business_meaning="Comprehensive diagnostic text, stack traces, and error logs reported.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Truncate to 256 tokens; concatenate with short_description for secondary semantic embedding.",
-            random_forest_usage="predictor", embedding_usage="secondary_summary", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="secondary_summary", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="knowledge_chunk_payload",
             explainability_usage="natural_language_context", required_or_optional="required"
         ))
@@ -475,7 +475,7 @@ class FeatureRegistry:
             business_meaning="Engineer's technical summary of root cause and exact remediation steps taken.",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="STRICTLY EXCLUDED at triage prediction time. Serves as the golden text payload inside RAG retrieval knowledge bases.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="knowledge_chunk_payload",
             explainability_usage="natural_language_context", required_or_optional="optional"
         ))
@@ -487,7 +487,7 @@ class FeatureRegistry:
             business_meaning="Standardized outcome classification (e.g., Solved Permanently, Workaround, User Error).",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome classification; exclude from all early-stage triage predictors.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="metadata_filter",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -499,22 +499,11 @@ class FeatureRegistry:
             business_meaning="Continuous elapsed clock time from opened_at to resolved_at.",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="median", scaling_strategy="log1p", feature_engineering_rules="Primary regression target (`y_resolution_time`). Apply log1p transform (`np.log1p(y)`) to normalize right-skewed log-normal distribution.",
-            random_forest_usage="target", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="target", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="optional"
         ))
-        
-        # 23. resolution_time_bucket
-        self.register_feature(FeatureDefinition(
-            business_name="Resolution Time SLA Bucket", technical_name="resolution_time_bucket", data_type="string",
-            nullable=True, cardinality="4", missing_percentage=2.0,
-            business_meaning="Discretized classification target for resolution time.",
-            ml_importance="high", target_leakage_classification="blocked", encoding_strategy="categorical",
-            imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Primary classification target.",
-            random_forest_usage="target", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="optional"
-        ))
+
 
         # 23. calendar_duration_hours
         self.register_feature(FeatureDefinition(
@@ -523,7 +512,7 @@ class FeatureRegistry:
             business_meaning="Total elapsed calendar time from opened_at to administrative closed_at.",
             ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome metric; exclude from triage prediction.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -535,7 +524,7 @@ class FeatureRegistry:
             business_meaning="Elapsed engineering effort hours within standard operational shifts (8am-6pm).",
             ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution calculation; exclude from triage prediction.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -547,7 +536,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator of whether resolution met target window (True=Met, False=Breached).",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome flag; strictly banned from triage feature matrix.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -559,7 +548,7 @@ class FeatureRegistry:
             business_meaning="Categorical SLA status label ('Met' or 'Breached').",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome label; banned from triage predictors.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -571,7 +560,7 @@ class FeatureRegistry:
             business_meaning="Exact UTC deadline by which ticket must be resolved to avoid SLA breach.",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Computed from opened_at + priority target window; usable for operational priority sorting.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -583,7 +572,7 @@ class FeatureRegistry:
             business_meaning="Number of times ticket ownership bounced across different assignment groups.",
             ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Operational outcome metric tracking routing efficiency; exclude from triage assignment prediction.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -595,7 +584,7 @@ class FeatureRegistry:
             business_meaning="Number of times ticket was reopened after initial resolution.",
             ml_importance="low", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome metric; exclude from triage prediction.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -607,7 +596,7 @@ class FeatureRegistry:
             business_meaning="Whether ticket linked or escalated to a formal Problem investigation (`PRB`).",
             ml_importance="medium", target_leakage_classification="warning", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Usually linked post-triage; exercise caution if used as predictor.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="metadata_filter",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -619,7 +608,7 @@ class FeatureRegistry:
             business_meaning="Associated Problem investigation ID (`PRB001...`) when problem_flag is True.",
             ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_problem_record`).",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="citation_reference",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -631,7 +620,7 @@ class FeatureRegistry:
             business_meaning="Associated Change Request ID (`CHG002...`) if caused by or resolved via deployment.",
             ml_importance="medium", target_leakage_classification="warning", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_change_request`); strong signal for release/deployment engineering L3 squads.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="citation_reference",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -643,7 +632,7 @@ class FeatureRegistry:
             business_meaning="Whether a Knowledge Base article was cited during incident resolution.",
             ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome indicator; banned from triage predictors.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
@@ -655,7 +644,7 @@ class FeatureRegistry:
             business_meaning="Specific KB article identifier (`KB0010042`) used for remediation.",
             ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Direct citation reference inside RAG resolution retrieval responses.",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="citation_reference",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -667,7 +656,7 @@ class FeatureRegistry:
             business_meaning="Origin reporting channel (`Alert`, `Phone`, `Self-service`, `Email`).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="one_hot",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="One-hot encode into binary indicators (`contact_type_Alert`, etc.).",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -679,7 +668,7 @@ class FeatureRegistry:
             business_meaning="Banking data center or branch facility where issue originated.",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Frequency encode to capture regional incident volume densities.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -691,7 +680,7 @@ class FeatureRegistry:
             business_meaning="Parent ticket ID if this record is marked as a duplicate (`State=8`).",
             ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`is_duplicate`).",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -703,7 +692,7 @@ class FeatureRegistry:
             business_meaning="Master parent ticket linking related alert storms.",
             ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
             imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_parent_incident`).",
-            random_forest_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
@@ -719,7 +708,7 @@ class FeatureRegistry:
             business_meaning="Integer hour (0-23) extracted from opened_at.",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="sine_cosine",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from opened_at. Intermediate step for cyclic shift encoding.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -731,7 +720,7 @@ class FeatureRegistry:
             business_meaning="Sine cyclic component of opened_at_hour (`sin(2*pi*hour/24)`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Preserves 23:00 to 00:00 continuous shift proximity for tree models and clustering.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="excluded", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -743,7 +732,7 @@ class FeatureRegistry:
             business_meaning="Cosine cyclic component of opened_at_hour (`cos(2*pi*hour/24)`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Preserves continuous shift proximity in tandem with sine component.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="excluded", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -755,7 +744,7 @@ class FeatureRegistry:
             business_meaning="Integer day of week (0=Monday to 6=Sunday) extracted from opened_at.",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="sine_cosine",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from opened_at. Distinguishes weekend vs weekday incident patterns.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -767,7 +756,7 @@ class FeatureRegistry:
             business_meaning="Sine cyclic component of opened_at_dayofweek (`sin(2*pi*day/7)`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Preserves Sunday-Monday cyclic boundary.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="excluded", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -779,7 +768,7 @@ class FeatureRegistry:
             business_meaning="Cosine cyclic component of opened_at_dayofweek (`cos(2*pi*day/7)`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Preserves Sunday-Monday cyclic boundary.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="excluded", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -791,7 +780,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator (`1` if opened Mon-Fri 8am-6pm else `0`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from opened_at; strong predictor of initial L1 triage latency.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
             dashboard_usage="kpi_filter", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -803,7 +792,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator (`1` if parent_incident is not empty else `0`).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from parent_incident.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -815,7 +804,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator (`1` if change_request is not empty else `0`).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from change_request; strong signal for routing to release/change engineering L3 squads.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -827,7 +816,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator (`1` if problem_record is not empty else `0`).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from problem_record.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -839,7 +828,7 @@ class FeatureRegistry:
             business_meaning="Binary indicator (`1` if duplicate_incident is not empty else `0`).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from duplicate_incident.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -851,7 +840,7 @@ class FeatureRegistry:
             business_meaning="Non-linear interaction term multiplying Priority by Impact.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="median", scaling_strategy="none", feature_engineering_rules="Derived via EnterpriseFeatureExtractor.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
@@ -863,7 +852,7 @@ class FeatureRegistry:
             business_meaning="Non-linear interaction term multiplying Priority by Urgency.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
             imputation_strategy="median", scaling_strategy="none", feature_engineering_rules="Derived via EnterpriseFeatureExtractor.",
-            random_forest_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))

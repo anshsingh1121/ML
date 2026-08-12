@@ -278,7 +278,7 @@ class MLReadinessEvaluator:
             if stats["unique_count"] > 100 and col not in ["incident_number", "short_description", "description", "close_notes", "caller"]:
                 recs.append(f"**High Cardinality Encoding:** `{col}` has {stats['unique_count']} unique categories. Avoid One-Hot Encoding to prevent dimensionality explosion; use Target Encoding or Frequency Encoding instead.")
             elif stats["unique_count"] <= 20 and col not in ["incident_number", "short_description", "description", "close_notes"]:
-                recs.append(f"**Categorical Encoding:** `{col}` has {stats['unique_count']} distinct values. Use Ordinal/Label Encoding for tree models (`RandomForestClassifier`).")
+                recs.append(f"**Categorical Encoding:** `{col}` has {stats['unique_count']} distinct values. Use Ordinal/Label Encoding for tree models (`CatBoostClassifier`).")
 
         # 4. Text length checks for Sentence Transformers
         desc_text = text.get("description", {})

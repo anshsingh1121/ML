@@ -8,12 +8,12 @@ import joblib
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.pipeline import Pipeline
 
 from src.ml.model_registry import ModelRegistry
-from src.ml.random_forest.evaluator import ModelEvaluator
-from src.ml.random_forest.transformers import EnterpriseFeatureExtractor
+from src.ml.catboost.evaluator import ModelEvaluator
+from src.ml.catboost.transformers import EnterpriseFeatureExtractor
 
 
 @pytest.fixture
@@ -35,9 +35,9 @@ def dummy_pipeline_and_test_data(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # Train a quick dummy classification pipeline using all authorized predictors
     from src.data.feature_registry import FeatureRegistry
-    from src.ml.random_forest.trainer import EnterpriseRandomForestTrainer
-    trainer = EnterpriseRandomForestTrainer()
-    predictors = FeatureRegistry.get_instance().get_random_forest_predictors()
+    from src.ml.catboost.trainer import EnterpriseCatBoostTrainer
+    trainer = EnterpriseCatBoostTrainer()
+    predictors = FeatureRegistry.get_instance().get_catboost_predictors()
     for col in predictors:
         if col not in df_test.columns:
             df_test[col] = 0

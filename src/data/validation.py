@@ -396,6 +396,8 @@ class DatasetValidator:
             Tuple containing paths to the saved (JSON, Markdown) report files.
         """
         out_dir = Path(report_dir or self.config.get("reports.dir", "reports"))
+        if not out_dir.is_absolute():
+            out_dir = Path(__file__).resolve().parent.parent.parent / out_dir
         out_dir.mkdir(parents=True, exist_ok=True)
 
         json_path = out_dir / "validation_report.json"

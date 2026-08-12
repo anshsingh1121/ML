@@ -100,7 +100,7 @@ dataset_generator:
 # ---------------------------------------------------------------------------
 models:
   base_dir: "models"
-  random_forest_dir: "models/random_forest"
+  catboost_dir: "models/catboost"
   embeddings_dir: "models/embeddings"
   registry_file: "models/model_registry.json"
 
@@ -125,29 +125,6 @@ reporting:
   report_title: "Incident Intelligence Report"
 
 # ---------------------------------------------------------------------------
-# Dashboard Configuration
-# ---------------------------------------------------------------------------
-dashboard:
-  host: "0.0.0.0"
-  port: 8501
-  theme: "dark"
-  title: "Incident Intelligence Platform"
-  page_icon: "🏦"
-  layout: "wide"
-
-# ---------------------------------------------------------------------------
-# API Configuration
-# ---------------------------------------------------------------------------
-api:
-  host: "0.0.0.0"
-  port: 8000
-  workers: 2
-  reload: true                            # Auto-reload in development
-  cors_origins:
-    - "http://localhost:8501"
-    - "http://127.0.0.1:8501"
-
-# ---------------------------------------------------------------------------
 # Logging Configuration
 # ---------------------------------------------------------------------------
 logging:
@@ -156,7 +133,6 @@ logging:
   log_dir: "logs"
   app_log: "logs/app.log"
   ml_log: "logs/ml_training.log"
-  api_log: "logs/api_access.log"
   max_bytes: 10485760                     # 10 MB
   backup_count: 5
   console_enabled: true

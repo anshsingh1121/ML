@@ -18,7 +18,7 @@ def test_embedding_registry_registration_and_export(temp_workspace: Path) -> Non
 
     meta = reg.register_index(
         index_name="incidents_semantic_index",
-        embedding_model="all-MiniLM-L6-v2",
+        embedding_model="tfidf-svd-384",
         version="v1.0",
         dimension=384,
         chunk_strategy="truncate_256_tokens_strip_html",
@@ -37,5 +37,5 @@ def test_embedding_registry_registration_and_export(temp_workspace: Path) -> Non
     assert md_path.exists()
     with open(md_path, "r", encoding="utf-8") as f:
         content = f.read()
-    assert "all-MiniLM-L6-v2" in content
+    assert "tfidf-svd-384" in content
     assert "384" in content

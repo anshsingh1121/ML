@@ -11,7 +11,7 @@ Design Decisions:
       (URLs, credentials) are injected via env vars, never stored in YAML.
     - Immutable After Load: Config is loaded once at startup. Explicit reload()
       is required to pick up changes (prevents mid-request config drift).
-    - Dot-notation Access: config.get("ml.random_forest.n_estimators") for
+    - Dot-notation Access: config.get("ml.catboost.n_estimators") for
       clean, readable access to nested values.
 
 Usage:
@@ -177,7 +177,7 @@ class ConfigManager:
         Get a configuration value using dot-notation.
 
         Args:
-            key: Dot-separated key path (e.g., "ml.random_forest.n_estimators").
+            key: Dot-separated key path (e.g., "ml.catboost.n_estimators").
             default: Default value if key is not found.
 
         Returns:
@@ -187,7 +187,7 @@ class ConfigManager:
             >>> config = ConfigManager()
             >>> config.get("app.name")
             'Incident Intelligence Platform'
-            >>> config.get("ml.random_forest.n_estimators", 100)
+            >>> config.get("ml.catboost.n_estimators", 100)
             200
         """
         keys = key.split(".")

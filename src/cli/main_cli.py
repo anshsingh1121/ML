@@ -27,9 +27,8 @@ from src.preprocessing.engineer import FeatureEngineeringEngine
 from src.preprocessing.text_preprocessor import TextPreprocessor
 from src.preprocessing.splitter import DatasetSplitter
 from src.data.feature_registry import FeatureRegistry
-from src.ml.random_forest.trainer import EnterpriseRandomForestTrainer
-from src.ml.random_forest.hpo import HyperparameterOptimizer
-from src.ml.random_forest.evaluator import ModelEvaluator
+from src.ml.catboost.trainer import EnterpriseCatBoostTrainer
+from src.ml.catboost.evaluator import ModelEvaluator
 from src.ml.explainability.shap_explainer import SHAPIntelligenceExplainer
 from src.ml.model_registry import ModelRegistry
 from src.ml.semantic.embedding_generator import SemanticEmbeddingGenerator
@@ -71,7 +70,7 @@ class EnterpriseCLI:
             print("\n[INFO] Self-Healing: Missing runtime models, indexes, reports, or processed data detected.")
             print("[INFO] Automatically regenerating complete runtime artifacts (--records 500)...")
             try:
-                self.cmd_full_pipeline(records=500, input_path=str(raw_path))
+                self.cmd_full_pipeline(input_path=str(raw_path))
             except Exception as e:
                 logger.warning(f"Self-healing regeneration encountered an exception: {e}")
 
@@ -86,9 +85,7 @@ class EnterpriseCLI:
             self._check_and_self_heal()
 
         try:
-            if command == "fetch":
-                return self.cmd_fetch(getattr(args, "output", "data/raw/incidents.csv"), getattr(args, "limit", 100000), getattr(args, "batch_size", 10000))
-            elif command == "validate":
+            if command == "validate":
                 return self.cmd_validate(args.input)
             elif command == "readiness":
                 return self.cmd_readiness(args.input)
@@ -105,7 +102,7 @@ class EnterpriseCLI:
             elif command == "status":
                 return self.cmd_status()
             elif command == "train":
-                return self.cmd_train(args.target, args.hpo, args.compare_baselines, args.train_data, args.val_data)
+                return self.cmd_train(args.target, args.compare_baselines, args.train_data, args.val_data)
             elif command == "evaluate":
                 return self.cmd_evaluate(args.model_key, args.test_data, args.target)
             elif command == "explain":
@@ -123,7 +120,7 @@ class EnterpriseCLI:
             elif command == "recommend":
                 return self.cmd_recommend(getattr(args, "input", None), getattr(args, "text", None), getattr(args, "top_k", 5))
             elif command == "full-pipeline":
-                return self.cmd_full_pipeline(records=getattr(args, "records", 500), input_path=getattr(args, "input", "data/raw/incidents.csv"))
+                return self.cmd_full_pipeline(input_path=getattr(args, "input", "data/raw/incidents.csv"))
             elif command == "clean-workspace":
                 return self.cmd_clean_workspace()
             else:
@@ -135,18 +132,7 @@ class EnterpriseCLI:
             return 1
 
 
-    def cmd_fetch(self, output_path: str, limit: int, batch_size: int) -> int:
-        """Fetch huge real-time datasets from ServiceNow via REST API."""
-        print(f"\n---> [1/1] Initializing ServiceNow API Fetcher...")
-        from src.data.servicenow_api import ServiceNowFetcher
-        fetcher = ServiceNowFetcher()
-        success = fetcher.fetch_incidents(output_path=output_path, limit=limit, batch_size=batch_size)
-        if success:
-            print(f"[STATUS] Fetch Operation: PASS")
-            return 0
-        else:
-            print(f"[STATUS] Fetch Operation: FAIL")
-            return 1
+
 
     def cmd_validate(self, input_path: str) -> int:
         """Run enterprise dataset validation framework."""
@@ -300,32 +286,15 @@ class EnterpriseCLI:
         print(f"====================================================================")
         return 0
 
-    def cmd_train(self, target: str = "assignment_group", hpo: bool = False, compare_baselines: bool = True, train_path: Optional[str] = None, val_path: Optional[str] = None) -> int:
-        """Train Random Forest & baseline pipelines (`assignment_group` or `resolution_time_hours`)."""
+    def cmd_train(self, target: str = "assignment_group", compare_baselines: bool = True, train_path: Optional[str] = None, val_path: Optional[str] = None) -> int:
+        """Train CatBoost pipelines (`assignment_group` or `resolution_time_hours`)."""
         print(f"\n====================================================================")
-        print(f"Launching Enterprise ML Trainer (`target={target}`, HPO={hpo}, Baselines={compare_baselines})")
+        print(f"Launching Enterprise ML Trainer (`target={target}`, Baselines={compare_baselines})")
         print(f"====================================================================")
-        trainer = EnterpriseRandomForestTrainer()
-
-        if hpo:
-            print("\n---> [Stage 1/2] Running Hyperparameter Optimization...")
-            optimizer = HyperparameterOptimizer()
-            train_file = Path(train_path or "data/processed/train.csv")
-            if not train_file.exists():
-                print(f"[ERROR] Training partition missing: {train_file}")
-                return 1
-            df_t = robust_read_csv(train_file)
-            predictors = self.registry.get_random_forest_predictors()
-            X_t = trainer._get_safe_predictor_matrix(df_t, predictors)
-
-            if target in ["assignment_group", "category", "priority", "resolution_time_bucket"]:
-                best_p = optimizer.optimize_classifier(X_t, df_t[target], target_col=target)
-            else:
-                best_p = optimizer.optimize_regressor(X_t, df_t[target], target_col=target)
-            print(f"[SUCCESS] HPO Best Parameters Identified: {best_p}")
+        trainer = EnterpriseCatBoostTrainer()
 
         print("\n---> [Stage 2/2] Training & Persisting Complete Zero-Leakage Pipeline...")
-        if target in ["assignment_group", "category", "priority", "resolution_time_bucket"]:
+        if target in ["assignment_group", "category", "priority", "resolution_time_hours"]:
             out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
         else:
             out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
@@ -514,7 +483,7 @@ class EnterpriseCLI:
         print(f"\n[SUCCESS] Hybrid recommendation complete. Full reports exported to reports/hybrid_prediction.json, .md, and .csv")
         return 0
 
-    def _run_stage1_dataset_check(self, records: int, input_path: str) -> int:
+    def _run_stage1_dataset_check(self, input_path: str) -> int:
         """Stage 1 helper: Check if real/existing dataset exists; fail if missing."""
         target_path = Path(input_path)
         if target_path.exists():
@@ -526,7 +495,7 @@ class EnterpriseCLI:
             print(f"\n---> [Stage 1/12] No dataset found at '{input_path}'. Enterprise execution halted.")
             return 1
 
-    def cmd_full_pipeline(self, records: int = 500, input_path: str = "data/raw/incidents.csv") -> int:
+    def cmd_full_pipeline(self, input_path: str = "data/raw/incidents.csv") -> int:
         """Orchestrate all 12 stages of the Enterprise Incident Intelligence Platform sequentially."""
         start_time = time.time()
         print("\n" + "=" * 70)
@@ -535,11 +504,11 @@ class EnterpriseCLI:
         print("=" * 70)
 
         stages = [
-            ("Stage 1: Check/Prepare Input Dataset", lambda: self._run_stage1_dataset_check(records=records, input_path=input_path)),
+            ("Stage 1: Check/Prepare Input Dataset", lambda: self._run_stage1_dataset_check(input_path=input_path)),
             ("Stage 2: Enterprise Dataset Validation", lambda: self.cmd_validate(input_path=input_path)),
             ("Stage 3: Zero-Leakage Data Intelligence Pipeline", lambda: self.cmd_pipeline(input_path=input_path, output_dir="data/processed")),
-            ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", hpo=True, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
-            ("Stage 5: Train Classification Model (`resolution_time_bucket`)", lambda: self.cmd_train(target="resolution_time_bucket", hpo=True, compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+            ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+            ("Stage 5: Train Classification Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
             ("Stage 6: Evaluate Classification Model", lambda: self.cmd_evaluate(model_key="catboost_assignment_group:latest", test_data="data/processed/test.csv", target="assignment_group")),
             ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="catboost_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
             ("Stage 8: Generate Local Neural Embeddings (`TF-IDF + SVD`)", lambda: self.cmd_embed(input_path="data/processed/train.csv", batch_size=64)),
@@ -782,7 +751,6 @@ class EnterpriseCLI:
         print("Enterprise Incident Intelligence Platform (First Citizens Bank)")
         print("====================================================")
         print("--- PHASE 1 & 2: DATA FOUNDATION & INTELLIGENCE ---")
-        print("1. Generate Sample Synthetic Dataset (`data/raw/incidents.csv`) [Skip if using real CSV]")
         print("2. Validate Dataset")
         print("3. Run Quality Gates")
         print("4. ML Readiness Verification")
@@ -790,10 +758,9 @@ class EnterpriseCLI:
         print("6. Run Data Cleaning Engine")
         print("7. Run Feature Engineering Engine")
         print("8. Run Complete End-to-End Pipeline (`Clean -> Engineer -> Preprocess -> Split`)")
-        print("--- PHASE 3: RANDOM FOREST ML MODULE ---")
+        print("--- PHASE 3: CATBOOST ML MODULE ---")
         print("9. Train Classification Pipeline (`assignment_group` + Multi-Baseline Comparison)")
         print("10. Train Regression Pipeline (`resolution_time_hours` + Multi-Baseline Comparison)")
-        print("11. Run Hyperparameter Optimization (HPO)")
         print("12. Evaluate Trained Classification Model (`evaluate`)")
         print("13. Run SHAP Explainable AI Diagnostics (`explain`)")
         print("14. Audit Model Registry Catalog (`models`)")
@@ -840,11 +807,12 @@ class EnterpriseCLI:
         elif choice == "8":
             return self.cmd_pipeline(input_path, "data/processed")
         elif choice == "9":
-            return self.cmd_train(target="assignment_group", hpo=False, compare_baselines=True)
+            return self.cmd_train(target="assignment_group", compare_baselines=True)
         elif choice == "10":
-            return self.cmd_train(target="resolution_time_hours", hpo=False, compare_baselines=True)
+            return self.cmd_train(target="resolution_time_hours", compare_baselines=True)
         elif choice == "11":
-            return self.cmd_train(target="assignment_group", hpo=True, compare_baselines=True)
+            print("\n[INFO] Hyperparameter Optimization (HPO) has been removed.")
+            return 0
         elif choice == "12":
             return self.cmd_evaluate(model_key="catboost_assignment_group:latest", target="assignment_group")
         elif choice == "13":
@@ -865,7 +833,7 @@ class EnterpriseCLI:
             query_txt = input("Enter Incident JSON path or free query text (e.g. 'ATM cash jam'): ").strip()
             return self.cmd_recommend(input_path=None, text=query_txt, top_k=5)
         elif choice == "20":
-            return self.cmd_full_pipeline(records=500, input_path="data/raw/incidents.csv")
+            return self.cmd_full_pipeline(input_path="data/raw/incidents.csv")
         elif choice == "21":
             return self.cmd_clean_workspace()
         elif choice == "22":

@@ -34,7 +34,7 @@ Examples:
   python main.py explain --target assignment_group         # Generate SHAP explainability plots
   python main.py models                                    # Audit registered SHA256 model catalog
   python main.py predict --input sample.json               # Run zero-leakage inference & SHAP
-  python main.py embed                                     # Generate local embeddings (all-MiniLM-L6-v2)
+  python main.py embed                                     # Generate local embeddings (tfidf-svd-384)
   python main.py index                                     # Build and register FAISS vector index
   python main.py similar --incident INC0012345             # Find Top-K similar historical incidents
   python main.py similar --text "ATM withdrawal failing"   # Semantic search from free text
@@ -47,15 +47,7 @@ Examples:
     subparsers.add_parser("menu", help="Launch interactive menu (1-16)")
     subparsers.add_parser("status", help="Check system readiness and registry status")
 
-    # 2. generate / fetch
-    gen_parser = subparsers.add_parser("generate", help="Generate synthetic ServiceNow incidents")
-    gen_parser.add_argument("--records", type=int, default=10000, help="Number of incident records to generate")
-    gen_parser.add_argument("--output", type=str, default="datasets/synthetic/v1/incidents.csv", help="Output CSV path")
 
-    fetch_parser = subparsers.add_parser("fetch", help="Fetch real-time incidents from ServiceNow API")
-    fetch_parser.add_argument("--output", type=str, default="data/raw/incidents.csv", help="Output CSV path")
-    fetch_parser.add_argument("--limit", type=int, default=100000, help="Maximum number of records to pull")
-    fetch_parser.add_argument("--batch-size", type=int, default=10000, help="Number of records to pull per request")
 
     # 3. validate / readiness
     val_parser = subparsers.add_parser("validate", help="Run dataset validation checks")
@@ -103,13 +95,13 @@ Examples:
 
     # 10. evaluate (Phase 3)
     eval_parser = subparsers.add_parser("evaluate", help="Evaluate trained model pipeline and generate charts")
-    eval_parser.add_argument("--model-key", type=str, default="random_forest_assignment_group:latest", help="Model key (`name:version`) or absolute file path")
+    eval_parser.add_argument("--model-key", type=str, default="catboost_assignment_group:latest", help="Model key (`name:version`) or absolute file path")
     eval_parser.add_argument("--test-data", type=str, default="data/processed/test.csv", help="Path to test partition CSV")
     eval_parser.add_argument("--target", type=str, default="assignment_group", help="Target variable evaluated")
 
     # 11. explain (Phase 3)
     exp_parser = subparsers.add_parser("explain", help="Run SHAP TreeExplainer diagnostics and generate summary plots")
-    exp_parser.add_argument("--model-key", type=str, default="random_forest_assignment_group:latest", help="Model key (`name:version`) or absolute file path")
+    exp_parser.add_argument("--model-key", type=str, default="catboost_assignment_group:latest", help="Model key (`name:version`) or absolute file path")
     exp_parser.add_argument("--input", type=str, default="data/processed/test.csv", help="Input dataset for SHAP background/samples")
     exp_parser.add_argument("--target", type=str, default="assignment_group", help="Target variable explained")
 
@@ -119,11 +111,11 @@ Examples:
     # 13. predict (Phase 3)
     pred_parser = subparsers.add_parser("predict", help="Execute zero-manual-preprocessing inference and export prediction metadata")
     pred_parser.add_argument("--input", type=str, required=True, help="Path to input JSON payload or CSV file")
-    pred_parser.add_argument("--model-key", type=str, default="random_forest_assignment_group:latest", help="Model key (`name:version`) or file path")
+    pred_parser.add_argument("--model-key", type=str, default="catboost_assignment_group:latest", help="Model key (`name:version`) or file path")
     pred_parser.add_argument("--target", type=str, default="assignment_group", help="Target variable predicted")
 
     # 14. embed (Phase 4)
-    embed_parser = subparsers.add_parser("embed", help="Generate local neural embeddings (`all-MiniLM-L6-v2`) from incident dataset")
+    embed_parser = subparsers.add_parser("embed", help="Generate local neural embeddings (`tfidf-svd-384`) from incident dataset")
     embed_parser.add_argument("--input", type=str, default="data/processed/train.csv", help="Input historical dataset CSV path")
     embed_parser.add_argument("--batch-size", type=int, default=64, help="Batch size for neural embedding inference")
 
@@ -144,8 +136,7 @@ Examples:
     rec_parser.add_argument("--top-k", type=int, default=5, help="Number of semantic precedents to retrieve")
 
     # 18. full-pipeline (Phase 7 Enterprise Packaging)
-    full_parser = subparsers.add_parser("full-pipeline", help="Execute complete end-to-end Enterprise Incident Intelligence Pipeline (All 12 Stages)")
-    full_parser.add_argument("--records", type=int, default=500, help="Number of synthetic incidents to generate and process (default: 500)")
+    full_parser = subparsers.add_parser("full-pipeline", help="Execute complete end-to-end Enterprise Incident Intelligence Pipeline")
     full_parser.add_argument("--input", type=str, default="data/raw/incidents.csv", help="Input raw CSV path for pipeline processing")
 
     # 19. clean-workspace (Phase 7 Enterprise Packaging)

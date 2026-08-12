@@ -26,7 +26,7 @@ This document defines the functional, non-functional, data, and architectural re
 - **REQ-FE-2:** System shall apply proper categorical encoding (`LabelEncoding` / `FrequencyEncoding`) suitable for Random Forest processing.
 
 ### Module 4: Assignment Group Prediction
-- **REQ-ML-AG-1:** System shall train a `RandomForestClassifier` to predict target Assignment Groups with confidence scores.
+- **REQ-ML-AG-1:** System shall train a `CatBoostClassifier` to predict target Assignment Groups with confidence scores.
 - **REQ-ML-AG-2:** System shall output the top-3 most likely Assignment Groups along with their respective probabilities.
 
 ### Module 5: Resolution Recommendation
@@ -34,7 +34,7 @@ This document defines the functional, non-functional, data, and architectural re
 - **REQ-REC-2:** System shall synthesize actionable resolution steps to guide support engineers.
 
 ### Module 6: Resolution Time Prediction
-- **REQ-ML-RT-1:** System shall train a `RandomForestRegressor` to estimate expected resolution time (`resolution_time_hours`).
+- **REQ-ML-RT-1:** System shall train a `CatBoostRegressor` to estimate expected resolution time (`resolution_time_hours`).
 - **REQ-ML-RT-2:** System shall flag tickets at elevated risk of SLA breach (`resolution_time_hours > sla_target`).
 
 ### Module 7: Hyperparameter Optimization
@@ -48,7 +48,7 @@ This document defines the functional, non-functional, data, and architectural re
 - **REQ-RAG-1:** System shall support integration with local `Ollama` LLM (`llama3.1:8b`) to summarize similar incident close notes without sending data to external APIs.
 
 ### Module 10: Enterprise Dashboard
-- **REQ-DASH-1:** System shall provide an interactive `Streamlit` dashboard allowing engineers to input or select tickets and view AI predictions, similar incidents, and SHAP explanations in real time.
+- **REQ-DASH-1:** System shall provide an interactive `TF-IDF` dashboard allowing engineers to input or select tickets and view AI predictions, similar incidents, and SHAP explanations in real time.
 
 ### Module 11: Professional Reporting
 - **REQ-REP-1:** System shall generate styled `OpenPyXL` Excel workbooks containing daily, weekly, and monthly SLA and assignment trend analytics.
@@ -60,6 +60,6 @@ This document defines the functional, non-functional, data, and architectural re
 
 ## 3. Non-Functional Requirements & Constraints
 
-- **Security & Privacy (Bank Zero-Egress Mandate):** All processing, model training, text embedding generation (`all-MiniLM-L6-v2`), and LLM inference (`Ollama`) must execute **exclusively on-premises within the local environment**. Absolutely zero network egress to third-party or cloud AI endpoints is permitted.
+- **Security & Privacy (Bank Zero-Egress Mandate):** All processing, model training, text embedding generation (`tfidf-svd-384`), and LLM inference (`Ollama`) must execute **exclusively on-premises within the local environment**. Absolutely zero network egress to third-party or cloud AI endpoints is permitted.
 - **Hardware Optimization:** Architecture must operate efficiently on a Windows development environment equipped with an Intel Core i5, NVIDIA GTX GPU, and 16GB RAM by utilizing memory-bounded chunking and generator patterns.
 - **Scalability:** The data pipeline and dataset generator must scale seamlessly from 10,000 records up to 1,000,000+ records without encountering memory exhaustion (`Out-Of-Memory` errors).

@@ -25,9 +25,9 @@ class PipelineContractValidator:
         """Initialize validator with FeatureRegistry singleton."""
         self.registry = registry or FeatureRegistry.get_instance()
 
-    def get_random_forest_features(self, target: str = "assignment_group") -> List[str]:
+    def get_catboost_features(self, target: str = "assignment_group") -> List[str]:
         """Retrieve safe predictor column names authorized for Random Forest training."""
-        return self.registry.get_random_forest_predictors(target)
+        return self.registry.get_catboost_predictors(target)
 
     def get_embedding_text_features(self) -> List[str]:
         """Retrieve text column names authorized for neural embedding tokenization."""

@@ -54,7 +54,7 @@ graph TB
     subgraph L3["③ MACHINE LEARNING LAYER"]
         direction LR
         RF["Random Forest Classifiers"]
-        ST["Sentence Transformer (all-MiniLM-L6-v2)"]
+        ST["Sentence Transformer (tfidf-svd-384)"]
         FI["FAISS Vector Index"]
     end
 
@@ -69,7 +69,7 @@ graph TB
     %% ── Layer 5 · Presentation ───────────────────────────────
     subgraph L5["⑤ PRESENTATION LAYER"]
         direction LR
-        SD["Streamlit Dashboard"]
+        SD["TF-IDF Dashboard"]
         XR["Excel Reports"]
     end
 
@@ -213,7 +213,7 @@ graph LR
 
 ## 3. Data Flow Diagram
 
-This diagram traces the journey of a single incident record from its origin in ServiceNow through every transformation stage until it reaches the end-user on the Streamlit dashboard. Each node describes the data shape at that point in the pipeline.
+This diagram traces the journey of a single incident record from its origin in ServiceNow through every transformation stage until it reaches the end-user on the TF-IDF dashboard. Each node describes the data shape at that point in the pipeline.
 
 ```mermaid
 graph TD
@@ -241,7 +241,7 @@ graph TD
 
     %% ── Training Branch ──────────────────────────────────────
     TR_RF["🌲 Random Forest Training\nassignment_predictor.py\nresolution_time_predictor.py\n→ Trained .joblib models"]
-    TR_ST["🔤 Sentence Transformer\nall-MiniLM-L6-v2\n→ 384-dim embedding vectors"]
+    TR_ST["🔤 Sentence Transformer\ntfidf-svd-384\n→ 384-dim embedding vectors"]
 
     %% ── Indexing ─────────────────────────────────────────────
     FAISS["📊 FAISS Index Build\nIVFFlat / FlatL2\n→ .faiss index file"]
@@ -262,7 +262,7 @@ graph TD
     SHAP["📈 SHAP Explainer\nFeature importance per prediction"]
 
     %% ── Output ───────────────────────────────────────────────
-    DASH["📊 Streamlit Dashboard\nInteractive predictions,\nexplanations, analytics"]
+    DASH["📊 TF-IDF Dashboard\nInteractive predictions,\nexplanations, analytics"]
     EXCEL["📄 Excel Reports\nBatch results export"]
 
     %% ── Flows ────────────────────────────────────────────────
@@ -337,7 +337,7 @@ graph TB
             subgraph CONDA["🐍 Conda Environment (incident_env)"]
                 direction LR
                 PY["Python 3.11"]
-                DEPS["Dependencies:\nscikit-learn, sentence-transformers,\nfaiss-cpu, streamlit, shap,\npandas, openpyxl, requests,\nlangchain, PyYAML"]
+                DEPS["Dependencies:\nscikit-learn, tfidf-svd-384,\nfaiss-cpu, streamlit, shap,\npandas, openpyxl, requests,\nlangchain, PyYAML"]
             end
 
             %% ── Application Components ───────────────────────
@@ -345,14 +345,14 @@ graph TB
                 direction TB
                 SRC_CODE["src/\n├─ data/\n├─ models/\n├─ resolution/\n├─ explainability/\n├─ dashboard/\n├─ reporting/\n└─ utils/"]
                 CFG_FILE["config/\n└─ config.yaml"]
-                SCRIPTS["scripts/\n├─ setup.bat\n├─ train.bat\n└─ run.bat"]
+                SCRIPTS["scripts/\n├─ train.bat\n"]
             end
 
             %% ── Ollama (optional, local) ─────────────────────
             OLL["🤖 Ollama Server (Local)\nModel: llama3.1:8b\nPort: 11434"]
 
-            %% ── Streamlit Server ─────────────────────────────
-            STR["🖥️ Streamlit Dev Server\nPort: 8501\n(localhost only)"]
+            %% ── TF-IDF Server ─────────────────────────────
+            STR["🖥️ TF-IDF Dev Server\nPort: 8501\n(localhost only)"]
 
             %% ── Local Storage ────────────────────────────────
             subgraph STORE["💾 Local Storage"]

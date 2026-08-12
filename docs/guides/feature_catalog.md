@@ -12,8 +12,8 @@ This catalog governs exact feature representations, encodings, target usage stra
 
 | Feature Name | Feature Type | Encoding Strategy | Target Usage | Feature Importance | Transformation Strategy |
 |---|:---:|:---:|:---:|:---:|---|
-| `short_description` | `Text` | `SentenceTransformer` (`all-MiniLM-L6-v2`) | **Similarity Search / Assignment Group** | 🔥 **High** | Normalize whitespace, strip special characters, compute 384-dimensional dense semantic embedding vector (`FAISS` IVFFlat index). |
-| `description` | `Text` | `SentenceTransformer` / `TF-IDF` | **Similarity Search / Resolution Recommendation** | 🔥 **High** | Truncate/summarize to 256 tokens (`all-MiniLM-L6-v2` limit). Extract technical keywords and compute dense 384-D vector + sparse TF-IDF. |
+| `short_description` | `Text` | `SentenceTransformer` (`tfidf-svd-384`) | **Similarity Search / Assignment Group** | 🔥 **High** | Normalize whitespace, strip special characters, compute 384-dimensional dense semantic embedding vector (`FAISS` IVFFlat index). |
+| `description` | `Text` | `SentenceTransformer` / `TF-IDF` | **Similarity Search / Resolution Recommendation** | 🔥 **High** | Truncate/summarize to 256 tokens (`tfidf-svd-384` limit). Extract technical keywords and compute dense 384-D vector + sparse TF-IDF. |
 | `category` | `Categorical` | `Label Encoding` / `One-Hot` | **Assignment Group / Resolution Time** | 🔥 **High** | Encode standard 8 banking categories. High discriminant power for initial routing classification. |
 | `subcategory` | `Categorical` | `Target Encoding` / `Frequency Encoding` | **Assignment Group / Resolution Time** | 🔥 **High** | High cardinality (~40 distinct subcategories). Use smooth out-of-fold Target Encoding to prevent tree over-splitting and dimensionality bloat. |
 | `priority` | `Numerical (Ordinal)` | `Raw Integer (1-5)` | **Resolution Time / Assignment Group** | 🔥 **High** | Retain as ordinal integer (`1`=Critical to `5`=Planning). Direct linear weight on SLA due dates and MTTR regression curves. |

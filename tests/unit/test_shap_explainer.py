@@ -8,12 +8,12 @@ import joblib
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.ensemble import RandomForestClassifier
+from catboost import CatBoostClassifier
 from sklearn.pipeline import Pipeline
 
 from src.data.feature_registry import FeatureRegistry
 from src.ml.explainability.shap_explainer import SHAPIntelligenceExplainer
-from src.ml.random_forest.trainer import EnterpriseRandomForestTrainer
+from src.ml.catboost.trainer import EnterpriseCatBoostTrainer
 
 
 @pytest.fixture
@@ -32,11 +32,14 @@ def dummy_model_and_data(tmp_path: Path) -> Tuple[Path, Path, pd.DataFrame]:
     test_p = tmp_path / "test.csv"
     df.to_csv(test_p, index=False)
 
-    trainer = EnterpriseRandomForestTrainer()
-    predictors = FeatureRegistry.get_instance().get_random_forest_predictors()
+    trainer = EnterpriseCatBoostTrainer()
+    predictors = FeatureRegistry.get_instance().get_catboost_predictors()
     for col in predictors:
         if col not in df.columns:
-            df[col] = 0
+            if "text" in col:
+                df[col] = "safetoken"
+            else:
+                df[col] = 0
 
     X = df[predictors]
     y = df["assignment_group"]
@@ -99,23 +102,35 @@ def test_explain_prediction(dummy_model_and_data: Tuple[Path, Path, pd.DataFrame
 
 def test_explain_regression(dummy_model_and_data: Tuple[Path, Path, pd.DataFrame], tmp_path: Path) -> None:
     """Test global and local SHAP diagnostics for regression target (`resolution_time_hours`)."""
-    from sklearn.ensemble import RandomForestRegressor
+    from catboost import CatBoostRegressor
     _, test_p, df = dummy_model_and_data
     df_reg = df.copy()
     df_reg["resolution_time_hours"] = np.random.uniform(1.0, 48.0, size=len(df_reg))
     test_reg_p = tmp_path / "test_reg.csv"
     df_reg.to_csv(test_reg_p, index=False)
 
-    trainer = EnterpriseRandomForestTrainer()
-    predictors = FeatureRegistry.get_instance().get_random_forest_predictors()
+    trainer = EnterpriseCatBoostTrainer()
+    predictors = FeatureRegistry.get_instance().get_catboost_predictors()
+    for col in predictors:
+        if col not in df_reg.columns:
+            if "text" in col:
+                df_reg[col] = "safetoken"
+            else:
+                df_reg[col] = 0
+                
     X = df_reg[predictors]
     y = df_reg["resolution_time_hours"]
     prep = trainer.build_preprocessing_pipeline(X, predictors)
     pipe = Pipeline([
         ("preprocessing", prep),
-        ("estimator", RandomForestRegressor(n_estimators=5, random_state=42))
+        ("estimator", CatBoostRegressor(iterations=5, random_seed=42, verbose=0))
     ])
-    pipe.fit(X, y)
+    
+    prep.fit(X, y)
+    X_trans = prep.transform(X)
+    text_idx = X_trans.shape[1] - 1
+    
+    pipe.fit(X, y, estimator__text_features=[text_idx])
     model_reg_p = tmp_path / "dummy_reg_shap.pkl"
     joblib.dump(pipe, model_reg_p)
 
@@ -144,9 +159,9 @@ def test_explain_registry_key(tmp_path: Path) -> None:
     """Test loading model from ModelRegistry by key string format (`name:tag`)."""
     from src.ml.model_registry import ModelRegistry
     reg = ModelRegistry.get_instance()
-    meta = reg.get_model_metadata("random_forest_assignment_group", "latest")
+    meta = reg.get_model_metadata("catboost_assignment_group", "latest")
     if meta and Path(meta.model_file_path).exists():
         explainer = SHAPIntelligenceExplainer(reports_dir=tmp_path / "reports_key")
-        pipe, path = explainer._resolve_pipeline("random_forest_assignment_group:latest")
+        pipe, path = explainer._resolve_pipeline("catboost_assignment_group:latest")
         assert path == Path(meta.model_file_path)
 

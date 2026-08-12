@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-To prevent schema drift, hardcoded column arrays, and target leakage across our multi-module enterprise platform, First Citizens Bank enforces the **Central Enterprise Registry Layer**. This architectural enhancement introduces four interconnected registries (`Feature Registry`, `Feature Lineage Tracker`, `Model Registry`, and `Embedding Registry`) that act as the binding contract across `Random Forest`, `FAISS`, `Streamlit Dashboard`, `FastAPI REST Endpoints`, and `Future RAG`.
+To prevent schema drift, hardcoded column arrays, and target leakage across our multi-module enterprise platform, First Citizens Bank enforces the **Central Enterprise Registry Layer**. This architectural enhancement introduces four interconnected registries (`Feature Registry`, `Feature Lineage Tracker`, `Model Registry`, and `Embedding Registry`) that act as the binding contract across `Random Forest`, `FAISS`, `TF-IDF Dashboard`, `TF-IDF REST Endpoints`, and `Future RAG`.
 
 ---
 
@@ -25,7 +25,7 @@ graph TD
         FR["1. Feature Registry<br/>(`src/data/feature_registry.py`)<br/>• 38 Raw + 11 Derived Attributes<br/>• 22 Governance Dimensions<br/>• Leakage Tiers: Safe / Warning / Blocked"] ::: regStyle
         FL["2. Feature Lineage Tracker<br/>(`src/data/feature_lineage.py`)<br/>• Parent-Child Ancestry<br/>• Mathematical Formulas<br/>• Transformation Stages"] ::: linStyle
         MR["3. Model Registry<br/>(`src/ml/model_registry.py`)<br/>• SHA256 Checksum Verification<br/>• Feature Registry Version Match<br/>• Hyperparameters & Metrics"] ::: regStyle
-        ER["4. Embedding & FAISS Registry<br/>(`src/ml/embedding_registry.py`)<br/>• all-MiniLM-L6-v2 (384-D)<br/>• 256 Token Truncation Rule<br/>• Distance Metrics (L2/IP)"] ::: regStyle
+        ER["4. Embedding & FAISS Registry<br/>(`src/ml/embedding_registry.py`)<br/>• tfidf-svd-384 (384-D)<br/>• 256 Token Truncation Rule<br/>• Distance Metrics (L2/IP)"] ::: regStyle
     end
 
     FR <-->|Derivation & Ancestry Rules| FL
@@ -36,10 +36,10 @@ graph TD
     FR & MR & ER --> Con
 
     subgraph Downstream_Consumers ["Downstream Enterprise Consumers"]
-        RF["Random Forest Engine<br/>(`get_random_forest_features()`)"] ::: modStyle
+        RF["Random Forest Engine<br/>(`get_catboost_features()`)"] ::: modStyle
         ST["SentenceTransformer & FAISS<br/>(`get_embedding_text_features()`)"] ::: modStyle
-        UI["Streamlit EDA Dashboard<br/>(`get_dashboard_kpi_features()`)"] ::: modStyle
-        API["FastAPI REST Ingestion<br/>(`get_api_request_schema()`)"] ::: modStyle
+        UI["TF-IDF EDA Dashboard<br/>(`get_dashboard_kpi_features()`)"] ::: modStyle
+        API["TF-IDF REST Ingestion<br/>(`get_api_request_schema()`)"] ::: modStyle
         RAG["Future RAG Knowledge Base<br/>(`get_rag_knowledge_features()`)"] ::: modStyle
     end
 
@@ -52,7 +52,7 @@ graph TD
 
 ### 3.1 Feature Registry (`FeatureRegistry`)
 - **Responsibility:** Manages 49 total features (`38` raw ServiceNow schema columns + `11` derived engineering flags).
-- **22-Dimension Matrix:** Every feature definition requires `business_name`, `technical_name`, `data_type`, `nullable`, `cardinality`, `missing_percentage`, `business_meaning`, `ml_importance`, `target_leakage_classification`, `encoding_strategy`, `imputation_strategy`, `scaling_strategy`, `feature_engineering_rules`, `random_forest_usage`, `embedding_usage`, `faiss_metadata_usage`, `dashboard_usage`, `api_exposure`, `future_rag_usage`, `explainability_usage`, `required_or_optional`, `deprecated_status`.
+- **22-Dimension Matrix:** Every feature definition requires `business_name`, `technical_name`, `data_type`, `nullable`, `cardinality`, `missing_percentage`, `business_meaning`, `ml_importance`, `target_leakage_classification`, `encoding_strategy`, `imputation_strategy`, `scaling_strategy`, `feature_engineering_rules`, `catboost_usage`, `embedding_usage`, `faiss_metadata_usage`, `dashboard_usage`, `api_exposure`, `future_rag_usage`, `explainability_usage`, `required_or_optional`, `deprecated_status`.
 - **Target Leakage Enforcement:**
   - `Safe`: Available immediately when ticket opens (`short_description`, `priority`, `category`).
   - `Warning`: Caution required (`change_request`, `problem_record`).

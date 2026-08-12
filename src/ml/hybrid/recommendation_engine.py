@@ -28,7 +28,7 @@ from src.ml.hybrid.confidence_engine import HybridConfidenceEngine
 from src.ml.hybrid.decision_engine import HybridDecisionEngine
 from src.ml.hybrid.reasoning_engine import HybridReasoningEngine
 from src.ml.model_registry import ModelRegistry
-from src.ml.random_forest.transformers import EnterpriseFeatureExtractor
+from src.ml.catboost.transformers import EnterpriseFeatureExtractor
 from src.ml.semantic.similarity_engine import SemanticSimilarityEngine
 from src.utils.config_manager import ConfigManager
 from src.utils.logger import get_logger
@@ -80,9 +80,9 @@ class HybridRecommendationEngine:
 
         self.rf_regressor = rf_regressor_pipeline
         if self.rf_regressor is None:
-            reg_path = self.model_reg.get_model_path("random_forest_resolution_time_hours")
+            reg_path = self.model_reg.get_model_path("catboost_resolution_time_hours")
             if not reg_path:
-                reg_path = self.models_dir / "random_forest_resolution_time_hours.pkl"
+                reg_path = self.models_dir / "catboost_resolution_time_hours.pkl"
             if reg_path.exists():
                 try:
                     self.rf_regressor = joblib.load(reg_path)

@@ -11,7 +11,7 @@ def test_pipeline_contract_feature_queries() -> None:
     """Verify clean retrieval of contract feature lists across RF, Embeddings, FAISS, Dashboard, API, and RAG."""
     validator = PipelineContractValidator()
 
-    rf_feats = validator.get_random_forest_features()
+    rf_feats = validator.get_catboost_features()
     assert "priority" in rf_feats
     assert "category" in rf_feats
     assert "close_notes" not in rf_feats

@@ -151,7 +151,7 @@ class FeatureEngineeringEngine:
             imputation_strategy="zero",
             scaling_strategy="standard" if data_type in ("float", "integer") else "none",
             feature_engineering_rules=formula,
-            random_forest_usage=rf_usage,
+            catboost_usage=rf_usage,
             embedding_usage="excluded",
             faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter" if data_type == "integer" else "detail_table",
@@ -309,15 +309,7 @@ class FeatureEngineeringEngine:
                 "blocked", "none", "target_resolution_time", "(resolved_at - opened_at) in hours", ["opened_at", "resolved_at"], report
             )
 
-            # Generate Classification Buckets
-            bins = [-1, 1, 4, 24, float("inf")]
-            labels = ["<1 Hour", "1-4 Hours", "4-24 Hours", "24+ Hours"]
-            df["resolution_time_bucket"] = pd.cut(df["resolution_time_hours"], bins=bins, labels=labels).astype(str)
-            
-            self._register_new_feature(
-                "resolution_time_bucket", "Resolution Time SLA Bucket", "string", "Discrete categorization of resolution time",
-                "blocked", "categorical", "target", "binned resolution_time_hours", ["resolution_time_hours"], report
-            )
+
         return df
 
     def _generate_text_statistics(self, df: pd.DataFrame, report: Dict[str, Any]) -> pd.DataFrame:

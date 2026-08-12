@@ -12,13 +12,13 @@ import joblib
 
 from src.data.feature_registry import FeatureRegistry
 from src.ml.model_registry import ModelRegistry
-from src.ml.random_forest.transformers import (
+from src.ml.catboost.transformers import (
     DataFrameSelector,
     EnterpriseFeatureExtractor,
     FrequencyEncoder,
     SmoothedTargetEncoder,
 )
-from src.ml.random_forest.trainer import EnterpriseRandomForestTrainer
+from src.ml.catboost.trainer import EnterpriseCatBoostTrainer
 
 
 @pytest.fixture
@@ -93,7 +93,7 @@ def test_custom_transformers() -> None:
 
 def test_trainer_target_leakage_interlock() -> None:
     """Verify that passing a blocked target leakage column raises ValueError immediately."""
-    trainer = EnterpriseRandomForestTrainer()
+    trainer = EnterpriseCatBoostTrainer()
     with pytest.raises(ValueError, match="Blocked target leakage feature"):
         trainer._verify_no_target_leakage(["priority", "resolved_at"])
 
@@ -102,8 +102,8 @@ def test_trainer_build_preprocessing_pipeline(synthetic_incidents_csv: Tuple[Pat
     """Test zero-leakage scikit-learn preprocessing pipeline construction."""
     train_p, _, _ = synthetic_incidents_csv
     df = pd.read_csv(train_p)
-    trainer = EnterpriseRandomForestTrainer()
-    predictors = FeatureRegistry.get_instance().get_random_forest_predictors()
+    trainer = EnterpriseCatBoostTrainer()
+    predictors = FeatureRegistry.get_instance().get_catboost_predictors()
 
     pipe = trainer.build_preprocessing_pipeline(df, predictors)
     out = pipe.fit_transform(df)
@@ -117,8 +117,8 @@ def test_train_baselines_and_compare(synthetic_incidents_csv: Tuple[Path, Path, 
     df_train = pd.read_csv(train_p)
     df_val = pd.read_csv(val_p)
 
-    trainer = EnterpriseRandomForestTrainer()
-    predictors = FeatureRegistry.get_instance().get_random_forest_predictors()
+    trainer = EnterpriseCatBoostTrainer()
+    predictors = FeatureRegistry.get_instance().get_catboost_predictors()
 
     pipelines_dict, best_name = trainer.train_baselines_and_compare(
         df_train, df_train["assignment_group"],
@@ -137,7 +137,7 @@ def test_train_baselines_and_compare(synthetic_incidents_csv: Tuple[Path, Path, 
 def test_train_classifier_and_regressor(synthetic_incidents_csv: Tuple[Path, Path, Path]) -> None:
     """Test primary classification and regression training, joblib persistence, and ModelRegistry interlock."""
     train_p, val_p, _ = synthetic_incidents_csv
-    trainer = EnterpriseRandomForestTrainer()
+    trainer = EnterpriseCatBoostTrainer()
 
     # Classification
     clf_path = trainer.train_classifier(train_path=str(train_p), val_path=str(val_p), target_col="assignment_group", compare_baselines=False)

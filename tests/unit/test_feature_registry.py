@@ -18,13 +18,13 @@ def test_feature_registry_singleton_and_defaults() -> None:
     reg1 = FeatureRegistry.get_instance()
     reg2 = FeatureRegistry.get_instance()
     assert reg1 is reg2
-    assert len(reg1.list_all_features()) == 52
+    assert len(reg1.list_all_features()) == 51
 
     feat = reg1.get_feature("assignment_group")
     assert feat is not None
     assert feat.business_name == "Assignment Group"
     assert feat.target_leakage_classification == "safe"
-    assert feat.random_forest_usage == "target_assignment_group"
+    assert feat.catboost_usage == "target_assignment_group"
 
 
 def test_feature_registry_queries() -> None:
@@ -38,7 +38,7 @@ def test_feature_registry_queries() -> None:
     assert "close_notes" in [f.technical_name for f in blocked_feats]
     assert "category" in [f.technical_name for f in safe_feats]
 
-    rf_preds = reg.get_random_forest_predictors()
+    rf_preds = reg.get_catboost_predictors()
     assert "priority" in rf_preds
     assert "category" in rf_preds
     assert "close_notes" not in rf_preds
@@ -66,5 +66,5 @@ def test_feature_registry_export_json_and_md(tmp_path: Path) -> None:
 
     with open(out_j, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data["total_features"] == 52
+    assert data["total_features"] == 51
     assert "assignment_group" in data["features"]

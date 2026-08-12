@@ -94,9 +94,15 @@ class SHAPIntelligenceExplainer:
         if isinstance(X_trans, pd.DataFrame):
             df_trans = X_trans.copy()
             df_trans.columns = resolved_names[:len(df_trans.columns)]
-            return df_trans
         else:
-            return pd.DataFrame(X_trans, columns=resolved_names[:n_cols])
+            df_trans = pd.DataFrame(X_trans, columns=resolved_names[:n_cols])
+            
+        for col in df_trans.columns:
+            try:
+                df_trans[col] = pd.to_numeric(df_trans[col])
+            except (ValueError, TypeError):
+                pass
+        return df_trans
 
     def _compute_shap_values(self, estimator: Any, X_trans_df: pd.DataFrame) -> Tuple[Any, Any]:
         """Intercept CatBoost to use native NLP SHAP, or fallback to standard TreeExplainer."""
@@ -137,7 +143,7 @@ class SHAPIntelligenceExplainer:
             raise FileNotFoundError(f"Test partition missing: {test_file}")
 
         df_test = robust_read_csv(test_file)
-        predictors = self.feat_reg.get_random_forest_predictors()
+        predictors = self.feat_reg.get_catboost_predictors()
         X_sample = self._get_safe_predictor_matrix(df_test, predictors).head(sample_size)
 
         # Transform features through pipeline preprocessing
@@ -196,7 +202,7 @@ class SHAPIntelligenceExplainer:
     def explain_prediction(
         self,
         record_or_batch: Union[Dict[str, Any], pd.DataFrame, List[Dict[str, Any]]],
-        model_key_or_path: Union[str, Path] = "models/random_forest_assignment_group.pkl",
+        model_key_or_path: Union[str, Path] = "models/catboost_assignment_group.pkl",
         target_col: str = "assignment_group"
     ) -> List[Dict[str, Any]]:
         """
@@ -216,7 +222,7 @@ class SHAPIntelligenceExplainer:
         else:
             raise ValueError("Input must be a dict, list of dicts, or pandas DataFrame.")
 
-        predictors = self.feat_reg.get_random_forest_predictors()
+        predictors = self.feat_reg.get_catboost_predictors()
         X_in = self._get_safe_predictor_matrix(df_in, predictors)
         prep = pipeline.named_steps.get("preprocessing", None)
         estimator = pipeline.named_steps.get("estimator", pipeline)
@@ -234,7 +240,16 @@ class SHAPIntelligenceExplainer:
         now_iso = datetime.now().isoformat()
 
         for i in range(len(df_in)):
-            pred_val = str(preds[i]) if hasattr(preds[i], "strip") or isinstance(preds[i], (str, int, np.integer)) else float(preds[i])
+            raw_pred = preds[i]
+            if isinstance(raw_pred, (list, np.ndarray)):
+                raw_pred = raw_pred[0] if len(raw_pred) > 0 else str(raw_pred)
+            if hasattr(raw_pred, "strip") or isinstance(raw_pred, (str, np.str_, int, np.integer)):
+                pred_val = str(raw_pred) if hasattr(raw_pred, "strip") or isinstance(raw_pred, (str, np.str_)) else float(raw_pred)
+            else:
+                try:
+                    pred_val = float(raw_pred)
+                except ValueError:
+                    pred_val = str(raw_pred)
             # If resolution time regression was log-transformed, apply expm1
             if target_col == "resolution_time_hours" and isinstance(pred_val, float):
                 pred_val = float(np.expm1(pred_val)) if pred_val < 15.0 else pred_val

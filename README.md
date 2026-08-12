@@ -39,7 +39,7 @@ graph TD
     end
 
     subgraph Layer 4: Semantic Vector Storage Layer
-        SPLIT --> EMBED[Local Neural Embedding Generator<br/>Model: all-MiniLM-L6-v2]
+        SPLIT --> EMBED[Local Neural Embedding Generator<br/>Model: tfidf-svd-384]
         EMBED --> FAISS[FAISS Vector Index<br/>Exact Flat / IVF Memory Storage]
     end
 
@@ -71,8 +71,6 @@ The repository root is strictly organized to expose exact public entry points an
 
 ```text
 incident_classification/
-├── setup.bat                # Canonical one-time Windows environment and installation setup
-├── run.bat                  # Canonical daily interactive operational choice launcher
 ├── main.py                  # Master CLI entry controller delegating to src/cli/main_cli.py
 ├── README.md                # Enterprise platform documentation (this file)
 ├── LICENSE                  # First Citizens Bank Proprietary Enterprise License
@@ -85,9 +83,9 @@ incident_classification/
 │   ├── logging.yaml         # Structured logger names, levels, and rotation handlers
 │   └── servicenow.yaml      # ServiceNow REST API and integration schema configs
 ├── src/                     # Core application source code package (`incident-intelligence`)
-│   ├── api/                 # FastAPI REST API schemas and route handlers
+│   ├── api/                 # TF-IDF REST API schemas and route handlers
 │   ├── cli/                 # Interactive subshell controller (`main_cli.py`)
-│   ├── dashboard/           # Streamlit presentation and visual analysis pages
+│   ├── dashboard/           # TF-IDF presentation and visual analysis pages
 │   ├── data/                # Data generation, validation, quality gates, and registry
 │   ├── ml/                  # Random forest trainers, HPO, SHAP, FAISS, and hybrid engines
 │   ├── preprocessing/       # Data cleaning, EDA, engineering, text prep, and splitting
@@ -113,7 +111,6 @@ incident_classification/
 
 ## 🖥️ Windows Support
 
-The platform is explicitly certified for **Windows 10** and **Windows 11** architectures (`x86_64` / `AMD64`). All environment setup, virtual environment creation, package installations, and pipeline execution wrappers are handled through robust Windows Command Prompt (`cmd.exe`) batch scripts (`setup.bat` and `run.bat`).
 
 ---
 
@@ -121,16 +118,14 @@ The platform is explicitly certified for **Windows 10** and **Windows 11** archi
 
 Getting started requires exactly **two double-clicks** inside Windows File Explorer:
 
-### 1. Double-click `setup.bat`
 - Automatically detects Python (`3.11+` / `3.12+`) and Conda (`where conda`).
 - Checks for existing or creates the dedicated `incident-ai` Conda environment (or falls back cleanly to `.venv` if Conda is not installed).
 - Upgrades `pip` and installs all dependencies (`requirements.txt`).
 - Installs the project package in editable mode (`pip install -e . --no-deps`).
 - Creates all required workspace folders (`data\raw`, `data\processed`, `models\embeddings`, `indexes`, `reports\figures`, `logs`).
-- Verifies core package imports (`numpy, pandas, sklearn, sentence_transformers, faiss, shap, src`).
+- Verifies core package imports (`numpy, pandas, sklearn, tfidf-svd-384, faiss, shap, src`).
 - Executes a platform status diagnostic (`python main.py status`) and confirms readiness.
 
-### 2. Double-click `run.bat`
 Launches the interactive operational menu:
 ```text
 ===============================================================================
@@ -164,7 +159,7 @@ Orchestrates the complete 12-stage automated certification sequence in a single 
 5. **Stage 5**: Train `resolution_time_hours` regression model (`Random Forest Regressor`).
 6. **Stage 6**: Run comprehensive classification metrics evaluator (`Accuracy`, `Precision`, `Recall`, `F1`, `Top-K`).
 7. **Stage 7**: Compute global and local feature importance attributions using `SHAP TreeExplainer`.
-8. **Stage 8**: Generate 384-dimensional dense semantic embeddings (`all-MiniLM-L6-v2`) from normalized text.
+8. **Stage 8**: Generate 384-dimensional dense semantic embeddings (`tfidf-svd-384`) from normalized text.
 9. **Stage 9**: Build and persist high-speed `FAISS` exact Euclidean (`Flat`) vector indexes.
 10. **Stage 10**: Execute Hybrid Recommendation Engine against demonstration precedents.
 11. **Stage 11**: Run automated `Pytest` unit and integration test suite (`89 tests`, verifying `>80%` coverage).
@@ -173,7 +168,7 @@ Orchestrates the complete 12-stage automated certification sequence in a single 
 ### Model Registry (`src/ml/model_registry.py`)
 Provides thread-safe singleton governance over all trained models:
 - **Automatic SHA256 Verification**: Calculates and records cryptographic hashes for every saved `.pkl` artifact to guarantee model immutability.
-- **Atomic Versioning**: Maintains versioned manifests (`random_forest_assignment_group:latest`, `random_forest_resolution_time_hours:v2.0.0`) with historical lineage tracking.
+- **Atomic Versioning**: Maintains versioned manifests (`catboost_assignment_group:latest`, `catboost_resolution_time_hours:v2.0.0`) with historical lineage tracking.
 - **Centralized Metadata**: Stores exact hyperparameters, feature names, training timestamps, and validation metrics.
 
 ### Embedding Registry (`src/ml/embedding_registry.py`)
@@ -207,8 +202,6 @@ The platform enforces strict continuous integration quality gates (`pyproject.to
 | :--- | :--- | :--- |
 | `ModuleNotFoundError: No module named 'faiss.swigfaiss_avx512'` | `faiss-cpu` attempts to probe AVX512 CPU registers on startup before falling back to AVX2. | **Normal Behavior**. Look at the next log line confirming `Successfully loaded faiss with AVX2 support`. No action needed. |
 | `PermissionError: [WinError 32] ... logs\system.log` during cleanup | Active Python logger instances hold an open file lock on `system.log` in Windows. | Our `clean-workspace` command has built-in Windows file-lock resilience and will cleanly preserve active log files without failing. |
-| `eq was unexpected at this time` inside batch scripts | Using PowerShell/Unix `eq` operator instead of `==` inside Windows Command Prompt (`cmd.exe`). | Always use `"%errorlevel%"=="0"` inside `setup.bat` / `run.bat`. This is already fixed in canonical `v2.0.0` scripts. |
-| `Environment not activated or missing` when launching `run.bat` | Conda or virtual environment is not active in current command prompt session. | Simply allow `run.bat` to automatically invoke `setup.bat` or double-click `setup.bat` directly once. |
 
 ---
 

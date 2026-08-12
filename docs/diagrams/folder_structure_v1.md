@@ -18,8 +18,8 @@ graph TD
     ROOT --> SRC["src/<br/>Source Code Package"]
     ROOT --> TESTS["tests/<br/>Pytest Test Suite"]
     
-    SRC --> API["api/<br/>FastAPI REST Engine"]
-    SRC --> DASH["dashboard/<br/>Streamlit UI"]
+    SRC --> API["api/<br/>TF-IDF REST Engine"]
+    SRC --> DASH["dashboard/<br/>TF-IDF UI"]
     SRC --> DATAM["data/<br/>Dataset Generator"]
     SRC --> ML["ml/<br/>ML & Vector Intelligence"]
     SRC --> PRE["preprocessing/<br/>Cleaning & FE"]
@@ -27,7 +27,7 @@ graph TD
     SRC --> RES["resolution/<br/>Recommender & RAG"]
     SRC --> UTILS["utils/<br/>ConfigManager & Logger"]
     
-    ML --> RF["random_forest/<br/>Classifiers & Regressors"]
+    ML --> RF["catboost/<br/>Classifiers & Regressors"]
     ML --> EMB["embeddings/<br/>Sentence Transformers"]
     ML --> VS["vector_store/<br/>FAISS Index Manager"]
     ML --> SIM["similarity/<br/>Hybrid Scoring"]
@@ -48,5 +48,5 @@ graph TD
 | `config/` | Centralized type-safe YAML configuration files | `config.yaml`, `logging.yaml`, `model_config.yaml`, `servicenow.yaml` |
 | `src/data/` | Synthetic dataset generator and ServiceNow API client | `dataset_generator.py` |
 | `src/utils/` | Enterprise core infrastructure singletons | `config_manager.py`, `logger.py` |
-| `src/ml/` | Core ML engines, embeddings, and vector similarity | `random_forest/`, `embeddings/`, `vector_store/`, `similarity/` |
+| `src/ml/` | Core ML engines, embeddings, and vector similarity | `catboost/`, `embeddings/`, `vector_store/`, `similarity/` |
 | `projects/` | Version-controlled Mermaid architectural diagrams | `pipeline_v1.md`, `architecture_v1.md`, `folder_structure_v1.md` |
