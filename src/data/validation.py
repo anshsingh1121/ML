@@ -48,7 +48,7 @@ class DatasetValidator:
     """
 
     REQUIRED_FIELDS = [
-        "incident_number", "opened_at", "priority", "category",
+        "number", "opened_at", "priority", "category",
         "assignment_group", "short_description", "description"
     ]
 
@@ -162,7 +162,7 @@ class DatasetValidator:
         if not passed:
             missing_rows = df[df[self.REQUIRED_FIELDS].isnull().any(axis=1)].head(3)
             for _, row in missing_rows.iterrows():
-                sample.append({"incident_number": row.get("incident_number", "UNKNOWN"), "missing_cols": [col for col in self.REQUIRED_FIELDS if pd.isnull(row.get(col))]})
+                sample.append({"number": row.get("number", "UNKNOWN"), "missing_cols": [col for col in self.REQUIRED_FIELDS if pd.isnull(row.get(col))]})
 
         return CheckResult(
             rule_id="CHK-01",
@@ -174,12 +174,12 @@ class DatasetValidator:
             sample_anomalies=sample
         )
 
-    def _check_duplicate_ids(self, df: pd.DataFrame) -> CheckResult:
-        """Rule 2: Check for exact duplicate incident_number keys."""
-        if "incident_number" not in df.columns:
-            return CheckResult("CHK-02", "Duplicate Incident Numbers", False, len(df), 100.0, "Missing incident_number column", [])
+    def _check_duplicate_incidents(self, df: pd.DataFrame) -> CheckResult:
+        """Rule 2: Check for exact duplicate number keys."""
+        if "number" not in df.columns:
+            return CheckResult("CHK-02", "Duplicate Incident Numbers", False, len(df), 100.0, "Missing number column", [])
 
-        dup_mask = df["incident_number"].duplicated(keep=False)
+        dup_mask = df["number"].duplicated(keep=False)
         error_count = int(dup_mask.sum())
         passed = error_count == 0
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
@@ -187,7 +187,7 @@ class DatasetValidator:
         details_msg = "All incident numbers are unique." if passed else f"Found {error_count} records sharing duplicate incident numbers."
         sample = []
         if not passed:
-            dup_records = df[dup_mask]["incident_number"].head(5).tolist()
+            dup_records = df[dup_mask]["number"].head(5).tolist()
             sample.append({"duplicate_ids": dup_records})
 
         return CheckResult("CHK-02", "Duplicate Incident Numbers", passed, error_count, error_pct, details_msg, sample)
@@ -203,14 +203,14 @@ class DatasetValidator:
             invalid_res = df[res_mask & (pd.to_datetime(df["resolved_at"]) < pd.to_datetime(df["opened_at"]))]
             error_count += len(invalid_res)
             for _, r in invalid_res.head(3).iterrows():
-                anomalies.append({"incident_number": r["incident_number"], "error": "resolved_at < opened_at", "opened_at": str(r["opened_at"]), "resolved_at": str(r["resolved_at"])})
+                anomalies.append({"number": r["number"], "error": "resolved_at < opened_at", "opened_at": str(r["opened_at"]), "resolved_at": str(r["resolved_at"])})
 
         if "resolved_at" in df.columns and "closed_at" in df.columns:
             close_mask = ~df["closed_at"].isnull() & ~df["resolved_at"].isnull()
             invalid_close = df[close_mask & (pd.to_datetime(df["closed_at"]) < pd.to_datetime(df["resolved_at"]))]
             error_count += len(invalid_close)
             for _, r in invalid_close.head(3).iterrows():
-                anomalies.append({"incident_number": r["incident_number"], "error": "closed_at < resolved_at", "resolved_at": str(r["resolved_at"]), "closed_at": str(r["closed_at"])})
+                anomalies.append({"number": r["number"], "error": "closed_at < resolved_at", "resolved_at": str(r["resolved_at"]), "closed_at": str(r["closed_at"])})
 
         passed = error_count == 0
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
@@ -251,17 +251,22 @@ class DatasetValidator:
         return CheckResult("CHK-05", "Invalid Assignment Groups", passed, error_count, error_pct, details_msg, sample)
 
     def _check_invalid_priorities(self, df: pd.DataFrame) -> CheckResult:
-        """Rule 6: Check if priorities fall cleanly within integer levels 1 through 5."""
+        """Rule 6: Check if priorities fall cleanly within integer levels 1 through 5, or string formats starting with 1-5."""
         if "priority" not in df.columns:
             return CheckResult("CHK-06", "Invalid Priorities", False, len(df), 100.0, "Missing priority column", [])
 
-        valid_priorities = {1, 2, 3, 4, 5}
-        invalid_mask = ~df["priority"].isin(valid_priorities)
+        # Priority can be int (1) or string ("1 - High")
+        invalid_mask = df["priority"].isnull()
+        if not df["priority"].isnull().all():
+            priority_str = df["priority"].astype(str).str.strip().str[0]
+            valid_priorities = {"1", "2", "3", "4", "5"}
+            invalid_mask = ~priority_str.isin(valid_priorities) & df["priority"].notnull()
+            
         error_count = int(invalid_mask.sum())
         passed = error_count == 0
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
-        details_msg = "All ticket priorities conform to standard 1-5 integer scale." if passed else f"Found {error_count} tickets with out-of-bounds priorities."
+        details_msg = "All ticket priorities conform to standard 1-5 scale." if passed else f"Found {error_count} tickets with out-of-bounds priorities."
         sample = [{"invalid_priority": str(p)} for p in df[invalid_mask]["priority"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-06", "Invalid Priorities", passed, error_count, error_pct, details_msg, sample)
@@ -280,11 +285,11 @@ class DatasetValidator:
                 if r["made_sla"] and r["resolution_time_hours"] > (target + 0.05):
                     error_count += 1
                     if len(anomalies) < 3:
-                        anomalies.append({"incident_number": r["incident_number"], "error": "made_sla=True but resolution exceeded target", "priority": r["priority"], "resolution_time_hours": r["resolution_time_hours"], "target_hours": target})
+                        anomalies.append({"number": r["number"], "error": "made_sla=True but resolution exceeded target", "priority": r["priority"], "resolution_time_hours": r["resolution_time_hours"], "target_hours": target})
                 elif not r["made_sla"] and r["resolution_time_hours"] <= target and r["sla_status"] == "Breached":
                     error_count += 1
                     if len(anomalies) < 3:
-                        anomalies.append({"incident_number": r["incident_number"], "error": "made_sla=False but resolution within target", "priority": r["priority"], "resolution_time_hours": r["resolution_time_hours"], "target_hours": target})
+                        anomalies.append({"number": r["number"], "error": "made_sla=False but resolution within target", "priority": r["priority"], "resolution_time_hours": r["resolution_time_hours"], "target_hours": target})
 
         passed = error_count == 0
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
@@ -304,7 +309,7 @@ class DatasetValidator:
             error_count += neg_count
             if neg_count > 0:
                 for _, r in df[neg_mask].head(3).iterrows():
-                    anomalies.append({"incident_number": r["incident_number"], "error": "Negative resolution time", "resolution_time_hours": r["resolution_time_hours"]})
+                    anomalies.append({"number": r["number"], "error": "Negative resolution time", "resolution_time_hours": r["resolution_time_hours"]})
 
             # Check timestamp difference vs resolution_time_hours tolerance
             if "opened_at" in df.columns and "resolved_at" in df.columns:
@@ -316,7 +321,7 @@ class DatasetValidator:
                     error_count += diff_count
                     if diff_count > 0 and len(anomalies) < 3:
                         for _, r in res_df[diff_error].head(3).iterrows():
-                            anomalies.append({"incident_number": r["incident_number"], "error": "Resolution time diverges from resolved_at - opened_at by >30 mins"})
+                            anomalies.append({"number": r["number"], "error": "Resolution time diverges from resolved_at - opened_at by >30 mins"})
 
         passed = error_count == 0
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
@@ -335,7 +340,7 @@ class DatasetValidator:
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
         details_msg = "All incident records maintain valid CMDB Configuration Item references." if passed else f"Found {error_count} records with missing or unknown CMDB references."
-        sample = [{"incident_number": str(num), "cmdb_ci": "EMPTY"} for num in df[empty_mask]["incident_number"].head(3).tolist()] if not passed else []
+        sample = [{"number": str(num), "cmdb_ci": "EMPTY"} for num in df[empty_mask]["number"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-09", "Invalid CMDB References", passed, error_count, error_pct, details_msg, sample)
 
@@ -350,7 +355,7 @@ class DatasetValidator:
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
         details_msg = "All tickets map cleanly to enterprise Business Services." if passed else f"Found {error_count} tickets missing Business Service designations."
-        sample = [{"incident_number": str(num)} for num in df[empty_mask]["incident_number"].head(3).tolist()] if not passed else []
+        sample = [{"number": str(num)} for num in df[empty_mask]["number"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-10", "Invalid Business Services", passed, error_count, error_pct, details_msg, sample)
 
@@ -365,7 +370,7 @@ class DatasetValidator:
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
         details_msg = "All records contain detailed incident descriptions." if passed else f"Found {error_count} tickets with empty or blank descriptions."
-        sample = [{"incident_number": str(num)} for num in df[empty_mask]["incident_number"].head(3).tolist()] if not passed else []
+        sample = [{"number": str(num)} for num in df[empty_mask]["number"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-11", "Empty Descriptions", passed, error_count, error_pct, details_msg, sample)
 
@@ -380,7 +385,7 @@ class DatasetValidator:
         error_pct = round((error_count / len(df)) * 100, 4) if len(df) > 0 else 0.0
 
         details_msg = "All records contain valid summary short descriptions." if passed else f"Found {error_count} tickets with empty short descriptions."
-        sample = [{"incident_number": str(num)} for num in df[empty_mask]["incident_number"].head(3).tolist()] if not passed else []
+        sample = [{"number": str(num)} for num in df[empty_mask]["number"].head(3).tolist()] if not passed else []
 
         return CheckResult("CHK-12", "Empty Short Descriptions", passed, error_count, error_pct, details_msg, sample)
 

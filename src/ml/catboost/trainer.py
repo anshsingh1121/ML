@@ -24,7 +24,7 @@ from sklearn.ensemble import (
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score, classification_report
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -174,7 +174,7 @@ class EnterpriseCatBoostTrainer:
                 iterations=rf_cfg.get("n_estimators", 300),
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
-                verbose=0,
+                verbose=50,
                 random_seed=42
             )
         else:
@@ -185,7 +185,7 @@ class EnterpriseCatBoostTrainer:
                 depth=rf_cfg.get("max_depth", 6),
                 learning_rate=0.1,
                 loss_function="MAE",
-                verbose=0,
+                verbose=50,
                 random_seed=42
             )
 
@@ -337,7 +337,7 @@ class EnterpriseCatBoostTrainer:
                 depth=rf_cfg.get("depth", 6),
                 learning_rate=rf_cfg.get("learning_rate", 0.1),
                 random_seed=42,
-                verbose=0
+                verbose=50
             )
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
             primary_pipeline.fit(X_train, y_train, estimator__text_features=[text_idx])
@@ -347,6 +347,10 @@ class EnterpriseCatBoostTrainer:
         acc = accuracy_score(y_val, val_preds)
         f1 = f1_score(y_val, val_preds, average="weighted", zero_division=0)
         train_dur = time.time() - start_t
+        
+        print(f"\n{'='*50}\nFINAL CLASSIFICATION METRICS: {target_col}\n{'='*50}")
+        print(classification_report(y_val, val_preds, zero_division=0))
+        print(f"Overall Accuracy: {acc:.4f} | Weighted F1: {f1:.4f}\n{'='*50}\n")
 
         # Persist complete pipeline
         out_path = self.models_dir / f"catboost_{target_col}.pkl"
@@ -430,7 +434,7 @@ class EnterpriseCatBoostTrainer:
                 learning_rate=rf_cfg.get("learning_rate", 0.1),
                 loss_function="MAE",
                 random_seed=42,
-                verbose=0
+                verbose=50
             )
             primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
             primary_pipeline.fit(X_train, y_train_log, estimator__text_features=[text_idx])
@@ -444,6 +448,11 @@ class EnterpriseCatBoostTrainer:
         mae = float(mean_absolute_error(y_val_inv, val_preds_inv))
         r2 = float(r2_score(y_val_inv, val_preds_inv))
         train_dur = time.time() - start_t
+        
+        print(f"\n{'='*50}\nFINAL REGRESSION METRICS: {target_col}\n{'='*50}")
+        print(f"Mean Absolute Error (MAE): {mae:.4f} hours")
+        print(f"Root Mean Squared Error (RMSE): {rmse:.4f} hours")
+        print(f"R-Squared (R2): {r2:.4f}\n{'='*50}\n")
 
         out_path = self.models_dir / f"catboost_{target_col}.pkl"
         joblib.dump(primary_pipeline, out_path)

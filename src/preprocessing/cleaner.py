@@ -59,6 +59,9 @@ class EnterpriseDataCleaner:
             "transformations": []
         }
 
+        # 0. Corporate Schema Mapping
+        clean_df = self._map_corporate_schema(clean_df, audit_log)
+
         # 1. Duplicate Removal
         clean_df = self._remove_duplicates(clean_df, audit_log)
 
@@ -102,6 +105,25 @@ class EnterpriseDataCleaner:
         logger.info(f"Exported cleaning Markdown report to: {md_file}")
 
         return clean_df, audit_log
+
+    def _map_corporate_schema(self, df: pd.DataFrame, audit_log: Dict[str, Any]) -> pd.DataFrame:
+        """Map corporate column names to standard pipeline schema."""
+        rename_map = {
+            "number": "incident_number",
+            "problem_id": "problem_record",
+            "business_impact": "impact",
+            "severity": "urgency"
+        }
+        actual_rename = {k: v for k, v in rename_map.items() if k in df.columns}
+        if actual_rename:
+            df = df.rename(columns=actual_rename)
+            audit_log["transformations"].append({
+                "step": "Corporate Schema Mapping",
+                "affected_column": ", ".join(actual_rename.keys()),
+                "records_modified": len(df),
+                "action": f"Renamed corporate columns to standard schema: {actual_rename}"
+            })
+        return df
 
     def _remove_duplicates(self, df: pd.DataFrame, audit_log: Dict[str, Any]) -> pd.DataFrame:
         """Remove duplicate incident numbers or duplicate rows."""
@@ -288,20 +310,36 @@ class EnterpriseDataCleaner:
                     "action": f"Clipped {invalid_count:,} out-of-bounds priority ratings into valid banking tier [1, 5]."
                 })
                 
-        if "severity" in df.columns:
-            severity_map = {"critical": 1, "high": 1, "sev 1": 1, "medium": 2, "sev 2": 2, "low": 3, "sev 3": 3}
-            df["severity"] = safe_map(df["severity"], severity_map, 2)
+        if "impact" in df.columns:
+            impact_map = {"critical": 1, "high": 1, "medium": 2, "low": 3}
+            df["impact"] = safe_map(df["impact"], impact_map, 2)
             
-            invalid_mask = (df["severity"] < 1) | (df["severity"] > 3)
+            invalid_mask = (df["impact"] < 1) | (df["impact"] > 3)
             invalid_count = int(invalid_mask.sum())
             if invalid_count > 0:
-                df.loc[df["severity"] < 1, "severity"] = 1
-                df.loc[df["severity"] > 3, "severity"] = 3
+                df.loc[df["impact"] < 1, "impact"] = 1
+                df.loc[df["impact"] > 3, "impact"] = 3
                 audit_log["transformations"].append({
                     "step": "Business Rule Enforcement",
-                    "affected_column": "severity",
+                    "affected_column": "impact",
                     "records_modified": invalid_count,
-                    "action": f"Clipped {invalid_count:,} out-of-bounds severity ratings into valid tier [1, 3]."
+                    "action": f"Clipped {invalid_count:,} out-of-bounds impact ratings into valid tier [1, 3]."
+                })
+
+        if "urgency" in df.columns:
+            urgency_map = {"critical": 1, "high": 1, "sev 1": 1, "medium": 2, "sev 2": 2, "low": 3, "sev 3": 3}
+            df["urgency"] = safe_map(df["urgency"], urgency_map, 2)
+            
+            invalid_mask = (df["urgency"] < 1) | (df["urgency"] > 3)
+            invalid_count = int(invalid_mask.sum())
+            if invalid_count > 0:
+                df.loc[df["urgency"] < 1, "urgency"] = 1
+                df.loc[df["urgency"] > 3, "urgency"] = 3
+                audit_log["transformations"].append({
+                    "step": "Business Rule Enforcement",
+                    "affected_column": "urgency",
+                    "records_modified": invalid_count,
+                    "action": f"Clipped {invalid_count:,} out-of-bounds urgency ratings into valid tier [1, 3]."
                 })
 
         return df
