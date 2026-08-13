@@ -272,19 +272,14 @@ class FeatureEngineeringEngine:
 
     def _generate_interaction_features(self, df: pd.DataFrame, report: Dict[str, Any]) -> pd.DataFrame:
         """Create high-signal cross-interactions between priority, impact, urgency, and categories."""
-        if "priority" in df.columns and "impact" in df.columns:
-            df["priority_x_impact"] = df["priority"].astype(int) * df["impact"].astype(int)
+        if "priority" in df.columns and "business_impact" in df.columns:
+            df["priority_x_business_impact"] = df["priority"].astype(int) * df["business_impact"].astype(int)
             self._register_new_feature(
-                "priority_x_impact", "Priority x Impact Interaction", "integer", "Multiplicative interaction score",
-                "safe", "ordinal", "predictor", "priority * impact", ["priority", "impact"], report
+                "priority_x_business_impact", "Priority x Impact Interaction", "integer", "Multiplicative interaction score",
+                "safe", "ordinal", "predictor", "priority * impact", ["priority", "business_impact"], report
             )
 
-        if "priority" in df.columns and "urgency" in df.columns:
-            df["priority_x_urgency"] = df["priority"].astype(int) * df["urgency"].astype(int)
-            self._register_new_feature(
-                "priority_x_urgency", "Priority x Urgency Interaction", "integer", "Multiplicative interaction score",
-                "safe", "ordinal", "predictor", "priority * urgency", ["priority", "urgency"], report
-            )
+
 
         if "category" in df.columns and "assignment_group" in df.columns:
             df["category_assignment_interaction"] = df["category"].astype(str) + "_" + df["assignment_group"].astype(str)
@@ -359,12 +354,12 @@ class FeatureEngineeringEngine:
                 "safe", "ordinal", "predictor", "1 if parent_incident not empty else 0", ["parent_incident"], report
             )
 
-        if "problem_record" in df.columns or "problem_flag" in df.columns:
-            prob_series = df["problem_flag"] if "problem_flag" in df.columns else df["problem_record"].notna()
-            df["has_problem_record"] = prob_series.astype(int)
+        if "problem_id" in df.columns or "problem_flag" in df.columns:
+            prob_series = df["problem_flag"] if "problem_flag" in df.columns else df["problem_id"].notna()
+            df["has_problem_id"] = prob_series.astype(int)
             self._register_new_feature(
-                "has_problem_record", "Problem Record Link Flag", "integer", "1 if linked to problem record else 0",
-                "safe", "ordinal", "predictor", "1 if problem_record/flag true else 0", ["problem_flag" if "problem_flag" in df.columns else "problem_record"], report
+                "has_problem_id", "Problem Record Link Flag", "integer", "1 if linked to problem record else 0",
+                "safe", "ordinal", "predictor", "1 if problem_record/flag true else 0", ["problem_flag" if "problem_flag" in df.columns else "problem_id"], report
             )
 
         if "change_request" in df.columns:

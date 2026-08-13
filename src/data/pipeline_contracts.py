@@ -78,7 +78,7 @@ class PipelineContractValidator:
                 "opened_at_hour", "opened_at_hour_sin", "opened_at_hour_cos",
                 "opened_at_dayofweek", "opened_at_dayofweek_sin", "opened_at_dayofweek_cos",
                 "is_business_hours", "has_parent_incident", "has_change_request",
-                "has_problem_record", "is_duplicate", "priority_x_impact", "priority_x_urgency"
+                "has_problem_id", "is_duplicate", "priority_x_business_impact", "priority_x_urgency"
             }
             safe_feats = self.registry.get_features_by_leakage("safe")
             required_triage = [

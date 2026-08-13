@@ -41,4 +41,4 @@ This catalog governs exact feature representations, encodings, target usage stra
 > - `close_notes`, `resolution_code` (Engineer's final fix text and code)
 > - `resolution_time_hours`, `calendar_duration_hours`, `business_duration_hours` (Calculated outcomes)
 > - `made_sla`, `sla_status` (Post-resolution SLA calculation results)
-> - `reassignment_count`, `reopen_count` (Lifecycle progression KPIs)
+> - `u_caused_by`, `reopen_count` (Lifecycle progression KPIs)

@@ -56,7 +56,7 @@ graph TD
 - **Target Leakage Enforcement:**
   - `Safe`: Available immediately when ticket opens (`short_description`, `priority`, `category`).
   - `Warning`: Caution required (`change_request`, `problem_record`).
-  - `Blocked`: Post-resolution outcomes explicitly rejected from triage models (`close_notes`, `resolved_at`, `resolution_code`, `made_sla`, `reassignment_count`).
+  - `Blocked`: Post-resolution outcomes explicitly rejected from triage models (`close_notes`, `resolved_at`, `resolution_code`, `made_sla`, `u_caused_by`).
 
 ### 3.2 Feature Lineage (`FeatureLineageTracker`)
 - **Responsibility:** Records exact transformations producing derived columns (`opened_at_hour_sin/cos`, `is_business_hours`, `resolution_time_hours`).

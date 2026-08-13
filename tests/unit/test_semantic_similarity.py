@@ -63,8 +63,8 @@ class TestSemanticEmbeddingGenerator:
     def test_embed_dataframe_and_storage(self, tmp_path):
 
         df = pd.DataFrame([
-            {"incident_number": "INC001", "short_description": "A", "description": "B", "category": "DB"},
-            {"incident_number": "INC002", "short_description": "C", "description": "D", "category": "Net"}
+            {"number": "INC001", "short_description": "A", "description": "B", "category": "DB"},
+            {"number": "INC002", "short_description": "C", "description": "D", "category": "Net"}
         ])
 
         embedder = SemanticEmbeddingGenerator(cache_dir=tmp_path)
@@ -72,7 +72,7 @@ class TestSemanticEmbeddingGenerator:
 
         assert embeddings.shape[0] == 2
         assert len(meta_df) == 2
-        assert meta_df["incident_number"].tolist() == ["INC001", "INC002"]
+        assert meta_df["number"].tolist() == ["INC001", "INC002"]
 
         npy_path, meta_path = embedder.save_embeddings(embeddings, meta_df, output_dir=tmp_path, prefix="test")
         assert npy_path.exists()
@@ -90,7 +90,7 @@ class TestFAISSVectorIndex:
         dim = 8
         faiss_idx = FAISSVectorIndex(dimension=dim, index_type="FlatIP", index_dir=tmp_path, index_name="unit_test")
         vectors = np.eye(dim, dtype=np.float32)
-        meta_df = pd.DataFrame([{"incident_number": f"INC{i:03d}", "assignment_group": "DB_Group"} for i in range(dim)])
+        meta_df = pd.DataFrame([{"number": f"INC{i:03d}", "assignment_group": "DB_Group"} for i in range(dim)])
 
         total = faiss_idx.add_embeddings(vectors, meta_df)
         assert total == dim
@@ -100,14 +100,14 @@ class TestFAISSVectorIndex:
         query = vectors[0:1]
         results = faiss_idx.search(query, top_k=3)
         assert len(results) == 3
-        assert results[0]["incident_number"] == "INC000"
+        assert results[0]["number"] == "INC000"
         assert results[0]["rank"] == 1
         assert pytest.approx(results[0]["similarity_score"], 1e-5) == 1.0
 
     def test_create_ivf_flat(self, tmp_path):
         dim = 16
         vectors = np.random.randn(50, dim).astype(np.float32)
-        meta_df = pd.DataFrame([{"incident_number": f"INC{i}"} for i in range(50)])
+        meta_df = pd.DataFrame([{"number": f"INC{i}"} for i in range(50)])
 
         faiss_idx = FAISSVectorIndex(dimension=dim, index_type="IVFFlat", nlist=5, index_dir=tmp_path)
         faiss_idx.add_embeddings(vectors, meta_df)
@@ -118,7 +118,7 @@ class TestFAISSVectorIndex:
         dim = 4
         faiss_idx = FAISSVectorIndex(dimension=dim, index_type="FlatL2", index_dir=tmp_path, index_name="save_test", version="v1")
         vectors = np.ones((5, dim), dtype=np.float32)
-        meta = pd.DataFrame([{"incident_number": f"I{i}"} for i in range(5)])
+        meta = pd.DataFrame([{"number": f"I{i}"} for i in range(5)])
         faiss_idx.add_embeddings(vectors, meta)
 
         idx_file, meta_file = faiss_idx.save_index()
@@ -140,10 +140,10 @@ class TestSemanticSimilarityEngine:
         engine = SemanticSimilarityEngine(embedding_generator=embedder, faiss_index=faiss_idx, reports_dir=tmp_path / "reports")
 
         df = pd.DataFrame([
-            {"incident_number": "INC001", "short_description": "ATM cash jam", "assignment_group": "ATM_Ops", "priority": "P1"},
-            {"incident_number": "INC002", "short_description": "Database timeout", "assignment_group": "DB_Team", "priority": "P2"},
-            {"incident_number": "INC003", "short_description": "Network latency", "assignment_group": "Net_Team", "priority": "P3"},
-            {"incident_number": "INC004", "short_description": "Login password reset", "assignment_group": "ServiceDesk", "priority": "P4"}
+            {"number": "INC001", "short_description": "ATM cash jam", "assignment_group": "ATM_Ops", "priority": "P1"},
+            {"number": "INC002", "short_description": "Database timeout", "assignment_group": "DB_Team", "priority": "P2"},
+            {"number": "INC003", "short_description": "Network latency", "assignment_group": "Net_Team", "priority": "P3"},
+            {"number": "INC004", "short_description": "Login password reset", "assignment_group": "ServiceDesk", "priority": "P4"}
         ])
 
         count = engine.build_index_from_dataframe(df, index_name="test_sim_index")
@@ -152,7 +152,7 @@ class TestSemanticSimilarityEngine:
         # Query by incident number
         res_inc = engine.find_similar_incidents("INC001", top_k=2, export_reports=True)
         assert len(res_inc) == 2
-        assert res_inc[0]["incident_number"] == "INC001"
+        assert res_inc[0]["number"] == "INC001"
         assert (tmp_path / "reports" / "similarity_results.csv").exists()
         assert (tmp_path / "reports" / "similarity_results.md").exists()
 

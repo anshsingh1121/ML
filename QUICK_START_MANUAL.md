@@ -1,3 +1,5 @@
+> **Note:** This repository has been fully adapted to the custom 25-column corporate dataset schema. All generic ITSM features have been removed.
+
 # First Citizens Bank — Incident Intelligence Platform (`v2.0.0`)
 ## Enterprise Quick Start & Operational Manual
 

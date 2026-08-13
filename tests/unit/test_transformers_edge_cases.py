@@ -37,13 +37,13 @@ def test_enterprise_feature_extractor_edge_cases() -> None:
 
     df = pd.DataFrame({
         "priority": [1, 2],
-        "impact": [2, 3],
+        "business_impact": [2, 3],
         "urgency": [1, 2],
         "opened_at": ["2025-01-01 10:00:00", "2025-01-02 12:00:00"]
     })
     extractor.fit(df)
-    out_names = extractor.get_feature_names_out(["priority", "impact", "urgency", "opened_at"])
-    assert "priority_x_impact" in out_names
+    out_names = extractor.get_feature_names_out(["priority", "business_impact", "urgency", "opened_at"])
+    assert "priority_x_business_impact" in out_names
     assert "priority_x_urgency" in out_names
     assert "opened_at_hour_sin" in out_names
 

@@ -38,8 +38,8 @@ class MLReadinessEvaluator:
 
     # Post-resolution fields that must NOT be used when predicting assignment_group at triage
     POST_RESOLUTION_FIELDS = {
-        "resolved_at", "closed_at", "close_notes", "resolution_code",
-        "resolution_time_hours", "calendar_duration_hours", "business_duration_hours",
+        "resolved_at", "closed_at", "close_notes", "close_code",
+        "resolution_time_hours", "calendar_stc", "business_duration_hours",
         "made_sla", "sla_status", "reassignment_count", "reopen_count",
         "root_cause_summary"
     }
@@ -114,7 +114,7 @@ class MLReadinessEvaluator:
             return {"exact_duplicate_pct": 0.0, "duplicate_id_pct": 0.0}
 
         exact_dups = df.duplicated().sum()
-        id_dups = df["incident_number"].duplicated().sum() if "incident_number" in df.columns else 0
+        id_dups = df["number"].duplicated().sum() if "number" in df.columns else 0
 
         return {
             "exact_duplicate_pct": round((exact_dups / len(df)) * 100.0, 4),
@@ -144,7 +144,7 @@ class MLReadinessEvaluator:
         safe_features = []
 
         for col in df.columns:
-            if col == target_col or col == "incident_number":
+            if col == target_col or col == "number":
                 continue
             if col in self.POST_RESOLUTION_FIELDS:
                 leaky_features.append({
@@ -229,7 +229,7 @@ class MLReadinessEvaluator:
 
     def _compute_correlation_matrix(self, df: pd.DataFrame) -> Dict[str, Any]:
         """Compute numeric correlation summary across continuous and ordinal fields."""
-        num_cols = [col for col in ["priority", "impact", "urgency", "severity", "resolution_time_hours", "reassignment_count"] if col in df.columns]
+        num_cols = [col for col in ["priority", "business_impact", "urgency", "resolution_time_hours", "reassignment_count"] if col in df.columns]
         if len(num_cols) < 2:
             return {"matrix": {}}
 
@@ -275,9 +275,9 @@ class MLReadinessEvaluator:
 
         # 3. Encoding strategy for cardinality
         for col, stats in cardinality.items():
-            if stats["unique_count"] > 100 and col not in ["incident_number", "short_description", "description", "close_notes", "caller"]:
+            if stats["unique_count"] > 100 and col not in ["number", "short_description", "description", "close_notes", "caller"]:
                 recs.append(f"**High Cardinality Encoding:** `{col}` has {stats['unique_count']} unique categories. Avoid One-Hot Encoding to prevent dimensionality explosion; use Target Encoding or Frequency Encoding instead.")
-            elif stats["unique_count"] <= 20 and col not in ["incident_number", "short_description", "description", "close_notes"]:
+            elif stats["unique_count"] <= 20 and col not in ["number", "short_description", "description", "close_notes"]:
                 recs.append(f"**Categorical Encoding:** `{col}` has {stats['unique_count']} distinct values. Use Ordinal/Label Encoding for tree models (`CatBoostClassifier`).")
 
         # 4. Text length checks for Sentence Transformers

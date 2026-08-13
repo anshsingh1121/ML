@@ -199,14 +199,14 @@ class QualityGateRunner:
     def validate_schema(self, df: pd.DataFrame) -> Dict[str, Any]:
         """Verify dataset adheres to the full 35+ attribute ServiceNow schema."""
         required_schema = [
-            "incident_number", "opened_at", "resolved_at", "closed_at",
-            "priority", "impact", "urgency", "severity", "state",
+            "number", "opened_at", "resolved_at", "closed_at",
+            "priority", "business_impact", "urgency", "state",
             "category", "subcategory", "assignment_group", "assigned_to",
             "business_service", "cmdb_ci", "vendor", "caller",
-            "short_description", "description", "close_notes", "resolution_code",
-            "resolution_time_hours", "calendar_duration_hours", "business_duration_hours",
+            "short_description", "description", "close_notes", "close_code",
+            "resolution_time_hours", "calendar_stc", "business_duration_hours",
             "made_sla", "sla_status", "sla_due", "reassignment_count",
-            "reopen_count", "problem_flag", "problem_record", "change_request",
+            "reopen_count", "problem_flag", "problem_id", "change_request",
             "knowledge_linked", "knowledge_base", "contact_type", "location",
             "duplicate_incident", "parent_incident"
         ]

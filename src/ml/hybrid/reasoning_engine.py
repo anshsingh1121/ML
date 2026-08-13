@@ -98,7 +98,7 @@ class HybridReasoningEngine:
         # 3. Format Historical Evidence Table
         evidence_list = []
         for rank, match in enumerate(semantic_matches, start=1):
-            inc_id = str(match.get("incident_number", f"INC{rank:05d}"))
+            inc_id = str(match.get("number", f"INC{rank:05d}"))
             sim_val = float(match.get("similarity_score", 0.0))
             grp_val = str(match.get("assignment_group", "Unknown"))
             time_val = match.get("resolution_time_hours")
@@ -111,7 +111,7 @@ class HybridReasoningEngine:
 
             evidence_list.append({
                 "rank": rank,
-                "incident_number": inc_id,
+                "number": inc_id,
                 "similarity_score": round(sim_val, 4),
                 "historical_assignment_group": grp_val,
                 "historical_resolution_time": formatted_time

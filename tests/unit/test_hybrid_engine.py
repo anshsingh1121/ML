@@ -39,7 +39,7 @@ def sample_rf_prediction():
 def sample_semantic_matches():
     return [
         {
-            "incident_number": "INC0010001",
+            "number": "INC0010001",
             "similarity_score": 0.9200,
             "assignment_group": "Platform-Support-L2",
             "resolution_time_hours": 2.5,
@@ -47,7 +47,7 @@ def sample_semantic_matches():
             "short_description": "Server crash during ATM sync"
         },
         {
-            "incident_number": "INC0010002",
+            "number": "INC0010002",
             "similarity_score": 0.8800,
             "assignment_group": "Platform-Support-L2",
             "resolution_time_hours": 3.5,
@@ -55,7 +55,7 @@ def sample_semantic_matches():
             "short_description": "Database connection timeout ATM"
         },
         {
-            "incident_number": "INC0010003",
+            "number": "INC0010003",
             "similarity_score": 0.8400,
             "assignment_group": "Network-Ops",
             "resolution_time_hours": 4.0,
@@ -63,7 +63,7 @@ def sample_semantic_matches():
             "short_description": "Network packet drop ATM gateway"
         },
         {
-            "incident_number": "INC0010004",
+            "number": "INC0010004",
             "similarity_score": 0.8100,
             "assignment_group": "Platform-Support-L2",
             "resolution_time_hours": 2.0,
@@ -71,7 +71,7 @@ def sample_semantic_matches():
             "short_description": "Platform middleware freeze"
         },
         {
-            "incident_number": "INC0010005",
+            "number": "INC0010005",
             "similarity_score": 0.7500,
             "assignment_group": "Platform-Support-L2",
             "resolution_time_hours": 3.0,
@@ -162,7 +162,7 @@ def test_reasoning_engine_formatting(clean_config, sample_rf_prediction, sample_
 
     row0 = reasoning["historical_evidence"][0]
     assert row0["rank"] == 1
-    assert row0["incident_number"] == "INC0010001"
+    assert row0["number"] == "INC0010001"
     assert row0["historical_assignment_group"] == "Platform-Support-L2"
     assert row0["historical_resolution_time"] == "2.50h"
 

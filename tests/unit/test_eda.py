@@ -13,7 +13,7 @@ from src.data.feature_registry import FeatureRegistry
 def sample_incident_df() -> pd.DataFrame:
     """Create synthetic incident dataframe for EDA testing."""
     return pd.DataFrame({
-        "incident_number": [f"INC00000{i}" for i in range(1, 21)],
+        "number": [f"INC00000{i}" for i in range(1, 21)],
         "opened_at": [f"2025-01-10 0{i%9}:15:00" for i in range(1, 21)],
         "resolved_at": [f"2025-01-10 1{i%9}:15:00" for i in range(1, 21)],
         "closed_at": [f"2025-01-11 1{i%9}:15:00" for i in range(1, 21)],
@@ -24,9 +24,9 @@ def sample_incident_df() -> pd.DataFrame:
         "subcategory": ["Router"] * 10 + ["Oracle"] * 10,
         "assignment_group": ["Network Support"] * 10 + ["Database Support"] * 10,
         "priority": [1, 2, 3, 4] * 5,
-        "impact": [1, 2, 2, 3] * 5,
+        "business_impact": [1, 2, 2, 3] * 5,
         "urgency": [1, 2, 2, 3] * 5,
-        "severity": [1, 2, 2, 3] * 5,
+        "urgency": [1, 2, 2, 3] * 5,
         "reassignment_count": [0, 1, 0, 2] * 5,
         "reopen_count": [0, 0, 1, 0] * 5,
         "made_sla": [True, True, False, True] * 5,

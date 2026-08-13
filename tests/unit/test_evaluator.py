@@ -23,7 +23,7 @@ def dummy_pipeline_and_test_data(tmp_path: Path) -> Tuple[Path, Path, Path]:
     n = 50
     df_test = pd.DataFrame({
         "priority": np.random.choice([1, 2, 3, 4], size=n),
-        "impact": np.random.choice([1, 2, 3], size=n),
+        "business_impact": np.random.choice([1, 2, 3], size=n),
         "urgency": np.random.choice([1, 2, 3], size=n),
         "reassignment_count": np.random.randint(0, 5, size=n),
         "category": np.random.choice(["Software", "Network", "Hardware"], size=n),

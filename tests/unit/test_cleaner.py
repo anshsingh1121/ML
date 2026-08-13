@@ -13,7 +13,7 @@ from src.data.feature_registry import FeatureRegistry
 def dirty_incident_df() -> pd.DataFrame:
     """Create synthetic dirty dataset with duplicates, invalid timestamps, and outliers."""
     return pd.DataFrame({
-        "incident_number": ["INC000001", "INC000001", "INC000002", "INC000003", "INC000004"],
+        "number": ["INC000001", "INC000001", "INC000002", "INC000003", "INC000004"],
         "opened_at": ["2025-01-10 10:00:00", "2025-01-10 12:00:00", "2025-01-10 14:00:00", "2025-01-10 16:00:00", "2025-01-10 18:00:00"],
         "resolved_at": ["2025-01-10 08:00:00", "2025-01-10 13:00:00", "2025-01-10 15:00:00", "2025-01-10 17:00:00", "2025-01-10 19:00:00"],
         "closed_at": ["2025-01-11 10:00:00", "2025-01-11 12:00:00", "2025-01-11 14:00:00", "2025-01-11 16:00:00", "2025-01-11 18:00:00"],
@@ -47,7 +47,7 @@ def test_cleaner_clean_dataset(dirty_incident_df: pd.DataFrame, tmp_path: Path) 
 
     # Verify duplicate removal (INC000001 had 2 rows, should now be 1)
     assert len(clean_df) == 4
-    assert clean_df["incident_number"].nunique() == 4
+    assert clean_df["number"].nunique() == 4
 
     # Verify missing value handling (short_description None filled with 'Not Provided')
     assert clean_df["short_description"].isna().sum() == 0

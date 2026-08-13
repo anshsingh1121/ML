@@ -13,7 +13,7 @@ def test_readiness_evaluation(temp_workspace: Path) -> None:
     """Verify MLReadinessEvaluator computes accurate stats and generates reports."""
     cfg = ConfigManager(config_dir=str(temp_workspace / "config"))
     df = pd.DataFrame({
-        "incident_number": [f"INC{i}" for i in range(10)],
+        "number": [f"INC{i}" for i in range(10)],
         "assignment_group": ["GroupA", "GroupA", "GroupB", "GroupB", "GroupC", "GroupC", "GroupA", "GroupB", "GroupC", "GroupA"],
         "category": ["Hardware", "Software"] * 5,
         "priority": [1, 2, 3, 4, 5] * 2,
@@ -51,6 +51,6 @@ def test_readiness_edge_cases(temp_workspace: Path) -> None:
     assert res_empty["total_records"] == 0
 
     # Df with no numeric columns for correlation or single numeric
-    tiny_df = pd.DataFrame({"incident_number": ["INC1"], "priority": [1], "short_description": ["Hello"]})
+    tiny_df = pd.DataFrame({"number": ["INC1"], "priority": [1], "short_description": ["Hello"]})
     res_tiny = readiness.evaluate_dataset(tiny_df, save_report=False)
     assert res_tiny["total_records"] == 1

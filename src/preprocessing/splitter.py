@@ -184,10 +184,10 @@ class DatasetSplitter:
         self, train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd.DataFrame
     ) -> Dict[str, Any]:
         """Verify strict zero intersection of incident numbers across partitions."""
-        if "incident_number" in train_df.columns:
-            train_ids = set(train_df["incident_number"].dropna())
-            val_ids = set(val_df["incident_number"].dropna())
-            test_ids = set(test_df["incident_number"].dropna())
+        if "number" in train_df.columns:
+            train_ids = set(train_df["number"].dropna())
+            val_ids = set(val_df["number"].dropna())
+            test_ids = set(test_df["number"].dropna())
 
             train_val_overlap = len(train_ids & val_ids)
             train_test_overlap = len(train_ids & test_ids)

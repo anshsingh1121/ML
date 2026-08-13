@@ -174,7 +174,7 @@ class SemanticEmbeddingGenerator:
 
         # Build separate metadata table aligned index-for-index with embeddings
         meta_cols = [
-            "incident_number", "assignment_group", "priority",
+            "number", "assignment_group", "priority",
             "business_service", "short_description", "description",
             "resolution_time_hours", "category", "subcategory", "cmdb_ci"
         ]

@@ -12,7 +12,7 @@ from src.preprocessing.text_preprocessor import TextPreprocessor
 def raw_text_df() -> pd.DataFrame:
     """Create synthetic text dataframe with stopwords, HTML, and protected keywords."""
     return pd.DataFrame({
-        "incident_number": ["INC000001", "INC000002", "INC000003"],
+        "number": ["INC000001", "INC000002", "INC000003"],
         "short_description": [
             "The server is down due to a critical network timeout!",
             "<html>Please kindly verify that the database login is slow and failing.</html>",

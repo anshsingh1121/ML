@@ -81,7 +81,7 @@ class DatasetValidator:
         self.results.append(self._check_missing_values(df))
 
         # 2. Duplicate Incident Numbers
-        self.results.append(self._check_duplicate_ids(df))
+        self.results.append(self._check_duplicate_incidents(df))
 
         # 3. Invalid Timestamps
         self.results.append(self._check_invalid_timestamps(df))
@@ -146,9 +146,9 @@ class DatasetValidator:
                 rule_name="Required Fields Missing",
                 passed=False,
                 error_count=len(df),
-                error_pct=100.0,
-                details_msg=f"Dataset schema is missing required columns entirely: {missing_cols}",
-                sample=[]
+                error_percentage=100.0,
+                details=f"Dataset schema is missing required columns entirely: {missing_cols}",
+                sample_anomalies=[]
             )
 
         missing_counts = df[self.REQUIRED_FIELDS].isnull().sum()

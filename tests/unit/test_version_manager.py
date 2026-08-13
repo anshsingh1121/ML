@@ -20,7 +20,7 @@ def test_version_manager_lifecycle(temp_workspace: Path) -> None:
     assert mgr.get_next_version_id() == "v1"
 
     df1 = pd.DataFrame({
-        "incident_number": ["INC1", "INC2"],
+        "number": ["INC1", "INC2"],
         "category": ["Core Banking", "Payment Systems"],
         "priority": [1, 2],
         "state": [6, 6],

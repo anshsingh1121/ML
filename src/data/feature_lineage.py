@@ -254,8 +254,8 @@ class FeatureLineageTracker:
         ))
 
         self.add_lineage(LineageEdge(
-            derived_feature="has_problem_record",
-            source_features=["problem_record"],
+            derived_feature="has_problem_id",
+            source_features=["problem_id"],
             transformation_type="Presence Indicator",
             formula="1 if (problem_record != '' and not null) else 0",
             business_rationale="Flags systemic underlying defects requiring long-term architectural root cause analysis.",

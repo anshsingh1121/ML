@@ -14,7 +14,7 @@ from src.data.feature_lineage import FeatureLineageTracker
 def clean_incident_df() -> pd.DataFrame:
     """Create synthetic clean dataframe for feature engineering testing."""
     return pd.DataFrame({
-        "incident_number": [f"INC00000{i}" for i in range(1, 11)],
+        "number": [f"INC00000{i}" for i in range(1, 11)],
         "opened_at": [
             "2025-01-10 08:30:00",  # Friday business hours
             "2025-01-11 14:00:00",  # Saturday weekend
@@ -32,7 +32,7 @@ def clean_incident_df() -> pd.DataFrame:
         "short_description": ["Router down and switch dead"] * 5 + ["Oracle database login failure"] * 5,
         "description": ["Router port gigabit 0/1 down after power cut"] * 5 + ["ORA-00001 unique constraint violated on login session"] * 5,
         "priority": [1, 2, 3, 4, 2] * 2,
-        "impact": [1, 2, 2, 3, 1] * 2,
+        "business_impact": [1, 2, 2, 3, 1] * 2,
         "urgency": [1, 2, 2, 3, 2] * 2,
         "category": ["Network", "Network", "Database", "Software", "Hardware"] * 2,
         "assignment_group": ["Network Support", "Network Support", "Database Support", "App Support", "Hardware Support"] * 2,
@@ -67,7 +67,7 @@ def test_engineer_features_pipeline(clean_incident_df: pd.DataFrame, tmp_path: P
     assert "is_weekend" in eng_df.columns
     assert "is_business_hours" in eng_df.columns
     assert "is_holiday" in eng_df.columns
-    assert "priority_x_impact" in eng_df.columns
+    assert "priority_x_business_impact" in eng_df.columns
     assert "resolution_time_hours" in eng_df.columns
     assert "short_description_word_count" in eng_df.columns
     assert "is_duplicate" in eng_df.columns
@@ -80,7 +80,7 @@ def test_engineer_features_pipeline(clean_incident_df: pd.DataFrame, tmp_path: P
     assert eng_df.loc[1, "is_weekend"] == 1  # Saturday
     assert eng_df.loc[3, "is_holiday"] == 1  # July 4th
     assert eng_df.loc[4, "is_holiday"] == 1  # Christmas
-    assert eng_df.loc[0, "priority_x_impact"] == 1
+    assert eng_df.loc[0, "priority_x_business_impact"] == 1
     assert eng_df.loc[0, "resolution_time_hours"] == 2.0
     assert eng_df.loc[0, "short_description_word_count"] == 5
 
@@ -95,9 +95,9 @@ def test_engineer_features_pipeline(clean_incident_df: pd.DataFrame, tmp_path: P
     assert res_def.target_leakage_classification == "blocked"
 
     # 4. Verify Feature Lineage automatic sync
-    ancestry = lineage.get_ancestry_chain("priority_x_impact")
+    ancestry = lineage.get_ancestry_chain("priority_x_business_impact")
     assert "priority" in ancestry
-    assert "impact" in ancestry
+    assert "business_impact" in ancestry
 
     # 5. Verify exported reports
     assert (Path(output_dir) / "feature_engineering_report.json").exists()

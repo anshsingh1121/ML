@@ -73,7 +73,7 @@ class EnterpriseEDAEngine:
 
         # 1. Dataset Summary & Missing/Duplicate Audit
         missing_report = self._compute_missing_report(df)
-        duplicate_count = int(df.duplicated(subset=["incident_number"]).sum()) if "incident_number" in df.columns else int(df.duplicated().sum())
+        duplicate_count = int(df.duplicated(subset=["number"]).sum()) if "number" in df.columns else int(df.duplicated().sum())
         duplicate_percentage = float(duplicate_count / len(df) * 100) if len(df) > 0 else 0.0
 
         # 2. Numerical Analysis & Outlier Detection
@@ -391,7 +391,7 @@ class EnterpriseEDAEngine:
                 })
 
         # Chart 4: Numerical Correlation Heatmap
-        valid_num = [c for c in num_cols if df[c].nunique() > 1 and c in ["priority", "impact", "urgency", "severity", "reassignment_count", "reopen_count"]]
+        valid_num = [c for c in num_cols if df[c].nunique() > 1 and c in ["priority", "business_impact", "urgency", "reassignment_count", "reopen_count"]]
         if len(valid_num) >= 2:
             fig_path = fig_dir / "04_numerical_correlation.png"
             plt.figure(figsize=(8, 6))
@@ -405,7 +405,7 @@ class EnterpriseEDAEngine:
             figures.append({
                 "filename": "04_numerical_correlation.png",
                 "title": "Numerical Attribute Correlation Heatmap",
-                "ml_explanation": "Detects multicollinearity among numeric indicators. For example, strong correlation between `priority`, `impact`, and `urgency` justifies exact interaction formulas (`priority_x_impact`) to assist tree splits."
+                "ml_explanation": "Detects multicollinearity among numeric indicators. For example, strong correlation between `priority`, `impact`, and `urgency` justifies exact interaction formulas (`priority_x_business_impact`) to assist tree splits."
             })
 
         # Chart 5: Text Word Count Distribution

@@ -68,7 +68,7 @@ class SHAPIntelligenceExplainer:
         df_clean = df.copy()
         for col in predictors:
             if col not in df_clean.columns:
-                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type"] else 0
+                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "cmdb_ci", "u_caused_by", "u_development_release_id", "u_vendor_ticket_ref"] else 0
         return df_clean[predictors]
 
     def _get_transformed_dataframe_with_business_names(self, prep: Any, X_trans: Any, predictors: List[str]) -> pd.DataFrame:
@@ -280,7 +280,7 @@ class SHAPIntelligenceExplainer:
             top_5_contributors = [{"feature": k, "shap_contribution": v} for k, v in sorted_feats[:5]]
 
             result_entry = {
-                "incident_number": str(df_in.iloc[i].get("incident_number", f"INC_INFERENCE_{i}")),
+                "number": str(df_in.iloc[i].get("number", f"INC_INFERENCE_{i}")),
                 "predicted_class" if probs is not None else "predicted_value": pred_val,
                 "confidence_score": round(conf, 4),
                 "top_contributing_features": top_5_contributors,
@@ -334,7 +334,7 @@ class SHAPIntelligenceExplainer:
         csv_rows = []
         for r in results:
             flat = {
-                "incident_number": r["incident_number"],
+                "number": r["number"],
                 "prediction": r.get("predicted_class", r.get("predicted_value")),
                 "confidence_score": r["confidence_score"],
                 "prediction_timestamp": r["prediction_timestamp"],

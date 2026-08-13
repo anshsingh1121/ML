@@ -114,7 +114,7 @@ class HybridRecommendationEngine:
             text_str = str(input_payload).strip()
             now_ts = pd.Timestamp.now()
             return {
-                "incident_number": "INC_QUERY_001",
+                "number": "INC_QUERY_001",
                 "short_description": text_str,
                 "description": text_str,
                 "category": "General",
@@ -122,9 +122,9 @@ class HybridRecommendationEngine:
                 "business_service": "Enterprise Core Service",
                 "cmdb_ci": "ci-query-node",
                 "priority": "P3 - Moderate",
-                "impact": "3 - Low",
+                "business_impact": "3 - Low",
                 "urgency": "3 - Low",
-                "severity": "3 - Low",
+                "urgency": "3 - Low",
                 "contact_type": "Self service",
                 "location": "UNKNOWN",
                 "vendor": "UNKNOWN",
@@ -132,7 +132,7 @@ class HybridRecommendationEngine:
                 "reopen_count": 0,
                 "is_business_hours": 1 if 8 <= now_ts.hour <= 17 else 0,
                 "has_change_request": 0,
-                "has_problem_record": 0,
+                "has_problem_id": 0,
                 "is_duplicate": 0,
                 "has_parent_incident": 0,
                 "opened_at_dayofweek": now_ts.dayofweek,
@@ -156,7 +156,7 @@ class HybridRecommendationEngine:
 
         for col in expected_cols:
             if col not in df_synced.columns:
-                if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type", "priority", "impact", "urgency", "severity"]:
+                if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type", "priority", "business_impact", "urgency"]:
                     df_synced[col] = "UNKNOWN"
                 elif col in ["short_description", "description"]:
                     df_synced[col] = ""
@@ -225,7 +225,7 @@ class HybridRecommendationEngine:
 
         # Step 1: Parse input
         ticket_dict = self._parse_input_payload(input_payload)
-        inc_number = str(ticket_dict.get("incident_number", "INC_QUERY_001"))
+        inc_number = str(ticket_dict.get("number", "INC_QUERY_001"))
 
         # Step 2: Random Forest Prediction
         rf_prediction = self._predict_rf(ticket_dict)
@@ -250,7 +250,7 @@ class HybridRecommendationEngine:
 
         # Step 6: Assemble Master Recommendation Payload
         recommendation = {
-            "incident_number": inc_number,
+            "number": inc_number,
             "short_description": str(ticket_dict.get("short_description", "")),
             "recommended_assignment_group": decision["recommended_assignment_group"],
             "confidence_score": decision["confidence_score"],
@@ -302,7 +302,7 @@ class HybridRecommendationEngine:
         md_path = self.reports_dir / "hybrid_prediction.md"
         md_lines = [
             f"# Enterprise Hybrid Incident Intelligence Report (`v2.0.0-alpha`)",
-            f"**Incident ID:** `{recommendation['incident_number']}`  ",
+            f"**Incident ID:** `{recommendation['number']}`  ",
             f"**Query/Summary:** `{recommendation['short_description']}`  ",
             f"**Execution Timestamp:** `{pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}`  \n",
             f"---",
@@ -328,7 +328,7 @@ class HybridRecommendationEngine:
         ])
         for row in recommendation["historical_evidence"]:
             md_lines.append(
-                f"| #{row['rank']} | `{row['incident_number']}` | `{row['similarity_score']:.4f}` | "
+                f"| #{row['rank']} | `{row['number']}` | `{row['similarity_score']:.4f}` | "
                 f"`{row['historical_assignment_group']}` | `{row['historical_resolution_time']}` |"
             )
 
@@ -353,7 +353,7 @@ class HybridRecommendationEngine:
             df_evidence["historical_success_rate"] = recommendation["historical_success_rate"]
         else:
             df_evidence = pd.DataFrame([{
-                "incident_number": recommendation["incident_number"],
+                "number": recommendation["number"],
                 "recommended_group": recommendation["recommended_assignment_group"],
                 "confidence_score": recommendation["confidence_score"],
                 "confidence_tier": recommendation["confidence_tier"],

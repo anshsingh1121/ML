@@ -60,8 +60,11 @@ class ModelEvaluator:
         """Ensure all predictor columns exist in the dataframe before slicing, initializing missing with safe defaults."""
         df_clean = df.copy()
         for col in predictors:
+            # Exclude text NLP pipelines
+            if col in ["short_description", "description", "u_describe_customer_impact", "close_notes"]:
+                continue
             if col not in df_clean.columns:
-                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type"] else 0
+                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "cmdb_ci", "u_caused_by", "u_development_release_id", "u_vendor_ticket_ref"] else 0
         return df_clean[predictors]
 
     def _resolve_pipeline_and_test_data(

@@ -1,0 +1,112 @@
+2026-08-13 11:27:07 | ERROR    | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Failed to train baseline [CatBoost]: continuous is not supported
+2026-08-13 11:27:07 | ERROR    | src.cli.main_cli | main_cli:run_command:130 | Command execution failed (train): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 105, in run_command
+    return self.cmd_train(args.target, args.compare_baselines, args.train_data, args.val_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 300, in cmd_train
+    out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 424, in train_regressor
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'
+2026-08-13 12:47:27 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 4: Train Classification Model (`assignment_group`): Cannot use median strategy with non-numeric data:
+could not convert string to float: 'Unknown'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 510, in <lambda>
+    ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 298, in cmd_train
+    out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 326, in train_classifier
+    pipelines_dict, best_name = self.train_baselines_and_compare(X_train, y_train, X_val, y_val, predictors, target_type=target_col)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 161, in train_baselines_and_compare
+    prep_pipeline.fit(X_train, y_train)
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py", line 621, in fit
+    self._final_estimator.fit(Xt, y, **last_step_params["fit"])
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 938, in fit
+    self.fit_transform(X, y=y, **params)
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py", line 316, in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 999, in fit_transform
+    result = self._call_func_on_transformers(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 901, in _call_func_on_transformers
+    return Parallel(n_jobs=self.n_jobs)(jobs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\joblib\parallel.py", line 1986, in __call__
+    return output if self.return_generator else list(output)
+                                                ^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\joblib\parallel.py", line 1914, in _get_sequential_output
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py", line 1484, in _fit_transform_one
+    res = transformer.fit_transform(X, y, **params.get("fit_transform", {}))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py", line 316, in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 910, in fit_transform
+    return self.fit(X, y, **fit_params).transform(X)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\impute\_base.py", line 447, in fit
+    X = self._validate_input(X, in_fit=True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\impute\_base.py", line 372, in _validate_input
+    raise new_ve from None
+ValueError: Cannot use median strategy with non-numeric data:
+could not convert string to float: 'Unknown'
+2026-08-13 12:56:06 | ERROR    | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Failed to train baseline [CatBoost]: catboost/private/libs/target/target_converter.cpp:404: Target contains only one unique value
+2026-08-13 12:56:06 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 4: Train Classification Model (`assignment_group`): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 510, in <lambda>
+    ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 298, in cmd_train
+    out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 328, in train_classifier
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'
+2026-08-13 12:57:11 | ERROR    | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Failed to train baseline [CatBoost]: catboost/libs/metrics/metric.cpp:7011: All train targets are equal
+2026-08-13 12:57:11 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 5: Train Regression Model (`resolution_time_hours`): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 511, in <lambda>
+    ("Stage 5: Train Regression Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 300, in cmd_train
+    out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 424, in train_regressor
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'

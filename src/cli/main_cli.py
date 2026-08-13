@@ -176,7 +176,7 @@ class EnterpriseCLI:
         df = robust_read_csv(input_path)
 
         # Validation for required columns
-        req_cols = ["incident_number", "opened_at", "priority", "category", "assignment_group", "short_description", "description"]
+        req_cols = ["number", "opened_at", "priority", "category", "assignment_group", "short_description", "description"]
         missing_cols = [c for c in req_cols if c not in df.columns]
         if missing_cols:
             print(f"\n[CRITICAL ERROR] Cleaner halted! Missing required columns in dataset: {missing_cols}")
@@ -231,7 +231,7 @@ class EnterpriseCLI:
         df = robust_read_csv(input_path)
         
         # Validation for required columns
-        req_cols = ["incident_number", "opened_at", "priority", "category", "assignment_group", "short_description", "description"]
+        req_cols = ["number", "opened_at", "priority", "category", "assignment_group", "short_description", "description"]
         missing_cols = [c for c in req_cols if c not in df.columns]
         if missing_cols:
             print(f"\n[CRITICAL ERROR] Pipeline halted! Missing required columns in dataset: {missing_cols}")
@@ -294,7 +294,7 @@ class EnterpriseCLI:
         trainer = EnterpriseCatBoostTrainer()
 
         print("\n---> [Stage 2/2] Training & Persisting Complete Zero-Leakage Pipeline...")
-        if target in ["assignment_group", "category", "priority", "resolution_time_hours"]:
+        if target in ["assignment_group", "category", "priority"]:
             out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
         else:
             out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
@@ -383,7 +383,7 @@ class EnterpriseCLI:
         results = explainer.explain_prediction(records, model_key_or_path=model_key, target_col=target)
 
         print(f"[SUCCESS] Completed inference & SHAP attribution across {len(results)} records!")
-        print(f"Top sample prediction: Incident {results[0]['incident_number']} -> {results[0].get('predicted_class', results[0].get('predicted_value'))} (Confidence: {results[0]['confidence_score']:.4f})")
+        print(f"Top sample prediction: Incident {results[0]['number']} -> {results[0].get('predicted_class', results[0].get('predicted_value'))} (Confidence: {results[0]['confidence_score']:.4f})")
         print("Structured prediction metadata exported to: reports/prediction_metadata.json & reports/prediction_metadata.csv")
         return 0
 
@@ -438,7 +438,7 @@ class EnterpriseCLI:
         results = engine.find_similar_incidents(query=query, top_k=top_k, export_reports=True)
         print(f"\n[TOP-{min(len(results), 5)} SEMANTIC MATCHES]")
         for r in results[:5]:
-            print(f"  #{r['rank']} | {r['incident_number']} | Sim: {r['similarity_score']:.4f} | Group: {r['assignment_group']} | {r['short_description'][:60]}...")
+            print(f"  #{r['rank']} | {r['number']} | Sim: {r['similarity_score']:.4f} | Group: {r['assignment_group']} | {r['short_description'][:60]}...")
 
         print(f"\n[SUCCESS] Retrieved {len(results)} precedents. Full reports exported to reports/similarity_results.csv and .md")
         return 0
@@ -472,7 +472,7 @@ class EnterpriseCLI:
         print(f"  {'Rank':<5} | {'Incident Number':<16} | {'Sim Score':<10} | {'Historical Assignment Group':<28} | {'Historical Resolution Time'}")
         print(f"  {'-'*5} | {'-'*16} | {'-'*10} | {'-'*28} | {'-'*26}")
         for r in rec["historical_evidence"]:
-            print(f"  #{r['rank']:<4} | {r['incident_number']:<16} | {r['similarity_score']:<10.4f} | {r['historical_assignment_group']:<28} | {r['historical_resolution_time']}")
+            print(f"  #{r['rank']:<4} | {r['number']:<16} | {r['similarity_score']:<10.4f} | {r['historical_assignment_group']:<28} | {r['historical_resolution_time']}")
 
         print(f"\nReasoning:")
         print(f"  {rec['reasoning']}")
@@ -508,7 +508,7 @@ class EnterpriseCLI:
             ("Stage 2: Enterprise Dataset Validation", lambda: self.cmd_validate(input_path=input_path)),
             ("Stage 3: Zero-Leakage Data Intelligence Pipeline", lambda: self.cmd_pipeline(input_path=input_path, output_dir="data/processed")),
             ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
-            ("Stage 5: Train Classification Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+            ("Stage 5: Train Regression Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
             ("Stage 6: Evaluate Classification Model", lambda: self.cmd_evaluate(model_key="catboost_assignment_group:latest", test_data="data/processed/test.csv", target="assignment_group")),
             ("Stage 7: Run SHAP Explainability Diagnostics", lambda: self.cmd_explain(model_key="catboost_assignment_group:latest", input_path="data/processed/test.csv", target="assignment_group")),
             ("Stage 8: Generate Local Neural Embeddings (`TF-IDF + SVD`)", lambda: self.cmd_embed(input_path="data/processed/train.csv", batch_size=64)),

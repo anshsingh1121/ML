@@ -40,7 +40,7 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
         for col in self.attribute_names:
             if col not in df.columns:
                 # Fill missing numerical/categorical with neutral unknown/0
-                df[col] = "UNKNOWN" if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type"] else 0
+                df[col] = "UNKNOWN" if col in ["category", "subcategory", "cmdb_ci", "u_caused_by", "u_development_release_id", "u_vendor_ticket_ref"] else 0
                 logger.debug(f"DataFrameSelector filled missing column '{col}' with neutral default.")
 
         selected = df[self.attribute_names]
@@ -53,7 +53,7 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
 
 class EnterpriseFeatureExtractor(BaseEstimator, TransformerMixin):
     """
-    Extracts non-linear interactions (`priority_x_impact`, `priority_x_urgency`) and cyclic temporal shifts
+    Extracts non-linear interactions (`priority_x_business_impact`, `priority_x_urgency`) and cyclic temporal shifts
     if raw columns are present. Ensures raw prediction payloads can be ingested without external engineering steps.
     """
 
@@ -93,8 +93,8 @@ class EnterpriseFeatureExtractor(BaseEstimator, TransformerMixin):
         df["combined_text"] = df["combined_text"] + " safetoken"
 
         # Extract interaction terms if raw numeric columns present
-        if "priority" in df.columns and "impact" in df.columns and "priority_x_impact" not in df.columns:
-            df["priority_x_impact"] = pd.to_numeric(df["priority"], errors="coerce").fillna(3) * pd.to_numeric(df["impact"], errors="coerce").fillna(2)
+        if "priority" in df.columns and "business_impact" in df.columns and "priority_x_business_impact" not in df.columns:
+            df["priority_x_business_impact"] = pd.to_numeric(df["priority"], errors="coerce").fillna(3) * pd.to_numeric(df["business_impact"], errors="coerce").fillna(2)
         if "priority" in df.columns and "urgency" in df.columns and "priority_x_urgency" not in df.columns:
             df["priority_x_urgency"] = pd.to_numeric(df["priority"], errors="coerce").fillna(3) * pd.to_numeric(df["urgency"], errors="coerce").fillna(2)
 
@@ -114,8 +114,8 @@ class EnterpriseFeatureExtractor(BaseEstimator, TransformerMixin):
         """Return exact feature names outputted after interaction and cyclic shift extraction."""
         in_feats = list(input_features) if input_features is not None else (list(self.feature_names_in_) if hasattr(self, "feature_names_in_") else [])
         out_feats = list(in_feats)
-        if "priority" in in_feats and "impact" in in_feats and "priority_x_impact" not in out_feats:
-            out_feats.append("priority_x_impact")
+        if "priority" in in_feats and "business_impact" in in_feats and "priority_x_business_impact" not in out_feats:
+            out_feats.append("priority_x_business_impact")
         if "priority" in in_feats and "urgency" in in_feats and "priority_x_urgency" not in out_feats:
             out_feats.append("priority_x_urgency")
         if "opened_at" in in_feats and "opened_at_hour_sin" not in out_feats:

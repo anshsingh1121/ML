@@ -18,7 +18,6 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-
 @dataclass(unsafe_hash=True)
 class FeatureDefinition:
     """Formal specification for a single enterprise feature attribute across 22 governance dimensions."""
@@ -48,7 +47,6 @@ class FeatureDefinition:
     def to_dict(self) -> Dict[str, Any]:
         """Convert feature definition to dictionary."""
         return asdict(self)
-
 
 class FeatureRegistry:
     """
@@ -131,7 +129,7 @@ class FeatureRegistry:
     def resolve_business_name(self, technical_name: str) -> str:
         """
         Resolve any raw or pipeline-transformed technical feature name to its exact enterprise business name.
-        Handles one-hot expanded indicators (`category_Hardware`) and cyclic interaction terms (`priority_x_impact`).
+        Handles one-hot expanded indicators (`category_Hardware`) and cyclic interaction terms (`priority_x_business_impact`).
         """
         import re
         # Strip any sklearn step prefix (e.g. freq__, onehot__, num__)
@@ -152,10 +150,8 @@ class FeatureRegistry:
                     return f"{base_feat.business_name} = {value}"
 
         # 3. Handle dynamic interaction / cyclic terms cleanly if not explicitly registered
-        if clean_name == "priority_x_impact":
+        if clean_name == "priority_x_business_impact":
             return "Priority x Impact Interaction Score"
-        if clean_name == "priority_x_urgency":
-            return "Priority x Urgency Interaction Score"
         if clean_name == "opened_at_hour_sin":
             return "Opened Hour Sine Cyclic"
         if clean_name == "opened_at_hour_cos":
@@ -242,7 +238,7 @@ class FeatureRegistry:
         """Populate the registry with the complete 38 raw ServiceNow schema + 11 derived features."""
         # 1. incident_number
         self.register_feature(FeatureDefinition(
-            business_name="Incident Number", technical_name="incident_number", data_type="string",
+            business_name="Incident Number", technical_name="number", data_type="string",
             nullable=False, cardinality="unique", missing_percentage=0.0,
             business_meaning="Unique system identifier assigned to ticket upon creation in ServiceNow.",
             ml_importance="none", target_leakage_classification="safe", encoding_strategy="none",
@@ -276,18 +272,6 @@ class FeatureRegistry:
             explainability_usage="excluded", required_or_optional="optional"
         ))
 
-        # 4. closed_at
-        self.register_feature(FeatureDefinition(
-            business_name="Closed Timestamp", technical_name="closed_at", data_type="datetime",
-            nullable=True, cardinality="high", missing_percentage=5.0,
-            business_meaning="UTC timestamp when ticket is administratively finalized after verification.",
-            ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Strictly exclude from all predictive models due to administrative delay variance.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
         # 5. priority
         self.register_feature(FeatureDefinition(
             business_name="Priority Level", technical_name="priority", data_type="integer",
@@ -302,21 +286,9 @@ class FeatureRegistry:
 
         # 6. impact
         self.register_feature(FeatureDefinition(
-            business_name="Business Impact", technical_name="impact", data_type="integer",
+            business_name="Business Impact", technical_name="business_impact", data_type="integer",
             nullable=False, cardinality="3", missing_percentage=0.0,
             business_meaning="Scope of business disruption (1=High/Bank-wide to 3=Low/Single User).",
-            ml_importance="medium", target_leakage_classification="safe", encoding_strategy="ordinal",
-            imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as ordinal 1-3 predictor.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 7. urgency
-        self.register_feature(FeatureDefinition(
-            business_name="Urgency Level", technical_name="urgency", data_type="integer",
-            nullable=False, cardinality="3", missing_percentage=0.0,
-            business_meaning="Time criticality of service restoration (1=High to 3=Low).",
             ml_importance="medium", target_leakage_classification="safe", encoding_strategy="ordinal",
             imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Retain as ordinal 1-3 predictor.",
             catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
@@ -396,18 +368,6 @@ class FeatureRegistry:
             explainability_usage="excluded", required_or_optional="optional"
         ))
 
-        # 14. business_service
-        self.register_feature(FeatureDefinition(
-            business_name="Affected Business Service", technical_name="business_service", data_type="string",
-            nullable=False, cardinality="15", missing_percentage=0.0,
-            business_meaning="Business-facing banking service offering (e.g., SWIFT Payments, ATM Network).",
-            ml_importance="high", target_leakage_classification="safe", encoding_strategy="frequency",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Apply frequency encoding; strong exact-match structural boost in hybrid similarity.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
-            dashboard_usage="chart_axis", api_exposure="required_payload", future_rag_usage="metadata_filter",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
         # 15. cmdb_ci
         self.register_feature(FeatureDefinition(
             business_name="Configuration Item (CI)", technical_name="cmdb_ci", data_type="string",
@@ -418,30 +378,6 @@ class FeatureRegistry:
             catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="structural_boost_tag",
             dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="metadata_filter",
             explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 16. vendor
-        self.register_feature(FeatureDefinition(
-            business_name="Third-Party Vendor", technical_name="vendor", data_type="string",
-            nullable=True, cardinality="10", missing_percentage=40.0,
-            business_meaning="Hardware/software vendor associated with the affected CI (e.g., IBM, Cisco).",
-            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Impute missing as 'Internal/UNKNOWN'; frequency encode.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="optional_payload", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="optional"
-        ))
-
-        # 17. caller
-        self.register_feature(FeatureDefinition(
-            business_name="Reporting Caller ID", technical_name="caller", data_type="string",
-            nullable=False, cardinality="high", missing_percentage=0.0,
-            business_meaning="Employee or automated monitoring daemon that initiated the ticket.",
-            ml_importance="none", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Exclude from ML modeling due to extreme cardinality and privacy governance.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="required_payload", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
         ))
 
         # 18. short_description
@@ -468,21 +404,9 @@ class FeatureRegistry:
             explainability_usage="natural_language_context", required_or_optional="required"
         ))
 
-        # 20. close_notes
-        self.register_feature(FeatureDefinition(
-            business_name="Resolution Close Notes", technical_name="close_notes", data_type="string",
-            nullable=True, cardinality="high", missing_percentage=12.0,
-            business_meaning="Engineer's technical summary of root cause and exact remediation steps taken.",
-            ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="STRICTLY EXCLUDED at triage prediction time. Serves as the golden text payload inside RAG retrieval knowledge bases.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="knowledge_chunk_payload",
-            explainability_usage="natural_language_context", required_or_optional="optional"
-        ))
-
         # 21. resolution_code
         self.register_feature(FeatureDefinition(
-            business_name="Resolution Code Taxonomy", technical_name="resolution_code", data_type="string",
+            business_name="Resolution Code Taxonomy", technical_name="close_code", data_type="string",
             nullable=True, cardinality="6", missing_percentage=12.0,
             business_meaning="Standardized outcome classification (e.g., Solved Permanently, Workaround, User Error).",
             ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
@@ -504,28 +428,15 @@ class FeatureRegistry:
             explainability_usage="shap_feature_label", required_or_optional="optional"
         ))
 
-
         # 23. calendar_duration_hours
         self.register_feature(FeatureDefinition(
-            business_name="Calendar Duration (Hours)", technical_name="calendar_duration_hours", data_type="float",
+            business_name="Calendar Duration (Hours)", technical_name="calendar_stc", data_type="float",
             nullable=True, cardinality="continuous", missing_percentage=2.0,
             business_meaning="Total elapsed calendar time from opened_at to administrative closed_at.",
             ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome metric; exclude from triage prediction.",
             catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
-        # 24. business_duration_hours
-        self.register_feature(FeatureDefinition(
-            business_name="Business Shift Duration (Hours)", technical_name="business_duration_hours", data_type="float",
-            nullable=True, cardinality="continuous", missing_percentage=2.0,
-            business_meaning="Elapsed engineering effort hours within standard operational shifts (8am-6pm).",
-            ml_importance="none", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution calculation; exclude from triage prediction.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
 
@@ -538,54 +449,6 @@ class FeatureRegistry:
             imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome flag; strictly banned from triage feature matrix.",
             catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
-        ))
-
-        # 26. sla_status
-        self.register_feature(FeatureDefinition(
-            business_name="SLA Status Label", technical_name="sla_status", data_type="string",
-            nullable=False, cardinality="2", missing_percentage=0.0,
-            business_meaning="Categorical SLA status label ('Met' or 'Breached').",
-            ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome label; banned from triage predictors.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
-        ))
-
-        # 27. sla_due
-        self.register_feature(FeatureDefinition(
-            business_name="SLA Target Cutoff Timestamp", technical_name="sla_due", data_type="datetime",
-            nullable=False, cardinality="high", missing_percentage=0.0,
-            business_meaning="Exact UTC deadline by which ticket must be resolved to avoid SLA breach.",
-            ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Computed from opened_at + priority target window; usable for operational priority sorting.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
-        ))
-
-        # 28. reassignment_count
-        self.register_feature(FeatureDefinition(
-            business_name="Reassignment Counter", technical_name="reassignment_count", data_type="integer",
-            nullable=False, cardinality="low", missing_percentage=0.0,
-            business_meaning="Number of times ticket ownership bounced across different assignment groups.",
-            ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Operational outcome metric tracking routing efficiency; exclude from triage assignment prediction.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
-        ))
-
-        # 29. reopen_count
-        self.register_feature(FeatureDefinition(
-            business_name="Reopen Counter", technical_name="reopen_count", data_type="integer",
-            nullable=False, cardinality="low", missing_percentage=0.0,
-            business_meaning="Number of times ticket was reopened after initial resolution.",
-            ml_importance="low", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome metric; exclude from triage prediction.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="response_only", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="required"
         ))
 
@@ -603,97 +466,13 @@ class FeatureRegistry:
 
         # 31. problem_record
         self.register_feature(FeatureDefinition(
-            business_name="Linked Problem ID", technical_name="problem_record", data_type="string",
+            business_name="Linked Problem ID", technical_name="problem_id", data_type="string",
             nullable=True, cardinality="medium", missing_percentage=90.0,
             business_meaning="Associated Problem investigation ID (`PRB001...`) when problem_flag is True.",
             ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_problem_record`).",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_problem_id`).",
             catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
             dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="citation_reference",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
-        # 32. change_request
-        self.register_feature(FeatureDefinition(
-            business_name="Linked Change Request ID", technical_name="change_request", data_type="string",
-            nullable=True, cardinality="medium", missing_percentage=93.0,
-            business_meaning="Associated Change Request ID (`CHG002...`) if caused by or resolved via deployment.",
-            ml_importance="medium", target_leakage_classification="warning", encoding_strategy="none",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_change_request`); strong signal for release/deployment engineering L3 squads.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="citation_reference",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
-        # 33. knowledge_linked
-        self.register_feature(FeatureDefinition(
-            business_name="Knowledge Base Linked Flag", technical_name="knowledge_linked", data_type="boolean",
-            nullable=False, cardinality="2", missing_percentage=0.0,
-            business_meaning="Whether a Knowledge Base article was cited during incident resolution.",
-            ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Post-resolution outcome indicator; banned from triage predictors.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="kpi_filter", api_exposure="response_only", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="required"
-        ))
-
-        # 34. knowledge_base
-        self.register_feature(FeatureDefinition(
-            business_name="Linked Knowledge Article ID", technical_name="knowledge_base", data_type="string",
-            nullable=True, cardinality="medium", missing_percentage=75.0,
-            business_meaning="Specific KB article identifier (`KB0010042`) used for remediation.",
-            ml_importance="medium", target_leakage_classification="blocked", encoding_strategy="none",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Direct citation reference inside RAG resolution retrieval responses.",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="response_only", future_rag_usage="citation_reference",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
-        # 35. contact_type
-        self.register_feature(FeatureDefinition(
-            business_name="Reporting Contact Type", technical_name="contact_type", data_type="string",
-            nullable=False, cardinality="4", missing_percentage=0.0,
-            business_meaning="Origin reporting channel (`Alert`, `Phone`, `Self-service`, `Email`).",
-            ml_importance="low", target_leakage_classification="safe", encoding_strategy="one_hot",
-            imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="One-hot encode into binary indicators (`contact_type_Alert`, etc.).",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
-            dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 36. location
-        self.register_feature(FeatureDefinition(
-            business_name="Origin Geographic Location", technical_name="location", data_type="string",
-            nullable=False, cardinality="12", missing_percentage=0.0,
-            business_meaning="Banking data center or branch facility where issue originated.",
-            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
-            imputation_strategy="mode", scaling_strategy="none", feature_engineering_rules="Frequency encode to capture regional incident volume densities.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="exact_match_filter",
-            dashboard_usage="kpi_filter", api_exposure="required_payload", future_rag_usage="metadata_filter",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 37. duplicate_incident
-        self.register_feature(FeatureDefinition(
-            business_name="Master Duplicate Ticket ID", technical_name="duplicate_incident", data_type="string",
-            nullable=True, cardinality="medium", missing_percentage=95.0,
-            business_meaning="Parent ticket ID if this record is marked as a duplicate (`State=8`).",
-            ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`is_duplicate`).",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="excluded",
-            explainability_usage="excluded", required_or_optional="optional"
-        ))
-
-        # 38. parent_incident
-        self.register_feature(FeatureDefinition(
-            business_name="Master Parent Incident ID", technical_name="parent_incident", data_type="string",
-            nullable=True, cardinality="medium", missing_percentage=92.0,
-            business_meaning="Master parent ticket linking related alert storms.",
-            ml_importance="low", target_leakage_classification="warning", encoding_strategy="none",
-            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Derive binary indicator (`has_parent_incident`).",
-            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="detail_table", api_exposure="optional_payload", future_rag_usage="excluded",
             explainability_usage="excluded", required_or_optional="optional"
         ))
 
@@ -785,33 +564,9 @@ class FeatureRegistry:
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
 
-        # 46. has_parent_incident
+        # 48. has_problem_id
         self.register_feature(FeatureDefinition(
-            business_name="Has Parent Incident Flag", technical_name="has_parent_incident", data_type="integer",
-            nullable=False, cardinality="2", missing_percentage=0.0,
-            business_meaning="Binary indicator (`1` if parent_incident is not empty else `0`).",
-            ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from parent_incident.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 47. has_change_request
-        self.register_feature(FeatureDefinition(
-            business_name="Has Change Request Flag", technical_name="has_change_request", data_type="integer",
-            nullable=False, cardinality="2", missing_percentage=0.0,
-            business_meaning="Binary indicator (`1` if change_request is not empty else `0`).",
-            ml_importance="medium", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from change_request; strong signal for routing to release/change engineering L3 squads.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 48. has_problem_record
-        self.register_feature(FeatureDefinition(
-            business_name="Has Problem Record Flag", technical_name="has_problem_record", data_type="integer",
+            business_name="Has Problem Record Flag", technical_name="has_problem_id", data_type="integer",
             nullable=False, cardinality="2", missing_percentage=0.0,
             business_meaning="Binary indicator (`1` if problem_record is not empty else `0`).",
             ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
@@ -821,21 +576,9 @@ class FeatureRegistry:
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
 
-        # 49. is_duplicate
+        # 50. priority_x_business_impact
         self.register_feature(FeatureDefinition(
-            business_name="Is Duplicate Ticket Flag", technical_name="is_duplicate", data_type="integer",
-            nullable=False, cardinality="2", missing_percentage=0.0,
-            business_meaning="Binary indicator (`1` if duplicate_incident is not empty else `0`).",
-            ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="none", scaling_strategy="none", feature_engineering_rules="Derived from duplicate_incident.",
-            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="required"
-        ))
-
-        # 50. priority_x_impact
-        self.register_feature(FeatureDefinition(
-            business_name="Priority x Impact Interaction Score", technical_name="priority_x_impact", data_type="float",
+            business_name="Priority x Impact Interaction Score", technical_name="priority_x_business_impact", data_type="float",
             nullable=False, cardinality="continuous", missing_percentage=0.0,
             business_meaning="Non-linear interaction term multiplying Priority by Impact.",
             ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
@@ -845,14 +588,82 @@ class FeatureRegistry:
             explainability_usage="shap_feature_label", required_or_optional="required"
         ))
 
-        # 51. priority_x_urgency
         self.register_feature(FeatureDefinition(
-            business_name="Priority x Urgency Interaction Score", technical_name="priority_x_urgency", data_type="float",
-            nullable=False, cardinality="continuous", missing_percentage=0.0,
-            business_meaning="Non-linear interaction term multiplying Priority by Urgency.",
-            ml_importance="high", target_leakage_classification="safe", encoding_strategy="none",
-            imputation_strategy="median", scaling_strategy="none", feature_engineering_rules="Derived via EnterpriseFeatureExtractor.",
+            business_name="Caused By (Custom)", technical_name="u_caused_by", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="Optional corporate root cause tracking.",
+            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Bespoke corporate column.",
             catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
-            dashboard_usage="chart_axis", api_exposure="internal_only", future_rag_usage="excluded",
-            explainability_usage="shap_feature_label", required_or_optional="required"
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
         ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Dev Release ID (Custom)", technical_name="u_development_release_id", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="Internal corporate release tracking.",
+            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Bespoke corporate column.",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Vendor Ticket Ref (Custom)", technical_name="u_vendor_ticket_ref", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="External vendor ticket ID.",
+            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Bespoke corporate column.",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Describe Customer Impact (Custom)", technical_name="u_describe_customer_impact", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="Detailed text describing customer impact.",
+            ml_importance="low", target_leakage_classification="safe", encoding_strategy="none",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Bespoke corporate column.",
+            catboost_usage="predictor", embedding_usage="text_concatenation", faiss_metadata_usage="excluded",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Caused By", technical_name="caused_by", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="System-identified root cause.",
+            ml_importance="low", target_leakage_classification="safe", encoding_strategy="frequency",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Bespoke corporate column.",
+            catboost_usage="predictor", embedding_usage="excluded", faiss_metadata_usage="excluded",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Incident State", technical_name="incident_state", data_type="string",
+            nullable=True, cardinality="low", missing_percentage=0.0,
+            business_meaning="Granular incident state.",
+            ml_importance="low", target_leakage_classification="blocked", encoding_strategy="none",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Leaky post-facto state.",
+            catboost_usage="excluded", embedding_usage="excluded", faiss_metadata_usage="metadata_filter",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="excluded",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+        self.register_feature(FeatureDefinition(
+            business_name="Close Notes", technical_name="close_notes", data_type="string",
+            nullable=True, cardinality="high", missing_percentage=0.0,
+            business_meaning="Resolution documentation.",
+            ml_importance="high", target_leakage_classification="blocked", encoding_strategy="none",
+            imputation_strategy="constant_unknown", scaling_strategy="none", feature_engineering_rules="Highly leaky.",
+            catboost_usage="excluded", embedding_usage="text_concatenation", faiss_metadata_usage="metadata_filter",
+            dashboard_usage="excluded", api_exposure="optional_payload", future_rag_usage="answer_generation",
+            explainability_usage="shap_feature_label", required_or_optional="optional"
+        ))
+
+
+

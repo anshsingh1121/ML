@@ -20,11 +20,11 @@ def sample_csv(tmp_path: Path) -> str:
     """Generate minimal synthetic CSV for CLI command verification."""
     csv_path = str(tmp_path / "test_incidents.csv")
     df = pd.DataFrame({
-        "incident_number": [f"INC00000{i}" for i in range(1, 16)],
+        "number": [f"INC00000{i}" for i in range(1, 16)],
         "opened_at": [f"2025-01-0{i%9+1} 10:00:00" for i in range(1, 16)],
         "resolved_at": [f"2025-01-0{i%9+1} 12:00:00" for i in range(1, 16)],
         "priority": [1, 2, 3, 2, 1] * 3,
-        "impact": [1, 2, 2, 1, 1] * 3,
+        "business_impact": [1, 2, 2, 1, 1] * 3,
         "urgency": [1, 2, 2, 1, 1] * 3,
         "category": ["Network", "Database", "Software", "Hardware", "Network"] * 3,
         "assignment_group": ["Network Support", "Database Support", "App Support", "Hardware Support", "Network Support"] * 3,

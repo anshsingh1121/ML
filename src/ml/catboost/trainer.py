@@ -75,7 +75,7 @@ class EnterpriseCatBoostTrainer:
         df_clean = df.copy()
         for col in predictors:
             if col not in df_clean.columns:
-                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "business_service", "location", "cmdb_ci", "vendor", "contact_type"] else 0
+                df_clean[col] = "UNKNOWN" if col in ["category", "subcategory", "cmdb_ci", "u_caused_by", "u_development_release_id", "u_vendor_ticket_ref"] else 0
         return df_clean[predictors]
 
     def build_preprocessing_pipeline(self, X: pd.DataFrame, predictors: List[str]) -> Pipeline:
@@ -95,7 +95,7 @@ class EnterpriseCatBoostTrainer:
                 continue
             
             # Text columns are handled separately by TfidfVectorizer via combined_text
-            if col in ["short_description", "description"]:
+            if col in ["short_description", "description", "u_describe_customer_impact", "close_notes"]:
                 continue
                 
             feat_def = self.feat_reg.get_feature(col)
@@ -110,8 +110,8 @@ class EnterpriseCatBoostTrainer:
                 num_cols.append(col)
 
         # Include columns added dynamically by EnterpriseFeatureExtractor inside num_cols branch
-        if "priority" in predictors and "impact" in predictors and "priority_x_impact" not in num_cols:
-            num_cols.append("priority_x_impact")
+        if "priority" in predictors and "business_impact" in predictors and "priority_x_business_impact" not in num_cols:
+            num_cols.append("priority_x_business_impact")
         if "priority" in predictors and "urgency" in predictors and "priority_x_urgency" not in num_cols:
             num_cols.append("priority_x_urgency")
         if "opened_at" in predictors:
@@ -165,15 +165,16 @@ class EnterpriseCatBoostTrainer:
 
         text_idx = X_train_trans.shape[1] - 1
 
-        is_classification = (target_type in ["assignment_group", "category", "priority", "resolution_time_hours"])
+        is_classification = (target_type in ["assignment_group", "category", "priority"])
         models_dict: Dict[str, Any] = {}
 
         if is_classification:
             rf_cfg = self.cfg.get(f"models.{target_type}.params", {})
             models_dict["CatBoost"] = CatBoostClassifier(
-                iterations=rf_cfg.get("n_estimators", 300),
-                depth=rf_cfg.get("max_depth", 6),
-                learning_rate=0.1,
+                iterations=1000,
+                depth=8,
+                learning_rate=0.05,
+                early_stopping_rounds=50,
                 verbose=50,
                 random_seed=42
             )
@@ -181,9 +182,10 @@ class EnterpriseCatBoostTrainer:
             # Regression for resolution_time_hours
             rf_cfg = self.cfg.get("models.resolution_time.params", {})
             models_dict["CatBoost"] = CatBoostRegressor(
-                iterations=rf_cfg.get("n_estimators", 150),
-                depth=rf_cfg.get("max_depth", 6),
-                learning_rate=0.1,
+                iterations=1000,
+                depth=8,
+                learning_rate=0.05,
+                early_stopping_rounds=50,
                 loss_function="MAE",
                 verbose=50,
                 random_seed=42
@@ -199,7 +201,7 @@ class EnterpriseCatBoostTrainer:
             try:
                 # Fit estimator on transformed features
                 if name == "CatBoost":
-                    estimator.fit(X_train_trans, y_train, text_features=[text_idx])
+                    estimator.fit(X_train_trans, y_train, text_features=[text_idx], eval_set=(X_val_trans, y_val))
                 else:
                     estimator.fit(X_train_trans, y_train)
                 train_dur = time.time() - start_t

@@ -12,7 +12,7 @@ from src.preprocessing.splitter import DatasetSplitter
 def engineered_incident_df() -> pd.DataFrame:
     """Create synthetic engineered dataframe for split testing."""
     return pd.DataFrame({
-        "incident_number": [f"INC0000{i:02d}" for i in range(1, 31)],
+        "number": [f"INC0000{i:02d}" for i in range(1, 31)],
         "opened_at": [f"2025-01-01 {i%24:02d}:00:00" for i in range(1, 31)],
         "priority": [1, 2, 3, 4, 5, 2] * 5,
         "assignment_group": ["Network Support"] * 10 + ["Database Support"] * 10 + ["App Support"] * 10,

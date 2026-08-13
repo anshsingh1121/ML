@@ -1,43 +1,539 @@
-2026-08-12 23:59:37 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 20 records and 19 columns...
-2026-08-12 23:59:40 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_eda_engine_analyze_datase0\reports\eda_report.json
-2026-08-12 23:59:40 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_eda_engine_analyze_datase0\reports\eda_report.md
-2026-08-12 23:59:40 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_eda_engine_analyze_datase0\reports\eda_report.html
-2026-08-12 23:59:40 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 10 records...
-2026-08-12 23:59:40 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_engineer_features_pipelin0\reports\feature_engineering_report.json
-2026-08-12 23:59:40 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_engineer_features_pipelin0\reports\feature_engineering_report.md
-2026-08-12 23:59:43 | INFO     | src.data.feature_lineage | feature_lineage:export_json:116 | Exported Feature Lineage JSON to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_5b_dydkj\reports\feature_lineage.json
-2026-08-12 23:59:43 | INFO     | src.data.feature_lineage | feature_lineage:export_markdown:161 | Exported Feature Lineage Markdown to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_5b_dydkj\reports\feature_lineage.md
-2026-08-12 23:59:43 | INFO     | src.data.feature_registry | feature_registry:export_json:186 | Exported Feature Registry JSON to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_feature_registry_export_j0\reports\feature_registry.json
-2026-08-12 23:59:43 | INFO     | src.data.feature_registry | feature_registry:export_markdown:238 | Exported Feature Registry Markdown to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_feature_registry_export_j0\reports\feature_registry.md
-2026-08-12 23:59:44 | WARNING  | src.utils.logger | logger:_configure_from_yaml:194 | Failed to load logging config from C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_barlmn4r\config\bad_logging.yaml: while parsing a flow sequence
-  in "C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_barlmn4r\config\bad_logging.yaml", line 1, column 10
+2026-08-13 11:02:30 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 20 records and 18 columns...
+2026-08-13 11:02:33 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_eda_engine_analyze_datase0\reports\eda_report.json
+2026-08-13 11:02:33 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_eda_engine_analyze_datase0\reports\eda_report.md
+2026-08-13 11:02:33 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_eda_engine_analyze_datase0\reports\eda_report.html
+2026-08-13 11:02:33 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 10 records...
+2026-08-13 11:02:33 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_engineer_features_pipelin0\reports\feature_engineering_report.json
+2026-08-13 11:02:33 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_engineer_features_pipelin0\reports\feature_engineering_report.md
+2026-08-13 11:02:36 | INFO     | src.data.feature_lineage | feature_lineage:export_json:116 | Exported Feature Lineage JSON to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_25r8jw74\reports\feature_lineage.json
+2026-08-13 11:02:36 | INFO     | src.data.feature_lineage | feature_lineage:export_markdown:161 | Exported Feature Lineage Markdown to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_25r8jw74\reports\feature_lineage.md
+2026-08-13 11:02:38 | WARNING  | src.utils.logger | logger:_configure_from_yaml:194 | Failed to load logging config from C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_nxqzdwzw\config\bad_logging.yaml: while parsing a flow sequence
+  in "C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_nxqzdwzw\config\bad_logging.yaml", line 1, column 10
 expected ',' or ']', but got ':'
-  in "C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_barlmn4r\config\bad_logging.yaml", line 1, column 23. Using fallback configuration.
-2026-08-12 23:59:44 | WARNING  | src.data.pipeline_contracts | pipeline_contracts:validate_dataframe_compliance:102 | Dataframe compliance check FAILED (1 violations encountered).
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 10 records (Target: 'assignment_group')...
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:save_readiness_report:373 | ML Readiness reports generated: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_1oix_juh\reports\ml_readiness_report.md & C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_1oix_juh\reports\ml_readiness_report.json
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 0 records (Target: 'assignment_group')...
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 1 records (Target: 'assignment_group')...
-2026-08-12 23:59:44 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 30 records (target: assignment_group)...
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_splitter_stratified_split0\processed: train=21, val=4, test=5
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_splitter_stratified_split0\reports
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'time_based' split on 30 records (target: assignment_group)...
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_splitter_time_based_split0\processed_time: train=21, val=4, test=5
-2026-08-12 23:59:51 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_splitter_time_based_split0\reports_time
-2026-08-12 23:59:51 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 3 records...
-2026-08-12 23:59:51 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
-2026-08-12 23:59:51 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
-2026-08-12 23:59:51 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_text_preprocessor_pipelin0\reports\text_preprocessing_report.json
-2026-08-12 23:59:51 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-125\test_text_preprocessor_pipelin0\reports\text_preprocessing_report.md
-2026-08-12 23:59:51 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
-2026-08-12 23:59:51 | INFO     | src.data.validation | validation:validate_dataset:131 | Dataset validation PASSED across all 12 quality gates.
-2026-08-12 23:59:51 | INFO     | src.data.validation | validation:save_validation_report:445 | Validation reports generated: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_oikcj79j\reports\validation_report.md & C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_oikcj79j\reports\validation_report.json
-2026-08-12 23:59:51 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 3 incident records...
-2026-08-12 23:59:51 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 11 failed quality gates out of 12.
-2026-08-12 23:59:51 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:108 | Saving immutable dataset (2 rows) to version v1 -> C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_lvswzsa8\test_datasets_synthetic\v1\incidents.csv...
-2026-08-12 23:59:51 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:124 | Dataset version v1 successfully finalized with verified metadata.
-2026-08-12 23:59:51 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:108 | Saving immutable dataset (2 rows) to version v2 -> C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_lvswzsa8\test_datasets_synthetic\v2\incidents.parquet...
-2026-08-12 23:59:51 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:124 | Dataset version v2 successfully finalized with verified metadata.
+  in "C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_nxqzdwzw\config\bad_logging.yaml", line 1, column 23. Using fallback configuration.
+2026-08-13 11:02:38 | WARNING  | src.data.pipeline_contracts | pipeline_contracts:validate_dataframe_compliance:102 | Dataframe compliance check FAILED (1 violations encountered).
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 10 records (Target: 'assignment_group')...
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:save_readiness_report:373 | ML Readiness reports generated: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_la9kt1la\reports\ml_readiness_report.md & C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_la9kt1la\reports\ml_readiness_report.json
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 0 records (Target: 'assignment_group')...
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:70 | Conducting ML Readiness evaluation for 1 records (Target: 'assignment_group')...
+2026-08-13 11:02:38 | INFO     | src.data.readiness | readiness:evaluate_dataset:99 | ML Readiness evaluation successfully completed.
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 30 records (target: assignment_group)...
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_splitter_stratified_split0\processed: train=21, val=4, test=5
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_splitter_stratified_split0\reports
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'time_based' split on 30 records (target: assignment_group)...
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_splitter_time_based_split0\processed_time: train=21, val=4, test=5
+2026-08-13 11:02:44 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_splitter_time_based_split0\reports_time
+2026-08-13 11:02:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 3 records...
+2026-08-13 11:02:44 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 11:02:44 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 11:02:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_text_preprocessor_pipelin0\reports\text_preprocessing_report.json
+2026-08-13 11:02:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: C:\Users\Ansh Singh\AppData\Local\Temp\pytest-of-Ansh Singh\pytest-131\test_text_preprocessor_pipelin0\reports\text_preprocessing_report.md
+2026-08-13 11:02:44 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:02:44 | INFO     | src.data.validation | validation:validate_dataset:131 | Dataset validation PASSED across all 12 quality gates.
+2026-08-13 11:02:44 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_anpafdyh\reports\validation_report.md & C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_anpafdyh\reports\validation_report.json
+2026-08-13 11:02:44 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 3 incident records...
+2026-08-13 11:02:44 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 11 failed quality gates out of 12.
+2026-08-13 11:02:44 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:108 | Saving immutable dataset (2 rows) to version v1 -> C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test__fw4jt82\test_datasets_synthetic\v1\incidents.csv...
+2026-08-13 11:02:44 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:124 | Dataset version v1 successfully finalized with verified metadata.
+2026-08-13 11:02:44 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:108 | Saving immutable dataset (2 rows) to version v2 -> C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test__fw4jt82\test_datasets_synthetic\v2\incidents.parquet...
+2026-08-13 11:02:44 | INFO     | src.data.version_manager | version_manager:save_versioned_dataset:124 | Dataset version v2 successfully finalized with verified metadata.
+2026-08-13 11:03:46 | INFO     | src.data.feature_registry | feature_registry:export_json:186 | Exported Feature Registry JSON to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_hjumvrjp\reports\feature_registry.json
+2026-08-13 11:03:46 | INFO     | src.data.feature_registry | feature_registry:export_markdown:238 | Exported Feature Registry Markdown to: C:\Users\ANSHSI~1\AppData\Local\Temp\fcb_iip_test_hjumvrjp\reports\feature_registry.md
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:04:36 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:04:37 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:04:37 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 2 failed quality gates out of 12.
+2026-08-13 11:04:37 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 11:05:14 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:05:14 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:05:14 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:05:14 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:05:14 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:05:15 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:05:38 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:05:38 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:05:38 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 2 failed quality gates out of 12.
+2026-08-13 11:05:38 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:07:39 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:07:39 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:07:39 | INFO     | src.data.validation | validation:validate_dataset:131 | Dataset validation PASSED across all 12 quality gates.
+2026-08-13 11:07:39 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 11:07:39 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 11:07:39 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 11:07:39 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 11:07:39 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 11:07:39 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 11:07:39 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 11:07:39 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 11:07:39 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 11:07:39 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 11:07:39 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 11:07:39 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 11:07:39 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 11:07:39 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 11:07:39 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 73 columns...
+2026-08-13 11:07:41 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 11:07:41 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 11:07:41 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 11:07:41 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 11:07:41 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 11:07:41 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 11:07:41 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 11:07:41 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:13:23 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:13:24 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:13:24 | INFO     | src.data.validation | validation:validate_dataset:131 | Dataset validation PASSED across all 12 quality gates.
+2026-08-13 11:13:24 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 11:13:24 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 11:13:24 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 11:13:24 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 11:13:24 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 11:13:24 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 11:13:24 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 11:13:24 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 11:13:24 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 11:13:24 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 11:13:24 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 11:13:24 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 11:13:24 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 11:13:24 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 11:13:24 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 73 columns...
+2026-08-13 11:13:26 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 11:13:26 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 11:13:26 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 11:13:26 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 11:13:26 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 11:13:26 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 11:13:26 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 11:13:26 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:19:38 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:23:41 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:24:12 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:27:07 | ERROR    | src.cli.main_cli | main_cli:run_command:130 | Command execution failed (train): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 105, in run_command
+    return self.cmd_train(args.target, args.compare_baselines, args.train_data, args.val_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 300, in cmd_train
+    out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 424, in train_regressor
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:28:25 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 11:48:44 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 11:48:44 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 11:48:44 | INFO     | src.data.validation | validation:validate_dataset:131 | Dataset validation PASSED across all 12 quality gates.
+2026-08-13 11:48:44 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 11:48:44 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 11:48:44 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 11:48:44 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 11:48:44 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 11:48:44 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 11:48:44 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 11:48:44 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 11:48:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 11:48:44 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 11:48:44 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 11:48:44 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 11:48:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 11:48:44 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 11:48:44 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 71 columns...
+2026-08-13 11:48:46 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 11:48:46 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 11:48:46 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 11:48:46 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 11:48:46 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 11:48:46 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 11:48:46 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 11:48:46 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:47:25 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:47:25 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 12:47:25 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:47:25 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:47:25 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 12:47:25 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:47:25 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:47:25 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:47:25 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 12:47:25 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:47:25 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:47:25 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 12:47:25 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:47:25 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:47:25 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:47:25 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:47:25 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 43 columns...
+2026-08-13 12:47:27 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:47:27 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:47:27 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:47:27 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 12:47:27 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 12:47:27 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 12:47:27 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 12:47:27 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:47:27 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 4: Train Classification Model (`assignment_group`): Cannot use median strategy with non-numeric data:
+could not convert string to float: 'Unknown'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 510, in <lambda>
+    ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 298, in cmd_train
+    out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 326, in train_classifier
+    pipelines_dict, best_name = self.train_baselines_and_compare(X_train, y_train, X_val, y_val, predictors, target_type=target_col)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 161, in train_baselines_and_compare
+    prep_pipeline.fit(X_train, y_train)
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py", line 621, in fit
+    self._final_estimator.fit(Xt, y, **last_step_params["fit"])
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 938, in fit
+    self.fit_transform(X, y=y, **params)
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py", line 316, in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 999, in fit_transform
+    result = self._call_func_on_transformers(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py", line 901, in _call_func_on_transformers
+    return Parallel(n_jobs=self.n_jobs)(jobs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\parallel.py", line 91, in __call__
+    return super().__call__(iterable_with_config_and_warning_filters)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\joblib\parallel.py", line 1986, in __call__
+    return output if self.return_generator else list(output)
+                                                ^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\joblib\parallel.py", line 1914, in _get_sequential_output
+    res = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\parallel.py", line 184, in __call__
+    return self.function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py", line 1484, in _fit_transform_one
+    res = transformer.fit_transform(X, y, **params.get("fit_transform", {}))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py", line 316, in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 910, in fit_transform
+    return self.fit(X, y, **fit_params).transform(X)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1336, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\impute\_base.py", line 447, in fit
+    X = self._validate_input(X, in_fit=True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\impute\_base.py", line 372, in _validate_input
+    raise new_ve from None
+ValueError: Cannot use median strategy with non-numeric data:
+could not convert string to float: 'Unknown'
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:48:58 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:48:58 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 12:48:58 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:48:58 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:48:58 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 12:48:58 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:48:58 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:48:58 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:48:58 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 12:48:58 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:48:58 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:48:58 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 12:48:58 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:48:58 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:48:58 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:48:58 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:48:58 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 43 columns...
+2026-08-13 12:49:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:49:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:49:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:49:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 12:49:00 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 12:49:00 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 12:49:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 12:49:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:53:40 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:53:41 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 100 incident records...
+2026-08-13 12:53:41 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:53:41 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:53:41 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 100 records...
+2026-08-13 12:53:41 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:53:41 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:53:41 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:53:41 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 100 records...
+2026-08-13 12:53:41 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:53:41 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:53:41 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 100 records...
+2026-08-13 12:53:41 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:53:41 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:53:41 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 12:53:41 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:53:41 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:53:41 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 100 records and 47 columns...
+2026-08-13 12:53:42 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:53:42 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:53:42 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:53:42 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 100 records (target: assignment_group)...
+2026-08-13 12:53:42 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Executive-Support-L2', 'Payments-SWIFT-Support-L3', 'Network-Engineering-L3', 'Data-Engineering-L2', 'SOC-Tier2-IncidentResponse', 'RetailBanking-L2', 'DBA-SQLServer-L2', 'Virtualization-Support-L2', 'DBA-NoSQL-L3'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 12:53:42 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['CorporateBanking-Support-L3', 'DataCenter-Ops-L1', 'Enterprise-Ops-L1', 'Hardware-BreakFix-L2', 'IT-ServiceDesk-L1']). Falling back to random split.
+2026-08-13 12:53:42 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=70, val=15, test=15
+2026-08-13 12:53:42 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:56:05 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:56:05 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 21 incident records...
+2026-08-13 12:56:05 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:56:05 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:56:05 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 21 records...
+2026-08-13 12:56:05 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:56:05 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:56:05 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:56:05 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 21 records...
+2026-08-13 12:56:05 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:56:05 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:56:05 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 21 records...
+2026-08-13 12:56:05 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:56:05 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:56:05 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 12:56:05 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:56:05 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:56:05 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 21 records and 47 columns...
+2026-08-13 12:56:06 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:56:06 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:56:06 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:56:06 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 21 records (target: assignment_group)...
+2026-08-13 12:56:06 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:136 | Target 'assignment_group' invalid or constant for stratification. Falling back to random split.
+2026-08-13 12:56:06 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=14, val=3, test=4
+2026-08-13 12:56:06 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:56:06 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 4: Train Classification Model (`assignment_group`): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 510, in <lambda>
+    ("Stage 4: Train Classification Model (`assignment_group`)", lambda: self.cmd_train(target="assignment_group", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 298, in cmd_train
+    out_pkl = trainer.train_classifier(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 328, in train_classifier
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:57:09 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:57:09 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 21 incident records...
+2026-08-13 12:57:09 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:57:09 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:57:09 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 21 records...
+2026-08-13 12:57:09 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:57:09 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:57:09 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:57:09 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 21 records...
+2026-08-13 12:57:09 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:57:09 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:57:09 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 21 records...
+2026-08-13 12:57:09 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:57:09 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:57:09 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 12:57:09 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:57:09 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:57:09 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 21 records and 47 columns...
+2026-08-13 12:57:10 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:57:10 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:57:10 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:57:10 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 21 records (target: assignment_group)...
+2026-08-13 12:57:10 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Hardware Application Sup', 'Tier 2 App Support SV', 'Desktop Tier 1 EUS/TCS SVB', 'Network Tier 1 EUS/TCS SVB'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 12:57:10 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['Rare / Other']). Falling back to random split.
+2026-08-13 12:57:10 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=14, val=3, test=4
+2026-08-13 12:57:10 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 12:57:11 | ERROR    | src.cli.main_cli | main_cli:cmd_full_pipeline:534 | Error during Stage 5: Train Regression Model (`resolution_time_hours`): 'CatBoost'
+Traceback (most recent call last):
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 527, in cmd_full_pipeline
+    ret = stage_fn()
+          ^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 511, in <lambda>
+    ("Stage 5: Train Regression Model (`resolution_time_hours`)", lambda: self.cmd_train(target="resolution_time_hours", compare_baselines=True, train_path="data/processed/train.csv", val_path="data/processed/val.csv")),
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\cli\main_cli.py", line 300, in cmd_train
+    out_pkl = trainer.train_regressor(train_path=train_path, val_path=val_path, target_col=target, compare_baselines=compare_baselines)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\src\ml\catboost\trainer.py", line 424, in train_regressor
+    primary_pipeline = pipelines_dict.get("CatBoost", pipelines_dict[best_name])
+                                                      ~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'CatBoost'
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 12:57:59 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 12:57:59 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 21 incident records...
+2026-08-13 12:57:59 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 12:57:59 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 12:57:59 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 21 records...
+2026-08-13 12:57:59 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 12:57:59 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 12:57:59 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 12:57:59 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 21 records...
+2026-08-13 12:57:59 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 12:57:59 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 12:57:59 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 21 records...
+2026-08-13 12:57:59 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 12:57:59 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 12:57:59 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 12:57:59 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 12:57:59 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 12:57:59 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 21 records and 47 columns...
+2026-08-13 12:58:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 12:58:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 12:58:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 12:58:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 21 records (target: assignment_group)...
+2026-08-13 12:58:00 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:143 | Rare classes ['Hardware Application Sup', 'Tier 2 App Support SV', 'Desktop Tier 1 EUS/TCS SVB', 'Network Tier 1 EUS/TCS SVB'] have < 3 instances. Grouping into 'Rare / Other' for stratification.
+2026-08-13 12:58:00 | WARNING  | src.preprocessing.splitter | splitter:_stratified_split:159 | Stratified split failed (The least populated classes in y have only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2. Classes with too few members are: ['Rare / Other']). Falling back to random split.
+2026-08-13 12:58:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=14, val=3, test=4
+2026-08-13 12:58:00 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:120 | Loading faiss with AVX512 support.
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:125 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:132 | Loading faiss with AVX2 support.
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:137 | Could not load library with AVX2 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:156 | Loading faiss.
+2026-08-13 13:04:53 | INFO     | faiss.loader | loader:<module>:158 | Successfully loaded faiss.
+2026-08-13 13:04:53 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 1,500 incident records...
+2026-08-13 13:04:53 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-13 13:04:53 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-13 13:04:53 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 1,500 records...
+2026-08-13 13:04:53 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-13 13:04:53 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-13 13:04:53 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-13 13:04:53 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 1,500 records...
+2026-08-13 13:04:53 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-13 13:04:53 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-13 13:04:53 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 1,500 records...
+2026-08-13 13:04:53 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-13 13:04:53 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-13 13:04:53 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-13 13:04:53 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-13 13:04:53 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-13 13:04:53 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 1,500 records and 47 columns...
+2026-08-13 13:04:55 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-13 13:04:55 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-13 13:04:55 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 1,500 records (target: assignment_group)...
+2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=1,050, val=225, test=225
+2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports

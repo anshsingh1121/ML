@@ -40,12 +40,12 @@ def test_dataframe_compliance_validation_clean_vs_leaky() -> None:
     validator = PipelineContractValidator()
 
     clean_df = pd.DataFrame({
-        "incident_number": ["INC001"],
+        "number": ["INC001"],
         "opened_at": ["2026-07-01"],
         "priority": [2],
-        "impact": [2],
+        "business_impact": [2],
         "urgency": [2],
-        "severity": [2],
+        "urgency": [2],
         "state": [1],
         "category": ["Core Banking"],
         "subcategory": ["Database"],
@@ -68,7 +68,7 @@ def test_dataframe_compliance_validation_clean_vs_leaky() -> None:
     # Inject blocked leakage predictor column into candidate triage predictors df
     leaky_df = clean_df.copy()
     leaky_df["close_notes"] = ["Fixed index"]
-    leaky_df["resolution_code"] = ["Solved Permanently"]
+    leaky_df["close_code"] = ["Solved Permanently"]
 
     compliant, violations = validator.validate_dataframe_compliance(leaky_df, expected_usage="triage_prediction")
     assert compliant is False

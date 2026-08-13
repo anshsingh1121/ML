@@ -13,7 +13,7 @@ def test_validator_on_clean_generated_dataset(temp_workspace: Path) -> None:
     """Verify DatasetValidator passes all checks on clean synthetic data."""
     cfg = ConfigManager(config_dir=str(temp_workspace / "config"))
     df = pd.DataFrame({
-        "incident_number": [f"INC{i:03d}" for i in range(100)],
+        "number": [f"INC{i:03d}" for i in range(100)],
         "opened_at": [f"2026-03-14 12:00:00" for _ in range(100)],
         "resolved_at": [f"2026-03-14 14:00:00" for _ in range(100)],
         "closed_at": [f"2026-03-15 14:00:00" for _ in range(100)],
@@ -45,7 +45,7 @@ def test_validator_detects_anomalies(temp_workspace: Path) -> None:
     
     # Create corrupted dataframe
     corrupted_data = pd.DataFrame({
-        "incident_number": ["INC001", "INC001", "INC003"],  # Duplicate INC001
+        "number": ["INC001", "INC001", "INC003"],  # Duplicate INC001
         "opened_at": ["2026-03-14 12:00:00", "2026-03-14 14:00:00", "2026-03-14 15:00:00"],
         "resolved_at": ["2026-03-14 10:00:00", "2026-03-14 16:00:00", None],  # Resolved before opened for INC001
         "closed_at": [None, None, None],

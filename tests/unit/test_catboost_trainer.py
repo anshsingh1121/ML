@@ -27,9 +27,9 @@ def synthetic_incidents_csv(tmp_path: Path) -> Tuple[Path, Path, Path]:
     n = 100
     np.random.seed(42)
     df = pd.DataFrame({
-        "incident_number": [f"INC{10000+i}" for i in range(n)],
+        "number": [f"INC{10000+i}" for i in range(n)],
         "priority": np.random.choice([1, 2, 3, 4], size=n),
-        "impact": np.random.choice([1, 2, 3], size=n),
+        "business_impact": np.random.choice([1, 2, 3], size=n),
         "urgency": np.random.choice([1, 2, 3], size=n),
         "state": np.random.choice([1, 2, 6], size=n),
         "contact_type": np.random.choice(["Alert", "Phone", "Self-service", "Email"], size=n),
@@ -62,7 +62,7 @@ def test_custom_transformers() -> None:
     """Test DataFrameSelector, EnterpriseFeatureExtractor, FrequencyEncoder, and SmoothedTargetEncoder."""
     df = pd.DataFrame({
         "priority": [1, 2, 3, 4],
-        "impact": [2, 2, 3, 1],
+        "business_impact": [2, 2, 3, 1],
         "category": ["A", "A", "B", "C"],
         "subcategory": ["X", "X", "Y", "Z"],
         "opened_at": ["2026-01-01 10:00:00", "2026-01-01 14:00:00", "2026-01-02 08:00:00", "2026-01-03 16:00:00"]
@@ -76,7 +76,7 @@ def test_custom_transformers() -> None:
     # EnterpriseFeatureExtractor
     extractor = EnterpriseFeatureExtractor()
     out_ext = extractor.fit_transform(df)
-    assert "priority_x_impact" in out_ext.columns
+    assert "priority_x_business_impact" in out_ext.columns
     assert "opened_at_hour_sin" in out_ext.columns
 
     # FrequencyEncoder

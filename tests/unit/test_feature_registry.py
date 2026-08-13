@@ -12,7 +12,6 @@ def reset_feature_registry() -> None:
     """Reset singleton instance before each test to guarantee isolated verification."""
     FeatureRegistry.reset_instance()
 
-
 def test_feature_registry_singleton_and_defaults() -> None:
     """Verify FeatureRegistry singleton initialization and default 49 attributes."""
     reg1 = FeatureRegistry.get_instance()
@@ -25,7 +24,6 @@ def test_feature_registry_singleton_and_defaults() -> None:
     assert feat.business_name == "Assignment Group"
     assert feat.target_leakage_classification == "safe"
     assert feat.catboost_usage == "target_assignment_group"
-
 
 def test_feature_registry_queries() -> None:
     """Verify querying features by leakage, RF usage, embedding usage, and FAISS usage."""
@@ -52,11 +50,14 @@ def test_feature_registry_queries() -> None:
     assert "business_service" in faiss_feats
 
 
-def test_feature_registry_export_json_and_md(tmp_path: Path) -> None:
+def test_feature_registry_export_json_and_md(temp_workspace: Path) -> None:
     """Verify JSON and Markdown export functionality."""
     reg = FeatureRegistry.get_instance()
-    json_path = tmp_path / "reports" / "feature_registry.json"
-    md_path = tmp_path / "reports" / "feature_registry.md"
+    json_path = temp_workspace / "reports" / "feature_registry.json"
+    md_path = temp_workspace / "reports" / "feature_registry.md"
+
+    # Create directories if they don't exist
+    json_path.parent.mkdir(parents=True, exist_ok=True)
 
     out_j = reg.export_json(str(json_path))
     out_m = reg.export_markdown(str(md_path))
@@ -66,5 +67,5 @@ def test_feature_registry_export_json_and_md(tmp_path: Path) -> None:
 
     with open(out_j, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data["total_features"] == 51
-    assert "assignment_group" in data["features"]
+        assert data["total_features"] == 51
+        assert len(data["features"]) == 51

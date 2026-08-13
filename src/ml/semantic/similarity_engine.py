@@ -132,12 +132,12 @@ class SemanticSimilarityEngine:
             # Check if query string matches an existing incident_number inside metadata_df
             if (
                 not self.faiss_index.metadata_df.empty
-                and "incident_number" in self.faiss_index.metadata_df.columns
-                and query_str in self.faiss_index.metadata_df["incident_number"].values
+                and "number" in self.faiss_index.metadata_df.columns
+                and query_str in self.faiss_index.metadata_df["number"].values
             ):
                 query_label = f"Incident Number: {query_str}"
                 row_idx = self.faiss_index.metadata_df.index[
-                    self.faiss_index.metadata_df["incident_number"] == query_str
+                    self.faiss_index.metadata_df["number"] == query_str
                 ][0]
                 query_text = str(self.faiss_index.metadata_df.iloc[row_idx].get("semantic_text", query_str))
                 logger.info(f"Resolved query '{query_str}' to existing historical record. Generating query vector...")
@@ -150,7 +150,7 @@ class SemanticSimilarityEngine:
         elif isinstance(query, (dict, pd.Series)):
             if isinstance(query, pd.Series):
                 query = query.to_dict()
-            query_label = f"Incident Object: {query.get('incident_number', 'New Incident')}"
+            query_label = f"Incident Object: {query.get('number', 'New Incident')}"
             query_text = SemanticEmbeddingGenerator.construct_semantic_text(query)
             query_vector = self.embedding_generator.embed_text(query_text)
         else:
@@ -170,7 +170,7 @@ class SemanticSimilarityEngine:
 
             formatted_match = {
                 "rank": match.get("rank", 0),
-                "incident_number": str(match.get("incident_number", "UNKNOWN")),
+                "number": str(match.get("number", "UNKNOWN")),
                 "similarity_score": round(float(match.get("similarity_score", 0.0)), 6),
                 "assignment_group": str(match.get("assignment_group", "Unassigned")),
                 "priority": str(match.get("priority", "P3 - Moderate")),
@@ -232,9 +232,9 @@ class SemanticSimilarityEngine:
         for r in results:
             badge = "🔥 Top Precedent" if r.get("rank", 1) <= 2 else f"#{r.get('rank', '-')}"
             lines.append(
-                f"| **{badge}** | `{r['incident_number']}` | **`{r['similarity_score']:.4f}`** | "
+                f"| **{badge}** | `{r['number']}` | **`{r['similarity_score']:.4f}`** | "
                 f"`{r['assignment_group']}` | `{r['priority']}` | {r['business_service']} | "
-                f"`{r['resolution_time']:.2f}` | {r['short_description'][:75]}..." if len(str(r['short_description'])) > 75 else f"| **{badge}** | `{r['incident_number']}` | **`{r['similarity_score']:.4f}`** | `{r['assignment_group']}` | `{r['priority']}` | {r['business_service']} | `{r['resolution_time']:.2f}` | {r['short_description']} |"
+                f"`{r['resolution_time']:.2f}` | {r['short_description'][:75]}..." if len(str(r['short_description'])) > 75 else f"| **{badge}** | `{r['number']}` | **`{r['similarity_score']:.4f}`** | `{r['assignment_group']}` | `{r['priority']}` | {r['business_service']} | `{r['resolution_time']:.2f}` | {r['short_description']} |"
             )
 
         lines.extend([
