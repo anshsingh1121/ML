@@ -25,6 +25,7 @@ from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, r2_score, classification_report
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -298,7 +299,8 @@ class EnterpriseCatBoostTrainer:
         train_path: Optional[str] = None,
         val_path: Optional[str] = None,
         target_col: str = "assignment_group",
-        compare_baselines: bool = True
+        compare_baselines: bool = True,
+        run_hpo: bool = True
     ) -> Path:
         """
         Train primary CatBoost (and multi-baseline) classification pipeline on triage predictors.
@@ -333,16 +335,42 @@ class EnterpriseCatBoostTrainer:
             X_train_trans = prep.fit_transform(X_train, y_train)
             text_idx = X_train_trans.shape[1] - 1
             
-            rf_cfg = self.cfg.get(f"models.{target_col}.params", {})
-            estimator = CatBoostClassifier(
-                iterations=rf_cfg.get("iterations", 300),
-                depth=rf_cfg.get("depth", 6),
-                learning_rate=rf_cfg.get("learning_rate", 0.1),
-                random_seed=42,
-                verbose=50
-            )
-            primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
-            primary_pipeline.fit(X_train, y_train, estimator__text_features=[text_idx])
+            if run_hpo:
+                logger.info("Starting RandomizedSearchCV for Classification HPO...")
+                estimator = CatBoostClassifier(random_seed=42, verbose=0)
+                primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
+                
+                hpo_cfg = self.cfg.get("hyperparameter_optimization", {})
+                param_dist = {
+                    "estimator__iterations": hpo_cfg.get("param_distributions", {}).get("iterations", [300, 500]),
+                    "estimator__depth": hpo_cfg.get("param_distributions", {}).get("depth", [6, 8]),
+                    "estimator__learning_rate": hpo_cfg.get("param_distributions", {}).get("learning_rate", [0.05, 0.1]),
+                    "estimator__l2_leaf_reg": hpo_cfg.get("param_distributions", {}).get("l2_leaf_reg", [1, 3, 5])
+                }
+                search = RandomizedSearchCV(
+                    primary_pipeline,
+                    param_distributions=param_dist,
+                    n_iter=hpo_cfg.get("n_iter", 5),
+                    cv=hpo_cfg.get("cv_folds", 3),
+                    scoring=hpo_cfg.get("scoring", "f1_weighted"),
+                    verbose=2,
+                    random_state=42,
+                    n_jobs=1
+                )
+                search.fit(X_train, y_train, estimator__text_features=[text_idx])
+                primary_pipeline = search.best_estimator_
+                logger.info(f"HPO Complete! Best Params: {search.best_params_}")
+            else:
+                rf_cfg = self.cfg.get(f"models.{target_col}.params", {})
+                estimator = CatBoostClassifier(
+                    iterations=rf_cfg.get("iterations", 300),
+                    depth=rf_cfg.get("depth", 6),
+                    learning_rate=rf_cfg.get("learning_rate", 0.1),
+                    random_seed=42,
+                    verbose=50
+                )
+                primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
+                primary_pipeline.fit(X_train, y_train, estimator__text_features=[text_idx])
 
         # Evaluate final pipeline on validation fold
         val_preds = primary_pipeline.predict(X_val)
@@ -385,7 +413,8 @@ class EnterpriseCatBoostTrainer:
         train_path: Optional[str] = None,
         val_path: Optional[str] = None,
         target_col: str = "resolution_time_hours",
-        compare_baselines: bool = True
+        compare_baselines: bool = True,
+        run_hpo: bool = True
     ) -> Path:
         """
         Train primary CatBoost (and multi-baseline) regression pipeline on triage predictors.
@@ -429,17 +458,43 @@ class EnterpriseCatBoostTrainer:
             X_train_trans = prep.fit_transform(X_train, y_train_log)
             text_idx = X_train_trans.shape[1] - 1
             
-            rf_cfg = self.cfg.get("models.resolution_time.params", {})
-            estimator = CatBoostRegressor(
-                iterations=rf_cfg.get("iterations", 150),
-                depth=rf_cfg.get("depth", 6),
-                learning_rate=rf_cfg.get("learning_rate", 0.1),
-                loss_function="MAE",
-                random_seed=42,
-                verbose=50
-            )
-            primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
-            primary_pipeline.fit(X_train, y_train_log, estimator__text_features=[text_idx])
+            if run_hpo:
+                logger.info("Starting RandomizedSearchCV for Regression HPO...")
+                estimator = CatBoostRegressor(loss_function="MAE", random_seed=42, verbose=0)
+                primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
+                
+                hpo_cfg = self.cfg.get("hyperparameter_optimization", {})
+                param_dist = {
+                    "estimator__iterations": hpo_cfg.get("param_distributions", {}).get("iterations", [150, 300]),
+                    "estimator__depth": hpo_cfg.get("param_distributions", {}).get("depth", [6, 8]),
+                    "estimator__learning_rate": hpo_cfg.get("param_distributions", {}).get("learning_rate", [0.05, 0.1]),
+                    "estimator__l2_leaf_reg": hpo_cfg.get("param_distributions", {}).get("l2_leaf_reg", [1, 3, 5])
+                }
+                search = RandomizedSearchCV(
+                    primary_pipeline,
+                    param_distributions=param_dist,
+                    n_iter=hpo_cfg.get("n_iter", 5),
+                    cv=hpo_cfg.get("cv_folds", 3),
+                    scoring="neg_mean_absolute_error",
+                    verbose=2,
+                    random_state=42,
+                    n_jobs=1
+                )
+                search.fit(X_train, y_train_log, estimator__text_features=[text_idx])
+                primary_pipeline = search.best_estimator_
+                logger.info(f"HPO Complete! Best Params: {search.best_params_}")
+            else:
+                rf_cfg = self.cfg.get("models.resolution_time.params", {})
+                estimator = CatBoostRegressor(
+                    iterations=rf_cfg.get("iterations", 150),
+                    depth=rf_cfg.get("depth", 6),
+                    learning_rate=rf_cfg.get("learning_rate", 0.1),
+                    loss_function="MAE",
+                    random_seed=42,
+                    verbose=50
+                )
+                primary_pipeline = Pipeline([("preprocessing", prep), ("estimator", estimator)])
+                primary_pipeline.fit(X_train, y_train_log, estimator__text_features=[text_idx])
 
         # Evaluate on validation fold (inverse transform log1p via expm1)
         val_preds_log = primary_pipeline.predict(X_val)
