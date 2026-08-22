@@ -241,5 +241,25 @@ if st.button("Predict Routing"):
     st.metric("Predicted Assignment Group", result["recommended_assignment_group"])
 ```
 
+## Summary of Remaining Core Files
+
+To ensure complete coverage of the 30 core mandatory files, here is the logic for the remaining orchestration, diagnostic, and metadata scripts:
+
+### Data Governance Additions
+* **`src/data/pipeline_contracts.py`:** Acts as the strict border patrol between raw data and preprocessing. It checks `df.columns` against the `FeatureRegistry` to ensure all required fields are present before cleaning begins.
+
+### Preprocessing Additions
+* **`src/preprocessing/enricher.py`:** Automatically checks if `cmdb.csv` or `shift_schedules.csv` exist in the raw folder. If they do, it performs a `pandas` left join (`how="left"`) to append external enterprise context to the tickets.
+* **`src/preprocessing/eda.py`:** Calculates statistical distributions (like `value_counts(normalize=True)`) and generates matplotlib/seaborn charts. Crucially, it **does not modify** the dataframe; it acts strictly as an observer.
+
+### ML Diagnostic Additions
+* **`src/ml/catboost/evaluator.py`:** Tests the model against the 15% holdout set. Computes strict classification metrics (F1 Macro, Precision Weighted) and pulls the `.get_feature_importances()` from the CatBoost pipeline.
+* **`src/ml/explainability/shap_explainer.py`:** Uses the mathematically proven SHAP (SHapley Additive exPlanations) library (`shap.TreeExplainer`). It calculates exactly how much each feature contributed to a specific ticket's prediction (e.g., "The word 'server' added +15% to Network Team").
+
+### Semantic Metadata & Orchestration
+* **`src/ml/semantic/embedding_registry.py`:** Just like the model registry, this saves metadata about the FAISS index (dimension size, number of vectors, index type) to ensure the search engine stays synchronized with the embedded data.
+* **`src/ml/semantic/similarity_engine.py`:** The wrapper that connects `embedding_generator` (creating vectors) with `faiss_index` (searching them), formatting the raw mathematical distances back into readable JSON incident formats.
+* **`src/ml/hybrid/recommendation_engine.py`:** The ultimate master controller. It calls `trainer` for ML, `similarity_engine` for FAISS, passes both to `decision_engine` for fusion, and finally to `reasoning_engine` for text output.
+
 ## Summary
 The pipeline moves seamlessly from strict governance (`feature_registry`), through defensive processing (`robust_read_csv`, `cleaner`), into dual-engine modeling (`CatBoost` + `FAISS`), and culminates in deterministic fusion (`decision_engine`) and explanation (`reasoning_engine`). Every component is decoupled and controlled by centralized YAML configurations.

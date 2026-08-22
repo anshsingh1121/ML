@@ -537,3 +537,69 @@ ModuleNotFoundError("No module named 'faiss.swigfaiss_avx2'")
 2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 1,500 records (target: assignment_group)...
 2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=1,050, val=225, test=225
 2026-08-13 13:04:55 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-14 21:21:31 | INFO     | faiss.loader | loader:<module>:74 | Loading faiss with AVX512 support.
+2026-08-14 21:21:31 | INFO     | faiss.loader | loader:<module>:79 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-14 21:21:31 | INFO     | faiss.loader | loader:<module>:86 | Loading faiss with AVX2 support.
+2026-08-14 21:21:32 | INFO     | faiss.loader | loader:<module>:88 | Successfully loaded faiss with AVX2 support.
+2026-08-14 22:00:00 | INFO     | faiss.loader | loader:<module>:74 | Loading faiss with AVX512 support.
+2026-08-14 22:00:00 | INFO     | faiss.loader | loader:<module>:79 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-14 22:00:00 | INFO     | faiss.loader | loader:<module>:86 | Loading faiss with AVX2 support.
+2026-08-14 22:00:00 | INFO     | faiss.loader | loader:<module>:88 | Successfully loaded faiss with AVX2 support.
+2026-08-14 22:00:00 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 1,500 incident records...
+2026-08-14 22:00:00 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-14 22:00:00 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-14 22:00:00 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 1,500 records...
+2026-08-14 22:00:00 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-14 22:00:00 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-14 22:00:00 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-14 22:00:00 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 1,500 records...
+2026-08-14 22:00:00 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-14 22:00:00 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-14 22:00:00 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 1,500 records...
+2026-08-14 22:00:00 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-14 22:00:00 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-14 22:00:00 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-14 22:00:00 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-14 22:00:00 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-14 22:00:00 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 1,500 records and 47 columns...
+2026-08-14 22:00:01 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-14 22:00:01 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-14 22:00:01 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-14 22:00:01 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 1,500 records (target: assignment_group)...
+2026-08-14 22:00:01 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=1,050, val=225, test=225
+2026-08-14 22:00:01 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-15 10:53:04 | INFO     | faiss.loader | loader:<module>:74 | Loading faiss with AVX512 support.
+2026-08-15 10:53:04 | INFO     | faiss.loader | loader:<module>:79 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-15 10:53:04 | INFO     | faiss.loader | loader:<module>:86 | Loading faiss with AVX2 support.
+2026-08-15 10:53:04 | INFO     | faiss.loader | loader:<module>:88 | Successfully loaded faiss with AVX2 support.
+2026-08-15 10:53:10 | INFO     | src.data.validation | validation:validate_dataset:77 | Starting Dataset Validation on 1,500 incident records...
+2026-08-15 10:53:10 | WARNING  | src.data.validation | validation:validate_dataset:133 | Dataset validation detected 1 failed quality gates out of 12.
+2026-08-15 10:53:10 | INFO     | src.data.validation | validation:save_validation_report:450 | Validation reports generated: C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.md & C:\Users\Ansh Singh\OneDrive\Desktop\incident_platform\reports\validation_report.json
+2026-08-15 10:53:10 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:54 | Initiating Enterprise Data Cleaning on 1,500 records...
+2026-08-15 10:53:10 | INFO     | src.preprocessing.cleaner | cleaner:_validate_and_clean_categories:223 | Preserving custom company category and assignment_group categories (`allow_custom_categories=True`).
+2026-08-15 10:53:10 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:98 | Exported cleaning JSON report to: reports\cleaning_report.json
+2026-08-15 10:53:10 | INFO     | src.preprocessing.cleaner | cleaner:clean_dataset:102 | Exported cleaning Markdown report to: reports\cleaning_report.md
+2026-08-15 10:53:10 | INFO     | src.preprocessing.engineer | engineer:engineer_features:73 | Initiating Enterprise Feature Engineering across 1,500 records...
+2026-08-15 10:53:10 | INFO     | src.preprocessing.engineer | engineer:engineer_features:117 | Exported feature engineering JSON report to: reports\feature_engineering_report.json
+2026-08-15 10:53:10 | INFO     | src.preprocessing.engineer | engineer:engineer_features:121 | Exported feature engineering Markdown report to: reports\feature_engineering_report.md
+2026-08-15 10:53:10 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:112 | Initiating Enterprise Text Preprocessing on 1,500 records...
+2026-08-15 10:53:10 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: short_description -> short_description_clean
+2026-08-15 10:53:10 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: description -> description_clean
+2026-08-15 10:53:10 | DEBUG    | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:127 | Normalizing text column: close_notes -> close_notes_clean
+2026-08-15 10:53:10 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:163 | Exported text preprocessing JSON report to: reports\text_preprocessing_report.json
+2026-08-15 10:53:10 | INFO     | src.preprocessing.text_preprocessor | text_preprocessor:preprocess_dataset:167 | Exported text preprocessing Markdown report to: reports\text_preprocessing_report.md
+2026-08-15 10:53:10 | INFO     | src.preprocessing.eda | eda:analyze_dataset:60 | Initiating Enterprise EDA Engine across 1,500 records and 47 columns...
+2026-08-15 10:53:11 | INFO     | src.preprocessing.eda | eda:analyze_dataset:131 | Exported EDA JSON report to: reports\eda_report.json
+2026-08-15 10:53:11 | INFO     | src.preprocessing.eda | eda:analyze_dataset:136 | Exported EDA Markdown report to: reports\eda_report.md
+2026-08-15 10:53:11 | INFO     | src.preprocessing.eda | eda:analyze_dataset:141 | Exported EDA HTML report to: reports\eda_report.html
+2026-08-15 10:53:11 | INFO     | src.preprocessing.splitter | splitter:split_dataset:60 | Initiating 'stratified' split on 1,500 records (target: assignment_group)...
+2026-08-15 10:53:11 | INFO     | src.preprocessing.splitter | splitter:split_dataset:100 | Saved splits to data\processed: train=1,050, val=225, test=225
+2026-08-15 10:53:11 | INFO     | src.preprocessing.splitter | splitter:split_dataset:117 | Exported split reports to reports
+2026-08-15 10:57:16 | INFO     | faiss.loader | loader:<module>:74 | Loading faiss with AVX512 support.
+2026-08-15 10:57:16 | INFO     | faiss.loader | loader:<module>:79 | Could not load library with AVX512 support due to:
+ModuleNotFoundError("No module named 'faiss.swigfaiss_avx512'")
+2026-08-15 10:57:16 | INFO     | faiss.loader | loader:<module>:86 | Loading faiss with AVX2 support.
+2026-08-15 10:57:16 | INFO     | faiss.loader | loader:<module>:88 | Successfully loaded faiss with AVX2 support.

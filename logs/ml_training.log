@@ -510,3 +510,135 @@
 2026-08-13 13:06:00 | INFO     | src.ml.hybrid.decision_engine | decision_engine:fuse_recommendation:177 | Decision Engine Output: Recommended Group='Hardware-BreakFix-L2' (Confidence: 41.54% - Review Required, MTTR: 28.53h, Success Rate: 40.0%)
 2026-08-13 13:06:00 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:export_reports:371 | Exported Phase 5 Hybrid prediction reports to reports
 2026-08-13 13:06:00 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:279 | Hybrid Recommendation Complete: Hardware-BreakFix-L2 (Review Required - 41.54%)
+2026-08-14 21:21:33 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:75 | Loaded Random Forest classifier pipeline from models\catboost_assignment_group.pkl
+2026-08-14 21:21:33 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:89 | Loaded Random Forest regressor pipeline from models\catboost_resolution_time_hours.pkl
+2026-08-14 21:21:33 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:224 | Starting Enterprise Hybrid Incident Intelligence recommendation flow...
+2026-08-14 21:21:33 | INFO     | src.ml.semantic.faiss_index | faiss_index:load_index:267 | Loaded FAISS index 'incident_semantic_index:latest' from indexes\incident_semantic_index_latest.index. Total vectors: 70
+2026-08-14 21:21:33 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-14 21:21:33 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-14 21:21:33 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:find_similar_incidents:159 | Executing FAISS Top-5 similarity search for Text Query: 'Database connection timeout on payment gateway. Us...'...
+2026-08-14 21:21:33 | INFO     | src.ml.hybrid.decision_engine | decision_engine:fuse_recommendation:177 | Decision Engine Output: Recommended Group='CoreBanking-Support-L3' (Confidence: 36.76% - Review Required, MTTR: 34.36h, Success Rate: 40.0%)
+2026-08-14 21:21:33 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:279 | Hybrid Recommendation Complete: CoreBanking-Support-L3 (Review Required - 36.76%)
+2026-08-14 21:34:16 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:316 | Loading training data from data\processed\train.csv and validation data from data\processed\val.csv...
+2026-08-14 21:34:16 | INFO     | src.ml.catboost.trainer | trainer:build_preprocessing_pipeline:142 | Built zero-leakage preprocessing pipeline across 22 predictors (Freq: 6, OneHot: 4, Num: 9).
+2026-08-14 21:34:16 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:339 | Starting RandomizedSearchCV for Classification HPO...
+2026-08-14 21:37:23 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:362 | HPO Complete! Best Params: {'estimator__learning_rate': 0.05, 'estimator__l2_leaf_reg': 3, 'estimator__iterations': 500, 'estimator__depth': 6}
+2026-08-14 21:37:24 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:388 | Successfully persisted complete classification pipeline to: models\catboost_assignment_group.pkl
+2026-08-14 21:37:24 | WARNING  | src.ml.model_registry | model_registry:register_model:104 | Overwriting registered model metadata for key: catboost_assignment_group:v1.0.0
+2026-08-14 21:37:24 | INFO     | src.ml.model_registry | model_registry:register_model:124 | Registered model catboost_assignment_group:v1.0.0 (SHA256: f5a3fe2c2fb4...)
+2026-08-14 21:37:24 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:408 | Registered model catboost_assignment_group:v1.0.0 (Acc: 1.0000, F1: 1.0000)
+2026-08-14 22:00:01 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:316 | Loading training data from data\processed\train.csv and validation data from data\processed\val.csv...
+2026-08-14 22:00:01 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:158 | Initiating multi-baseline comparison for target 'assignment_group' across 30 predictors...
+2026-08-14 22:00:01 | INFO     | src.ml.catboost.trainer | trainer:build_preprocessing_pipeline:142 | Built zero-leakage preprocessing pipeline across 30 predictors (Freq: 7, OneHot: 16, Num: 5).
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Baseline [CatBoost]: {'accuracy': 1.0, 'f1_weighted': 1.0} (Trained in 47.77s)
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:_export_baseline_comparison_report:295 | Exported baseline comparison reports to reports\model_comparison_assignment_group.json & reports\model_comparison_assignment_group.md
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:264 | Multi-baseline comparison complete! Best Model identified: [CatBoost] (Score: 1.0000)
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:388 | Successfully persisted complete classification pipeline to: models\catboost_assignment_group.pkl
+2026-08-14 22:00:49 | WARNING  | src.ml.model_registry | model_registry:register_model:104 | Overwriting registered model metadata for key: catboost_assignment_group:v1.0.0
+2026-08-14 22:00:49 | INFO     | src.ml.model_registry | model_registry:register_model:124 | Registered model catboost_assignment_group:v1.0.0 (SHA256: 9cb027e41ecf...)
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:408 | Registered model catboost_assignment_group:v1.0.0 (Acc: 1.0000, F1: 1.0000)
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:431 | Loading training data from data\processed\train.csv and validation data from data\processed\val.csv...
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:158 | Initiating multi-baseline comparison for target 'resolution_time_hours' across 30 predictors...
+2026-08-14 22:00:49 | INFO     | src.ml.catboost.trainer | trainer:build_preprocessing_pipeline:142 | Built zero-leakage preprocessing pipeline across 30 predictors (Freq: 7, OneHot: 16, Num: 5).
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Baseline [CatBoost]: {'rmse': 3.7686, 'mae': 2.7276, 'r2': 0.914} (Trained in 1.62s)
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.trainer | trainer:_export_baseline_comparison_report:295 | Exported baseline comparison reports to reports\model_comparison_resolution_time_hours.json & reports\model_comparison_resolution_time_hours.md
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:264 | Multi-baseline comparison complete! Best Model identified: [CatBoost] (Score: 3.7686)
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:516 | Successfully persisted complete regression pipeline to: models\catboost_resolution_time_hours.pkl
+2026-08-14 22:00:51 | WARNING  | src.ml.model_registry | model_registry:register_model:104 | Overwriting registered model metadata for key: catboost_resolution_time_hours:v1.0.0
+2026-08-14 22:00:51 | INFO     | src.ml.model_registry | model_registry:register_model:124 | Registered model catboost_resolution_time_hours:v1.0.0 (SHA256: 84543771f1c3...)
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:534 | Registered model catboost_resolution_time_hours:v1.0.0 (RMSE: 3.7686, MAE: 2.7276, R2: 0.9140)
+2026-08-14 22:00:51 | INFO     | src.ml.catboost.evaluator | evaluator:_resolve_pipeline_and_test_data:91 | Loading model pipeline from models\catboost_assignment_group.pkl...
+2026-08-14 22:00:52 | INFO     | src.ml.catboost.evaluator | evaluator:extract_and_export_feature_importances:215 | Exported Feature Importance ranking across 81 predictors to reports\feature_importance_assignment_group.csv, reports\feature_importance_assignment_group.md, and reports\feature_importance_assignment_group.png
+2026-08-14 22:00:52 | INFO     | src.ml.catboost.evaluator | evaluator:evaluate_classification:332 | Classification evaluation complete! Acc=1.0000, Top3Acc=1.0000, F1=1.0000
+2026-08-14 22:00:52 | INFO     | src.ml.explainability.shap_explainer | shap_explainer:explain_global:156 | Computing SHAP values across 100 records...
+2026-08-14 22:00:53 | INFO     | src.ml.explainability.shap_explainer | shap_explainer:explain_global:199 | Exported global SHAP plots to reports/shap_bar.png & reports/shap_summary.png
+2026-08-14 22:00:53 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:139 | Constructing semantic text documents across 1,050 incident records...
+2026-08-14 22:00:53 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-14 22:00:53 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-14 22:00:53 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:164 | Using pre-trained embedding pipeline across 1,050 documents...
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:173 | Saved local embedding pipeline to models\embeddings\tfidf-svd-384.pkl
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:191 | Embedding complete. Matrix shape: (1050, 69), Metadata records: 1,050
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:save_embeddings:243 | Saved separated embedding artifacts to:
+  - Vector Matrix: models\embeddings\incident_embeddings.npy ((1050, 69))
+  - Metadata Table: models\embeddings\incident_metadata.csv (1,050 records)
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:65 | Starting end-to-end semantic index build across 1,050 records...
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:load_embeddings:264 | Loaded embeddings matrix (70, 69) and 70 metadata rows from models\embeddings
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:69 | Loaded 70 pre-computed embeddings from disk. Skipping redundant generation.
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.faiss_index | faiss_index:create_index:77 | Initializing FAISS index 'incident_semantic_index' (type=FlatIP, dim=69)...
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.faiss_index | faiss_index:add_embeddings:147 | Added 70 vectors. Total indexed vectors: 70
+2026-08-14 22:00:54 | INFO     | src.ml.embedding_registry | embedding_registry:register_index:112 | Registered embedding index incident_semantic_index:latest (70 vectors, Dim: 69)
+2026-08-14 22:00:54 | INFO     | src.ml.embedding_registry | embedding_registry:export_markdown:164 | Exported Embedding Registry Markdown to: indexes\embedding_registry.md
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.faiss_index | faiss_index:save_index:234 | Successfully saved FAISS index to indexes\incident_semantic_index_latest.index (70 vectors) and registered in EmbeddingRegistry.
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:91 | Successfully built and registered semantic index 'incident_semantic_index:latest' (70 vectors).
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:75 | Loaded Random Forest classifier pipeline from models\catboost_assignment_group.pkl
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:89 | Loaded Random Forest regressor pipeline from models\catboost_resolution_time_hours.pkl
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:224 | Starting Enterprise Hybrid Incident Intelligence recommendation flow...
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.faiss_index | faiss_index:load_index:267 | Loaded FAISS index 'incident_semantic_index:latest' from indexes\incident_semantic_index_latest.index. Total vectors: 70
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-14 22:00:54 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:find_similar_incidents:159 | Executing FAISS Top-5 similarity search for Text Query: 'ATM cash withdrawal failing due to hardware networ...'...
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.decision_engine | decision_engine:fuse_recommendation:177 | Decision Engine Output: Recommended Group='Hardware-BreakFix-L2' (Confidence: 41.38% - Review Required, MTTR: 28.56h, Success Rate: 40.0%)
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:export_reports:371 | Exported Phase 5 Hybrid prediction reports to reports
+2026-08-14 22:00:54 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:279 | Hybrid Recommendation Complete: Hardware-BreakFix-L2 (Review Required - 41.38%)
+2026-08-15 10:53:11 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:316 | Loading training data from data\processed\train.csv and validation data from data\processed\val.csv...
+2026-08-15 10:53:11 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:158 | Initiating multi-baseline comparison for target 'assignment_group' across 30 predictors...
+2026-08-15 10:53:11 | INFO     | src.ml.catboost.trainer | trainer:build_preprocessing_pipeline:142 | Built zero-leakage preprocessing pipeline across 30 predictors (Freq: 7, OneHot: 16, Num: 5).
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Baseline [CatBoost]: {'accuracy': 1.0, 'f1_weighted': 1.0} (Trained in 52.21s)
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:_export_baseline_comparison_report:295 | Exported baseline comparison reports to reports\model_comparison_assignment_group.json & reports\model_comparison_assignment_group.md
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:264 | Multi-baseline comparison complete! Best Model identified: [CatBoost] (Score: 1.0000)
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:388 | Successfully persisted complete classification pipeline to: models\catboost_assignment_group.pkl
+2026-08-15 10:54:04 | WARNING  | src.ml.model_registry | model_registry:register_model:104 | Overwriting registered model metadata for key: catboost_assignment_group:v1.0.0
+2026-08-15 10:54:04 | INFO     | src.ml.model_registry | model_registry:register_model:124 | Registered model catboost_assignment_group:v1.0.0 (SHA256: d18e7c9ad0dd...)
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_classifier:408 | Registered model catboost_assignment_group:v1.0.0 (Acc: 1.0000, F1: 1.0000)
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:431 | Loading training data from data\processed\train.csv and validation data from data\processed\val.csv...
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:158 | Initiating multi-baseline comparison for target 'resolution_time_hours' across 30 predictors...
+2026-08-15 10:54:04 | INFO     | src.ml.catboost.trainer | trainer:build_preprocessing_pipeline:142 | Built zero-leakage preprocessing pipeline across 30 predictors (Freq: 7, OneHot: 16, Num: 5).
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:249 | Baseline [CatBoost]: {'rmse': 3.7686, 'mae': 2.7276, 'r2': 0.914} (Trained in 1.88s)
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.trainer | trainer:_export_baseline_comparison_report:295 | Exported baseline comparison reports to reports\model_comparison_resolution_time_hours.json & reports\model_comparison_resolution_time_hours.md
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.trainer | trainer:train_baselines_and_compare:264 | Multi-baseline comparison complete! Best Model identified: [CatBoost] (Score: 3.7686)
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:516 | Successfully persisted complete regression pipeline to: models\catboost_resolution_time_hours.pkl
+2026-08-15 10:54:06 | WARNING  | src.ml.model_registry | model_registry:register_model:104 | Overwriting registered model metadata for key: catboost_resolution_time_hours:v1.0.0
+2026-08-15 10:54:06 | INFO     | src.ml.model_registry | model_registry:register_model:124 | Registered model catboost_resolution_time_hours:v1.0.0 (SHA256: 6a393f68cd70...)
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.trainer | trainer:train_regressor:534 | Registered model catboost_resolution_time_hours:v1.0.0 (RMSE: 3.7686, MAE: 2.7276, R2: 0.9140)
+2026-08-15 10:54:06 | INFO     | src.ml.catboost.evaluator | evaluator:_resolve_pipeline_and_test_data:91 | Loading model pipeline from models\catboost_assignment_group.pkl...
+2026-08-15 10:54:07 | INFO     | src.ml.catboost.evaluator | evaluator:extract_and_export_feature_importances:215 | Exported Feature Importance ranking across 81 predictors to reports\feature_importance_assignment_group.csv, reports\feature_importance_assignment_group.md, and reports\feature_importance_assignment_group.png
+2026-08-15 10:54:07 | INFO     | src.ml.catboost.evaluator | evaluator:evaluate_classification:332 | Classification evaluation complete! Acc=1.0000, Top3Acc=1.0000, F1=1.0000
+2026-08-15 10:54:07 | INFO     | src.ml.explainability.shap_explainer | shap_explainer:explain_global:156 | Computing SHAP values across 100 records...
+2026-08-15 10:54:09 | INFO     | src.ml.explainability.shap_explainer | shap_explainer:explain_global:199 | Exported global SHAP plots to reports/shap_bar.png & reports/shap_summary.png
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:139 | Constructing semantic text documents across 1,050 incident records...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:164 | Using pre-trained embedding pipeline across 1,050 documents...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:173 | Saved local embedding pipeline to models\embeddings\tfidf-svd-384.pkl
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:embed_dataframe:191 | Embedding complete. Matrix shape: (1050, 69), Metadata records: 1,050
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:save_embeddings:243 | Saved separated embedding artifacts to:
+  - Vector Matrix: models\embeddings\incident_embeddings.npy ((1050, 69))
+  - Metadata Table: models\embeddings\incident_metadata.csv (1,050 records)
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:65 | Starting end-to-end semantic index build across 1,050 records...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:load_embeddings:264 | Loaded embeddings matrix (70, 69) and 70 metadata rows from models\embeddings
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:69 | Loaded 70 pre-computed embeddings from disk. Skipping redundant generation.
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.faiss_index | faiss_index:create_index:77 | Initializing FAISS index 'incident_semantic_index' (type=FlatIP, dim=69)...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.faiss_index | faiss_index:add_embeddings:147 | Added 70 vectors. Total indexed vectors: 70
+2026-08-15 10:54:09 | INFO     | src.ml.embedding_registry | embedding_registry:register_index:112 | Registered embedding index incident_semantic_index:latest (70 vectors, Dim: 69)
+2026-08-15 10:54:09 | INFO     | src.ml.embedding_registry | embedding_registry:export_markdown:164 | Exported Embedding Registry Markdown to: indexes\embedding_registry.md
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.faiss_index | faiss_index:save_index:234 | Successfully saved FAISS index to indexes\incident_semantic_index_latest.index (70 vectors) and registered in EmbeddingRegistry.
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:build_index_from_dataframe:91 | Successfully built and registered semantic index 'incident_semantic_index:latest' (70 vectors).
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:75 | Loaded Random Forest classifier pipeline from models\catboost_assignment_group.pkl
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:89 | Loaded Random Forest regressor pipeline from models\catboost_resolution_time_hours.pkl
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:224 | Starting Enterprise Hybrid Incident Intelligence recommendation flow...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.faiss_index | faiss_index:load_index:267 | Loaded FAISS index 'incident_semantic_index:latest' from indexes\incident_semantic_index_latest.index. Total vectors: 70
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-15 10:54:09 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:find_similar_incidents:159 | Executing FAISS Top-5 similarity search for Text Query: 'ATM cash withdrawal failing due to hardware networ...'...
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.decision_engine | decision_engine:fuse_recommendation:177 | Decision Engine Output: Recommended Group='Hardware-BreakFix-L2' (Confidence: 40.47% - Review Required, MTTR: 28.39h, Success Rate: 40.0%)
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:export_reports:371 | Exported Phase 5 Hybrid prediction reports to reports
+2026-08-15 10:54:09 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:279 | Hybrid Recommendation Complete: Hardware-BreakFix-L2 (Review Required - 40.47%)
+2026-08-15 10:57:18 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:75 | Loaded Random Forest classifier pipeline from models\catboost_assignment_group.pkl
+2026-08-15 10:57:18 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:__init__:89 | Loaded Random Forest regressor pipeline from models\catboost_resolution_time_hours.pkl
+2026-08-15 10:57:48 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:224 | Starting Enterprise Hybrid Incident Intelligence recommendation flow...
+2026-08-15 10:57:48 | INFO     | src.ml.semantic.faiss_index | faiss_index:load_index:267 | Loaded FAISS index 'incident_semantic_index:latest' from indexes\incident_semantic_index_latest.index. Total vectors: 70
+2026-08-15 10:57:48 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:74 | Loading local embedding pipeline 'tfidf-svd-384' from models\embeddings\tfidf-svd-384.pkl...
+2026-08-15 10:57:48 | INFO     | src.ml.semantic.embedding_generator | embedding_generator:model:77 | Successfully loaded embedding pipeline. Dimension: 384
+2026-08-15 10:57:48 | INFO     | src.ml.semantic.similarity_engine | similarity_engine:find_similar_incidents:159 | Executing FAISS Top-5 similarity search for Text Query: 'Database connection timeout on payment gateway. Us...'...
+2026-08-15 10:57:48 | INFO     | src.ml.hybrid.decision_engine | decision_engine:fuse_recommendation:177 | Decision Engine Output: Recommended Group='CoreBanking-Support-L3' (Confidence: 36.76% - Review Required, MTTR: 34.36h, Success Rate: 40.0%)
+2026-08-15 10:57:48 | INFO     | src.ml.hybrid.recommendation_engine | recommendation_engine:recommend:279 | Hybrid Recommendation Complete: CoreBanking-Support-L3 (Review Required - 36.76%)
